@@ -1,506 +1,225 @@
-"""
-Pauli Wellness â LifeWave Brand Partner Landing Page
-Built with Streamlit | Conversion-Optimized | Modern UI
-"""
-
+"""Pauli Wellness - LifeWave Landing Page"""
 import streamlit as st
-import json
-import time
-import os
 import csv
 from datetime import datetime
 from pathlib import Path
 
-# ââââââââââââââââââââââââââââââââââââââââââââââ
-# PAGE CONFIG
-# ââââââââââââââââââââââââââââââââââââââââââââââ
-st.set_page_config(
-    page_title="Pauli Wellness | LifeWave",
-    page_icon="â¨",
-    layout="wide",
-    initial_sidebar_state="collapsed",
-)
-
-# ââââââââââââââââââââââââââââââââââââââââââââââ
-# DATA DIRECTORY FOR LEADS
-# ââââââââââââââââââââââââââââââââââââââââââââââ
+st.set_page_config(page_title="Pauli Wellness | LifeWave", page_icon="✨", layout="wide", initial_sidebar_state="collapsed")
 DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
-LEADS_FILE = DATA_DIR / "leads.csv"
-CONTACTS_FILE = DATA_DIR / "contacts.csv"
-TEAM_FILE = DATA_DIR / "team_requests.csv"
-
-
-def save_lead(name, email, phone, source="popup"):
-    file_exists = LEADS_FILE.exists()
-    with open(LEADS_FILE, "a", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        if not file_exists:
-            writer.writerow(["timestamp", "name", "email", "phone", "source"])
-        writer.writerow([datetime.now().isoformat(), name, email, phone, source])
-
-
-def save_contact(name, email, phone, message):
-    file_exists = CONTACTS_FILE.exists()
-    with open(CONTACTS_FILE, "a", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        if not file_exists:
-            writer.writerow(["timestamp", "name", "email", "phone", "message"])
-        writer.writerow([datetime.now().isoformat(), name, email, phone, message])
-
-
-def save_team_request(name, email, phone, city, why):
-    file_exists = TEAM_FILE.exists()
-    with open(TEAM_FILE, "a", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        if not file_exists:
-            writer.writerow(["timestamp", "name", "email", "phone", "city", "motivation"])
-        writer.writerow([datetime.now().isoformat(), name, email, phone, city, why])
-
-
-# ââââââââââââââââââââââââââââââââââââââââââââââ
-# SESSION STATE
-# ââââââââââââââââââââââââââââââââââââââââââââââ
-i~)â¶Ý[ÝÙ\ÜÚ[ÛÜÝ]NÝÙ\ÜÚ[ÛÜÝ]K]Z^Ø[ÝÙ\ÈHßBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÕTÕÓHÔÔÂÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ Y[XÝØÜÜÊ
-NÝX\ÙÝÛÝ[O[\Ü\
-	ÚÎËÙÛËÛÛÙÛX\\ËÛÛKØÜÜÌÙ[Z[OR[\ÙÚÌÍÍLÍÍÌÎÎL	[Z[OT^YZ\Ñ\Ü^N][ÙÚ
-Ì
-ÌÌK
-	\Ü^O\ÝØ\	ÊNÂÝ\ÂXÚÙÜÝ[Ì
-L
-LZ[\Ü[ÂÛY[Z[N	Ò[\ËØ[Ë\Ù\YZ[\Ü[ÂBØÚËXÛÛZ[\ÂY[Ë]ÜZ[\Ü[ÂY[ËXÝÛNZ[\Ü[ÂX^]ÚYL	HZ[\Ü[ÂBXY\Ù]K]\ÝYHÝXY\HÈ\Ü^NÛHZ[\Ü[ÈBÓXZ[Y[HÈ\ÚX[]NY[Z[\Ü[ÈBÛÝ\È\ÚX[]NY[Z[\Ü[ÈBÝ\ÞP]ÛÈ\Ü^NÛHZ[\Ü[ÈB]Ù]K]\ÝYHÝÚYX\ÛÛ\ÙYÛÛÛHÈ\Ü^NÛHZ[\Ü[ÈBÝ\YÜHÂÛÛ[	ÉÎÂÜÚ][Û^YÂÜÈYÈYÚÈÝÛNÂXÚÙÜÝ[YX[YÜYY[
-]	HÌ	KØJLNKMKMJK[Ü\[
-KYX[YÜYY[
-]
-	H
-Ì	KØJLMÌJK[Ü\[
-KYX[YÜYY[
-]	H	KØJMKL
-ËL
-Ë
-K[Ü\[
-KYX[YÜYY[
-ÜÜ]
-	H
-L	KØJLNKMKLK[Ü\[
-NÂÚ[\Y][ÎÛNÂZ[^Â[[X][ÛYÈX\ÙKZ[[Ý][[]NÂBÙ^Y[Y\ÈYÂ	KL	HÈ[ÙÜN[Û]J
-NÈBIHÈ[ÙÜN[Û]JLLM\
-NÈB
-L	HÈ[ÙÜN[Û]J
-\LL
-NÈB
-ÍIHÈ[ÙÜN[Û]JL
-\
-NÈBB]\ÂÜÚ][Û^YÂÜÈYÈYÚÂZ[^NNNNÂXÚÙÜÝ[ØJ
-K
-K
-JNÂXÚÙÜY[\\
-NÂÜ\XÝÛN\ÛÛYØJLNKMKMJNÂY[ÎL
-Â\Ü^N^Â\ÝYKXÛÛ[ÜXÙKX]ÙY[Â[YÛZ][\ÎÙ[\ÂB]\X[ÂÛY[Z[N	Ô^YZ\\Ü^IËÙ\YÂÛ\Ú^NK[NÂÛ]ÙZYÚ
-ÌÂXÚÙÜÝ[[X\YÜYY[
-LÍYYËÍÍÑÌ
-PJNÂ]ÙXÚ]XXÚÙÜÝ[XÛ\^Â]ÙXÚ]]^Y[XÛÛÜ[Ü\[ÂB]\[[ÜÈÂ\Ü^N^ÂØ\Â[YÛZ][\ÎÙ[\ÂB]\[[ÜÈHÂÛÛÜØJMKMKMKÊHZ[\Ü[Â^YXÛÜ][ÛÛHZ[\Ü[ÂÛ\Ú^N
-\[NÂÛ]ÙZYÚ
-LÂ]\\ÜXÚ[Î\Â^][ÙÜN\\Ø\ÙNÂ[Ú][ÛÛÛÜÜÎÂB]\[[ÜÈNÝ\ÈÛÛÜÍÍÑZ[\Ü[ÈB]XÝHÂXÚÙÜÝ[[X\YÜYY[
-LÍYYËÍÍÑÎPÑHZ[\Ü[Â]ÙXÚ]]^Y[XÛÛÜÚ]HZ[\Ü[Â]ÙXÚ]XXÚÙÜÝ[XÛ\[Ù]Z[\Ü[ÂY[ÎÂÜ\\Y]\Î\ÂÛ]ÙZYÚ
-Z[\Ü[ÂÛ\Ú^N[HZ[\Ü[ÂB\Ë\ÙXÝ[ÛÂZ[ZZYÚLÂ\Ü^N^Â[YÛZ][\ÎÙ[\Â\ÝYKXÛÛ[Ù[\Â^X[YÛÙ[\ÂY[ÎLÂÜÚ][Û[]]NÂÝ\ÝÎY[ÂB\Ë\ÙXÝ[ÛYÜHÂÛÛ[	ÉÎÂÜÚ][ÛXÛÛ]NÂÜML	NÈYML	NÂÚY	NÈZYÚ	NÂXÚÙÜÝ[ÛÛXËYÜYY[
-ÛHYÈ]
-L	H
-L	K[Ü\[YËØJLNKMK
-H
-YË[Ü\[LYËØJLMÌ
-
-HNYË[Ü\[YËØJMKL
-ËL
-ËÊHÌYË[Ü\[ÍYÊNÂ[[X][Û\ÔÝ]HÌÈ[X\[[]NÂBÙ^Y[Y\È\ÔÝ]HÈÛHÈ[ÙÜNÝ]JYÊNÈHÈÈ[ÙÜNÝ]JÍYÊNÈHB\ËXÛÛ[ÈÜÚ][Û[]]NÈZ[^ÈX^]ÚYLÈB\ËXYÙHÂ\Ü^N[[KXØÚÎÂXÚÙÜÝ[ØJLNKMKMJNÂÜ\\ÛÛYØJLNKMKÊNÂÜ\\Y]\Î
-LÂY[ÎÂÛ\Ú^N[NÂÛÛÜÍÍÑÂÛ]ÙZYÚ
-Â]\\ÜXÚ[ÎÂ^][ÙÜN\\Ø\ÙNÂX\Ú[XÝÛNÂ[[X][ÛYR[ÝÛÈX\ÙNÂB\Ë]]HÂÛY[Z[N	Ô^YZ\\Ü^IËÙ\YÂÛ\Ú^NÛ[\
-\[K
-Ë
-\[JNÂÛ]ÙZYÚ
-ÌÂ[KZZYÚKNÂX\Ú[XÝÛNÂÛÛÜÑQQNÂ[[X][ÛYR[\\ÈX\ÙHÈÝÂB\Ë]]HÜYY[]^ÂXÚÙÜÝ[[X\YÜYY[
-LÍYYËÍÍÑ	KÌ
-PH
-L	KÑ
-ÌL	JNÂ]ÙXÚ]XXÚÙÜÝ[XÛ\^Â]ÙXÚ]]^Y[XÛÛÜ[Ü\[ÂXÚÙÜÝ[\Ú^N	H]]ÎÂ[[X][ÛÚ[[Y\ÜÈX\ÙKZ[[Ý][[]NÂBÙ^Y[Y\ÈÚ[[Y\È	KL	HÈXÚÙÜÝ[\ÜÚ][Û	HÙ[\ÈH
-L	HÈXÚÙÜÝ[\ÜÚ][Û	HÙ[\ÈHB\Ë\ÝX]HÂÛ\Ú^NÛ[\
-\[KËK\[JNÂÛÛÜØJMKMKMKJNÂ[KZZYÚKÎÂX^]ÚY
-LÂX\Ú[]]È
-Â[[X][ÛYR[\\ÈX\ÙHÈÝÂB\ËX]ÛÈÂ\Ü^N^ÂØ\MÂ\ÝYKXÛÛ[Ù[\Â^]Ü\Ü\Â[[X][ÛYR[\\ÈX\ÙHÈÝÂB\[X\HÂ\Ü^N[[KY^È[YÛZ][\ÎÙ[\ÈØ\ÂXÚÙÜÝ[[X\YÜYY[
-LÍYYËÍÍÑÎPÑNÂÛÛÜÚ]HZ[\Ü[È^YXÛÜ][ÛÛHZ[\Ü[ÂY[ÎMÌÈÜ\\Y]\Î
-LÂÛ]ÙZYÚ
-ÈÛ\Ú^NM\[NÂ[Ú][Û[ÜÈX\ÙNÂÞ\ÚYÝÎ
-\ØJLNKMKÊNÂB\[X\NÝ\È[ÙÜN[Û]VJL
-NÈÞ\ÚYÝÎÍ\ØJLNKMK
-JNÈB\ÙXÛÛ\HÂ\Ü^N[[KY^È[YÛZ][\ÎÙ[\ÈØ\ÂXÚÙÜÝ[ØJMKMKMK
-JNÂÜ\\ÛÛYØJMKMKMKNÂÛÛÜÚ]HZ[\Ü[È^YXÛÜ][ÛÛHZ[\Ü[ÂY[ÎMÌÈÜ\\Y]\Î
-LÂÛ]ÙZYÚ
-ÈÛ\Ú^NM\[NÂ[Ú][Û[ÜÈX\ÙNÂB\ÙXÛÛ\NÝ\ÈXÚÙÜÝ[ØJMKMKMKJNÈÜ\XÛÛÜØJLNKMKJNÈ[ÙÜN[Û]VJL
-NÈB]Ú]Ø\Â\Ü^N[[KY^È[YÛZ][\ÎÙ[\ÈØ\LÂXÚÙÜÝ[[X\YÜYY[
-LÍYYËÌQÍÌLÍÑJNÂÛÛÜÚ]HZ[\Ü[È^YXÛÜ][ÛÛHZ[\Ü[ÂY[ÎMÍÈÜ\\Y]\Î
-LÂÛ]ÙZYÚ
-ÌÈÛ\Ú^N\[NÂ[Ú][Û[ÜÈX\ÙNÂÞ\ÚYÝÎ
-\ØJÍËLKLÊNÂB]Ú]Ø\Ý\È[ÙÜN[Û]VJLÜ
-NÈÞ\ÚYÝÎÍ\ØJÍËLKL
-JNÈBÙXÝ[ÛÈY[ÎLÈÜÚ][Û[]]NÈBÙXÝ[Û]YÈÂ\Ü^N[[KXØÚÎÂXÚÙÜÝ[ØJLNKMKLNÂÜ\\ÛÛYØJLNKMKJNÂÜ\\Y]\Î
-LÈY[Î
-ÂÛ\Ú^NÍ\[NÈÛÛÜÍÍÑÂÛ]ÙZYÚ
-È]\\ÜXÚ[ÎÂ^][ÙÜN\\Ø\ÙNÈX\Ú[XÝÛNMÂBÙXÝ[Û]]HÂÛY[Z[N	Ô^YZ\\Ü^IËÙ\YÂÛ\Ú^NÛ[\
-[K
-ËÜ[JNÂÛ]ÙZYÚ
-ÌÈÛÛÜÑQQNÂ[KZZYÚKÈX\Ú[XÝÛNMÂBÙXÝ[Û\ÝX]HÂÛ\Ú^NK
-\[NÂÛÛÜØJMKMKMKMJNÂ[KZZYÚKÎÈX^]ÚY
-ÂBÝ]ËX\Â\Ü^N^È\ÝYKXÛÛ[Ù[\ÂØ\
-È^]Ü\Ü\ÂY[Î
-ÂXÚÙÜÝ[ØJLNKMK
-
-NÂÜ\]Ü\ÛÛYØJLNKMKJNÂÜ\XÝÛN\ÛÛYØJLNKMKJNÂBÝ]Z][HÈ^X[YÛÙ[\ÈBÝ][[X\ÂÛY[Z[N	Ô^YZ\\Ü^IËÙ\YÂÛ\Ú^N[NÈÛ]ÙZYÚ
-ÌÂXÚÙÜÝ[[X\YÜYY[
-LÍYYËÍÍÑÌ
-PJNÂ]ÙXÚ]XXÚÙÜÝ[XÛ\^È]ÙXÚ]]^Y[XÛÛÜ[Ü\[ÂBÝ][X[ÂÛ\Ú^N[NÈÛÛÜØJMKMKMKJNÂ^][ÙÜN\\Ø\ÙNÈ]\\ÜXÚ[ÎÈX\Ú[]Ü
-ÂBÛ\ÜËXØ\ÂXÚÙÜÝ[ØJMKMKMKÊNÂÜ\\ÛÛYØJMKMKMK
-NÂÜ\\Y]\ÎÈY[ÎÌÂXÚÙÜY[\\L
-NÂ[Ú][Û[ÈX\ÙNÈZYÚL	NÂBÛ\ÜËXØ\Ý\Â[ÙÜN[Û]VJN
-NÂÜ\XÛÛÜØJLNKMKÊNÂÞ\ÚYÝÎ
-ØJLNKMKJNÂXÚÙÜÝ[ØJLNKMK
-JNÂBØ\ZXÛÛÈÛ\Ú^N\[NÈX\Ú[XÝÛNMÈBØ\]]HÈÛ\Ú^NKM\[NÈÛ]ÙZYÚ
-ÌÈÛÛÜÑQQNÈX\Ú[XÝÛNLÈBØ\]^ÈÛ\Ú^N\[NÈÛÛÜØJMKMKMKMJNÈ[KZZYÚKÈBÙXÝXØ\ÂXÚÙÜÝ[ØJMKMKMKÊNÂÜ\\ÛÛYØJMKMKMK
-NÂÜ\\Y]\ÎÈY[ÎÈÝ\ÝÎY[Â[Ú][Û[ÈX\ÙNÂBÙXÝXØ\Ý\Â[ÙÜN[Û]VJN
-NÂÜ\XÛÛÜØJLNKMK
-NÂÞ\ÚYÝÎ
-ØJLNKMKMJNÂBÙXÝZ[XYÙHÈÚYL	NÈZYÚÈØXÝY]ÛÝ\È\Ü^NØÚÎÈBÙXÝZ[ÈÈY[ÎÈBÙXÝXØ]YÛÜHÂÛ\Ú^NÜ[NÈÛÛÜÍÍÑÂ^][ÙÜN\\Ø\ÙNÈ]\\ÜXÚ[ÎÂÛ]ÙZYÚ
-ÈX\Ú[XÝÛNÂBÙXÝ[[YHÈÛ\Ú^NK[NÈÛ]ÙZYÚ
-ÌÈÛÛÜÑQQNÈX\Ú[XÝÛNÈBÙXÝY\ØÈÈÛ\Ú^N
-\[NÈÛÛÜØJMKMKMKJNÈ[KZZYÚKNÈX\Ú[XÝÛNMÈB[Y[[KZ][HÂ\Ü^N^ÈØ\È[YÛZ][\Î^\Ý\ÂY[ÎÂÜ\XÝÛN\ÛÛYØJMKMKMK
-NÂB[Y[[KYÝÂÚY
-ÈZYÚ
-ÈZ[]ÚY
-ÂÜ\\Y]\Î
-L	NÂ\Ü^N^È[YÛZ][\ÎÙ[\È\ÝYKXÛÛ[Ù[\ÂÛ]ÙZYÚÈÛ\Ú^N
-\[NÈÛÛÜÚ]NÂB[Y[[KXÛÛ[
-ÈÛ\Ú^NK
-\[NÈÛ]ÙZYÚ
-ÌÈÛÛÜÑQQNÈX\Ú[
-ÈB[Y[[KXÛÛ[ÈÛ\Ú^N[NÈÛÛÜØJMKMKMKJNÈ[KZZYÚKNÈX\Ú[ÈB\Ý[[ÛX[XØ\ÂXÚÙÜÝ[ØJMKMKMKÊNÂÜ\\ÛÛYØJMKMKMK
-NÂÜ\\Y]\ÎÈY[ÎÌÂ[Ú][Û[ÜÈX\ÙNÂB\Ý[[ÛX[XØ\Ý\ÈÜ\XÛÛÜØJLNKMKÊNÈB\Ý[[ÛX[\][ÝHÂÛ\Ú^NÜ[NÈÛÛÜØJLNKMKÊNÂÛY[Z[N	Ô^YZ\\Ü^IËÙ\YÈ[KZZYÚNÈX\Ú[XÝÛNÂB\Ý[[ÛX[]^ÂÛ\Ú^NM\[NÈÛÛÜØJMKMKMKÊNÂ[KZZYÚKÎÈÛ\Ý[N][XÎÈX\Ú[XÝÛNMÂB\Ý[[ÛX[X]]ÜÈÛ\Ú^N
-\[NÈÛ]ÙZYÚ
-ÈÛÛÜÍÍÑÈB\Ý[[ÛX[\Ý\ÈÈÛÛÜÑ
-ÌÈÛ\Ú^N\[NÈX\Ú[XÝÛNLÈB]Z^XÛÛZ[\ÂXÚÙÜÝ[[X\YÜYY[
-LÍYYËØJLNKMK
-KØJLMÌ
-JJNÂÜ\\ÛÛYØJLNKMKNÂÜ\\Y]\ÎÈY[Î
-ÈX^]ÚY
-ÌÈX\Ú[]]ÎÂB]Z^\ÙÜ\ÜÈÂZYÚ
-ÈXÚÙÜÝ[ØJMKMKMKJNÂÜ\\Y]\ÎÈX\Ú[XÝÛNÌÈÝ\ÝÎY[ÂB]Z^\ÙÜ\ÜËX\ÂZYÚL	NÂXÚÙÜÝ[[X\YÜYY[
-LYËÍÍÑÌ
-PJNÂÜ\\Y]\ÎÈ[Ú][ÛÚY\ÈX\ÙNÂB]Z^\]Y\Ý[ÛÂÛ\Ú^NKÜ[NÈÛ]ÙZYÚ
-ÈÛÛÜÑQQNÂX\Ú[XÝÛNÈ^X[YÛÙ[\ÂBÝ\XØ\ÂXÚÙÜÝ[ØJMKMKMKÊNÂÜ\\ÛÛYØJMKMKMK
-NÂÜ\\Y]\ÎÈY[ÎÌÂ^X[YÛÙ[\È[Ú][Û[ÈX\ÙNÈZYÚL	NÂBÝ\XØ\Ý\È[ÙÜN[Û]VJM\
-NÈÜ\XÛÛÜØJLNKMKÊNÈBÝ\[[X\ÂÚY
-MÈZYÚ
-MÈÜ\\Y]\Î
-L	NÂXÚÙÜÝ[[X\YÜYY[
-LÍYYËÍÍÑÎPÑNÂ\Ü^N^È[YÛZ][\ÎÙ[\È\ÝYKXÛÛ[Ù[\ÂÛ\Ú^NK[NÈÛ]ÙZYÚÈÛÛÜÚ]NÂX\Ú[]]ÈMÂBÛÝ\Â^X[YÛÙ[\ÈY[Î
-ÂÜ\]Ü\ÛÛYØJMKMKMK
-NÂÛÛÜØJMKMKMKÊNÈÛ\Ú^NÍ\[NÂBÛÝ\HÈÛÛÜØJLNKMKHZ[\Ü[È^YXÛÜ][ÛÛHZ[\Ü[ÈBÚ]Ø\YØ]ÂÜÚ][Û^YÈÝÛNÈYÚÈZ[^NNNNÂÚY
-ÈZYÚ
-ÈXÚÙÜÝ[ÌQÍÂÜ\\Y]\Î
-L	NÂ\Ü^N^È[YÛZ][\ÎÙ[\È\ÝYKXÛÛ[Ù[\ÂÞ\ÚYÝÎ
-\ØJÍËLKL
-NÂ[Ú][Û[ÜÈX\ÙNÈ[[X][ÛÝ[ÙHÈ[[]NÂBÚ]Ø\YØ]Ý\È[ÙÜNØØ[JKJNÈÞ\ÚYÝÎÍ\ØJÍËLKLMJNÈBÚ]Ø\YØ]ÝÈÈÚYÌÈZYÚÌÈ[Ú]NÈBÙ^Y[Y\ÈÝ[ÙHÂ	K	K
-L	K	KL	HÈ[ÙÜN[Û]VJ
-NÈB
-	HÈ[ÙÜN[Û]VJN
-NÈB
-	HÈ[ÙÜN[Û]VJM
-NÈBBÙ^Y[Y\ÈYR[\ÈÛHÈÜXÚ]NÈ[ÙÜN[Û]VJÌ
-NÈHÈÈÜXÚ]NNÈ[ÙÜN[Û]VJ
-NÈHBÙ^Y[Y\ÈYR[ÝÛÈÛHÈÜXÚ]NÈ[ÙÜN[Û]VJL
-NÈHÈÈÜXÚ]NNÈ[ÙÜN[Û]VJ
-NÈHBÝ^[]]][]Ý^\XH]]^\XHÂXÚÙÜÝ[ØJMKMKMK
-JHZ[\Ü[ÂÜ\\ÛÛYØJMKMKMKMJHZ[\Ü[ÂÜ\\Y]\ÎLZ[\Ü[ÂÛÛÜÚ]HZ[\Ü[ÂÛY[Z[N	Ò[\ËØ[Ë\Ù\YZ[\Ü[ÂY[ÎLMZ[\Ü[ÂBÝ^[]]][]ØÝ\ËÝ^\XH]]^\XNØÝ\ÈÂÜ\XÛÛÜÍÍÑZ[\Ü[ÂÞ\ÚYÝÎØJLNKMKHZ[\Ü[ÂBÝÙ[XÝÞ]]ÂXÚÙÜÝ[ØJMKMKMK
-JHZ[\Ü[ÂÜ\\ÛÛYØJMKMKMKMJHZ[\Ü[ÂÜ\\Y]\ÎLZ[\Ü[ÂBÝY[È]ÂXÚÙÜÝ[ØJMKMKMKÊHZ[\Ü[ÂÜ\\Y]\ÎLZ[\Ü[ÂY[ÎLZ[\Ü[ÂB]Ý]Û]ÛÂXÚÙÜÝ[[X\YÜYY[
-LÍYYËÍÍÑÎPÑHZ[\Ü[ÂÛÛÜÚ]HZ[\Ü[ÈÜ\ÛHZ[\Ü[ÂÜ\\Y]\Î
-LZ[\Ü[ÈY[ÎLÌZ[\Ü[ÂÛ]ÙZYÚ
-Z[\Ü[ÂÛY[Z[N	Ò[\ËØ[Ë\Ù\YZ[\Ü[Â[Ú][Û[ÜÈX\ÙHZ[\Ü[ÂÞ\ÚYÝÎ
-ØJLNKMKÊHZ[\Ü[ÂB]Ý]Û]ÛÝ\Â[ÙÜN[Û]VJL
-HZ[\Ü[ÂÞ\ÚYÝÎÌØJLNKMK
-JHZ[\Ü[ÂBYYXH
-X^]ÚY
-Í
-HÂ]\ÈY[ÎLMÈB]\[[ÜÈÈ\Ü^NÛNÈBÝ]ËX\ÈØ\ÌÈB\Ë\ÙXÝ[ÛÈY[ÎLM
-ÈBÙXÝ[ÛÈY[Î
-MÈB]Z^XÛÛZ[\ÈY[ÎÌÈBBÜÝ[O[ØYWØ[Ý×Ú[UYJB[XÝØÜÜÊ
-BÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÓÓQÈ8 %TUHTÑHÔUSBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÒUÐTÓSPTHNLÎLÎNL
-NHÈ][HHØ[^HLÍ
-QÈHXÝXYÜÛ\ÂÒUÐTÓTÑÈHÛH][HHHHYÚ[HHYHÝ\Ý\XHØX\X\ÈÛØHÜÈ\Ú\ÈYUØ]HÒUÐTÕTHÎËÝØKYKÞÕÒUÐTÓSPTOÝ^^ÕÒUÐTÓTÑË\XÙJ	È	Ë	ÉL	Ê_HÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈUTÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏH]\]Û\ÜÏH]\X[¸§*][HÙ[\ÜÏÙ]]Û\ÜÏH]\[[ÜÈHYHÜÙXÝÜÈÙXÝÜÏØOHYHØÚY[ÚXHÚY[ÚXOØOHYHÜ\Ý[YÜÈ\Ý[YÜÏØOHYHÙ^\Y[ÚX\È\Ý[[Û[ÜÏØOHYHÙ\]Z\È[]OØOHYHÕÒUÐTÕTH\Ù]HØ[ÈÛ\ÜÏH]XÝHÛÛXÝ[YOØOÙ]Ù][ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÐUSÈÒUÐTÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛHYHÕÒUÐTÕTH\Ù]HØ[ÈÛ\ÜÏHÚ]Ø\YØ]]OHÚ]Ð\ÝÈ[ÏHËÝÝÝËÌËÜËÌÜÝÈY]ÐÞH
-
-
-LL]HLÎHMËPÌÌÎH
-MKHËÌËHÌËLLLNKLÎKHL
-ÍËÈKLLS
-LMËËLÌXÌÌMËÈ
-HÈL
-HÚXÌLÈKNNKKLMNKËLKLLMKMËKLMMÞKLMMÈÍKËLÌËMKËNKNMLKÛMËMMKNÓ
-ÌÍNKMMØËLNKLKLMËËLNNLLKÈLN
-HN
-LN
-H
-KÈMKNKLÌ
-MHÍÍH
-MK
-MHLÌHLKN
-HN
-LN
-N
-LLKLLÎËMKKLLÌLMLÍËKLNMKKLKNLLLHLËÈ
-KLMÈNLMËKLËËËMH
-LLKLÌLMËMMLKKMÍKKMMKËNK
-KËNKHMËLÌÈKLËËKMKKKNKËLKLLLKLÌKLMËKMKMKLLNKKNKËLLKNKKLËKMKKLLKLËÈNKÈKLM
-KMKH
-KLNKNKLNK
-
-ÈËÈNKH
-LËÈ
-MËËÈÎKH
-NKÈMËÍKMK
-HMH
-LËHLËLKÌLLËÍËL
-LLÈ
-LHËLLKËLËMKLËËLLKMÏÜÝÏØO[ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈTÂÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏH\Ë\ÙXÝ[Û]Û\ÜÏH\ËXÛÛ[]Û\ÜÏH\ËXYÙHXÛÛÙÚXH][YH0­È
-Ì][\È][X[\ÏÙ]HÛ\ÜÏH\Ë]]HHÝY\ÈØXHØ[\ÙKÏÜ[Û\ÜÏHÜYY[]^ÛÛÈXÙ\Ú]HXÛÜ\ÛÛ[ËÜÜ[ÚOÛ\ÜÏH\Ë\ÝX]H\ØÝXHHÝÝ\\XH]YHXÝ]H\ÈÙ[[\ÈXYHÛÛ^8 %Ú[]Z[ZXÛÜËÚ[[YXØÚ[Û\ËÚ[YXÝÜÈÙXÝ[\[ÜË\Ü[YÈÜÚY[ÚXHX[HX\ÈB\ÝY[ÜÈÛ[XÛÜËÜ]Û\ÜÏH\ËX]ÛÈHYHÕÒUÐTÕTH\Ù]HØ[ÈÛ\ÜÏH\[X\H]ZY\ÈØX\X\ÏØOHYHØÚY[ÚXHÛ\ÜÏH\ÙXÛÛ\H\HÚY[ÚXOØOÙ]Ù]Ù][ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÕUÂÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏHÝ]ËX\]Û\ÜÏHÝ]Z][H]Û\ÜÏHÝ][[X\
-ÏÙ]]Û\ÜÏHÝ][X[][\È][X[\ÏÙ]Ù]]Û\ÜÏHÝ]Z][H]Û\ÜÏHÝ][[X\
-ÏÙ]]Û\ÜÏHÝ][X[\ÝY[ÜÈÛ[XÛÜÏÙ]Ù]]Û\ÜÏHÝ]Z][H]Û\ÜÏHÝ][[X\
-ÏÙ]]Û\ÜÏHÝ][X[[ÜÈH[\ÝYØXÚ[ÛÙ]Ù]]Û\ÜÏHÝ]Z][H]Û\ÜÏHÝ][[X\
-ÏÙ]]Û\ÜÏHÝ][X[Z\Ù\ÏÙ]Ù]Ù][ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÐSBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\È]Û\ÜÏHÙXÝ[Û]YÈ[Ø[XOÙ]Û\ÜÏHÙXÝ[Û]]HÝ[OHX^]ÚY
-ÌÈX\Ú[]]ÈMÈHYYYH]YH[ZXÙ[[ÜËY\Ý\ÈÙ[[\ÈÙH[[^[ÚÛ\ÜÏHÙXÝ[Û\ÝX]HÝ[OHX\Ú[]]È
-ÈX^]ÚY
-ÈY[ÜÈÙ[[\ÈXÝ]\ÈÚYÛYXØHXÝ\\XÚ[ÛX\È[KY[ÜÈ[\ÚXHHÚYÛÜÈ\ÚX\ÈH[ZXÚ[ZY[ËÜÙ][ØYWØ[Ý×Ú[UYJBØØÛÛÈHÝÛÛ[[Ê
-
-BØ[\ÈHÂ
-¼'æ-]YØHHZH[\ÚXHHÚY[\ÈYÛÝYËØHÚ[^Û\\[K[Û\ÛÈ\ÜY\ÈHÜZ\K
-¼'é%HÛÜHYÚY^ÛÜ\È\XÝ[\\ÈH]\ØÝ[\\È]YH[Z][HXHHXKK
-¼'æ-¸ #|'ã*ûî#ÈÝY[ÈYXÚY[HÈÙÜ\È[\ØØ[ÛÈÙ[ÈH\\YÜK
-¼'ê§[ZXÚ[ZY[È\ÚXH[X\ÈH^\Ú[ÛY[ÜXØKØX[ÈX[]YËKBÜK
-XÛÛ]K\ØÊH[[[Y\]JØ[\ÊNÚ]ØØÛÛÖÚWNÝX\ÙÝÛ]Û\ÜÏHÛ\ÜËXØ\]Û\ÜÏHØ\ZXÛÛÚXÛÛOÙ]]Û\ÜÏHØ\]]HÝ]_OÙ]]Û\ÜÏHØ\]^Ù\ØßOÙ]Ù][ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÓÓUSÓÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\È]Ý[OHXÚÙÜÝ[[X\YÜYY[
-LÍYYËØJLNKMKJKØJLMÌ
-JNÂÜ\\ÛÛYØJLNKMKNÈÜ\\Y]\ÎÂY[Î
-ÌÈX^]ÚYLÈX\Ú[]]ÎÈ]Û\ÜÏHÙXÝ[Û]YÈÝ[OHXÚÙÜÝ[ØJLMÌMJNÈÜ\XÛÛÜØJLMÌÊNÈÛÛÜÌ
-PNÈHÛÛXÚ[ÛÙ]Û\ÜÏHÙXÝ[Û]]HÝ[OHX\Ú[XÝÛNMÈÈ\È[H\Ý[KÜ[XHH[YXØÚ[ÛÏÜ[Ý[OHXÚÙÜÝ[[X\YÜYY[
-LÍYYËÍÍÑÌ
-PJNÈ]ÙXÚ]XXÚÙÜÝ[XÛ\^È]ÙXÚ]]^Y[XÛÛÜ[Ü\[È\È[HØ]YÛÜXHÛÛ\][Y[HY]KÜÜ[ÚÛ\ÜÏHÙXÝ[Û\ÝX]HÝ[OHX\Ú[]]ÎÈX^]ÚY
-LÈ[\ÚHÈ[Ù\ZXÛÈ]YH\ØH^\H[X\[HÙ[[H\ÈÙ[[\ËYH[H[HÝY\ËÛÛÈXÝ]HÈ]YHXH\ÝH[ÈHKÚ[YYXØ[Y[ÜËÚ[YXÝÜÈÙXÝ[\[ÜËÛÛÈ^ÜÙ]Ù][ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÐÒQSÑBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ	<div id="ciencia"></div>', unsafe_allow_html=True)
-st.markdown("""
-<div class="section">
-    <div style="text-align: center; margin-bottom: 48px;">
-        <div class="section-tag">La Ciencia</div>
-        <h2 class="section-title">Por que la luz?</h2>
-        <p class="section-subtitle" style="margin: 0 auto;">
-            La fototerapia tiene mas de 100 anos de historia cientifica.
-        </p>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-sci_col1, sci_col2 = st.columns(2)
-with sci_col1:
-    st.markdown("""
-    <div class="glass-card" style="height: auto;">
-        <div class="card-icon">ð¡</div>
-        <div class="card-title" style="font-size: 1.3rem;">Como Funciona?</div>
-        <div class="card-text" style="margin-bottom: 16px;">
-            La luz es informacion, y tu cuerpo siempre esta a la escucha.
-            Nuestro parche patentado refleja longitudes de onda especificas de luz
-            que estimulan tu piel para elevar <strong style="color: #00D4AA;">GHK-Cu</strong>,
-            el peptido de cobre clinicamente probado para reparar y regenerar celulas.
-        </div>
-        <div class="card-text">
-            Es como la acupuntura unida a la biologia cuantica â sin agujas ni complejidades.
-            Tu cuerpo sabe que hacer. El parche simplemente lo recuerda.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with sci_col2:
-    st.markdown("""
-    <div class="glass-card" style="height: auto;">
-        <div class="card-icon">ð§¬</div>
-        <div class="card-title" style="font-size: 1.3rem;">GHK-Cu: El Superpeptido</div>
-        <div class="card-text" style="margin-bottom: 16px;">
-            A medida que envejecemos, los niveles naturales de GHK-Cu disminuyen
-            drasticamente. Con ellos, nuestra capacidad de reparacion, renovacion
-            y regeneracion.
-        </div>
-        <div class="card-text" style="margin-bottom: 16px;">
-            Esta clinicamente probado que nuestro parche eleva GHK-Cu a
-            <strong style="color: #6C63FF;">niveles juveniles</strong>.
-        </div>
-        <div style="background: rgba(108,99,255,0.1); border-radius: 12px; padding: 16px; margin-top: 8px;">
-            <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">
-                â +4,000 genes se reinician<br/>
-                â Activacion natural de colageno<br/>
-                â Reparacion celular profunda<br/>
-                â Respaldado por patentes y estudios
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ââââââââââââââââââââââââââââââââââââââââââââââ
+def save_csv(fp, row, hdr):
+    e = fp.exists()
+    with open(fp, "a", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        if not e: w.writerow(hdr)
+        w.writerow(row)
+WA = "593939890499"
+WA_URL = f"https://wa.me/{WA}?text=Hola%20Pauli!%20Vi%20tu%20pagina%20y%20me%20gustaria%20saber%20mas%20sobre%20los%20parches%20LifeWave"
+if "qz" not in st.session_state: st.session_state.qz = 0
+if "qa" not in st.session_state: st.session_state.qa = {}
+st.markdown("""<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+*{box-sizing:border-box}
+.stApp{background:#050508!important;font-family:'Inter',sans-serif!important}
+.block-container{padding-top:0!important;padding-bottom:0!important;max-width:100%!important}
+header[data-testid="stHeader"]{display:none!important}
+#MainMenu,footer,.stDeployButton{visibility:hidden!important;display:none!important}
+div[data-testid="stSidebarCollapsedControl"]{display:none!important}
+.nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(5,5,8,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(108,99,255,.15);padding:12px 40px;display:flex;justify-content:space-between;align-items:center}
+.nav-b{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,#6C63FF,#00D4AA);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-l{display:flex;gap:24px;align-items:center}
+.nav-l a{color:rgba(255,255,255,.7)!important;text-decoration:none!important;font-size:.85rem;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .3s}
+.nav-l a:hover{color:#6C63FF!important}
+.nav-c{background:linear-gradient(135deg,#6C63FF,#8B5CF6)!important;-webkit-text-fill-color:white!important;-webkit-background-clip:unset!important;padding:8px 20px;border-radius:25px;font-weight:600!important;font-size:.8rem!important}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(108,99,255,.06) 60deg,transparent 120deg,rgba(0,212,170,.04) 180deg,transparent 240deg,rgba(255,107,107,.03) 300deg,transparent 360deg);animation:hr 30s linear infinite}
+@keyframes hr{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.hero-c{position:relative;z-index:2;max-width:900px}
+.badge{display:inline-block;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);border-radius:50px;padding:8px 24px;font-size:.8rem;color:#6C63FF;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.ht{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;line-height:1.1;margin-bottom:24px;color:#FAFAFA}
+.gr{background:linear-gradient(135deg,#6C63FF 0%,#00D4AA 50%,#FFD700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:sh 3s ease-in-out infinite}
+@keyframes sh{0%,100%{background-position:0% center}50%{background-position:200% center}}
+.hs{font-size:clamp(1rem,2vw,1.25rem);color:rgba(255,255,255,.65);line-height:1.7;max-width:650px;margin:0 auto 40px}
+.hb{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.bp{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#6C63FF,#8B5CF6);color:white!important;text-decoration:none!important;padding:14px 32px;border-radius:50px;font-weight:600;font-size:.95rem;transition:all .3s;box-shadow:0 4px 25px rgba(108,99,255,.3)}
+.bp:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(108,99,255,.45)}
+.bs{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.2);color:white!important;text-decoration:none!important;padding:14px 32px;border-radius:50px;font-weight:600;font-size:.95rem;transition:all .3s}
+.bs:hover{background:rgba(255,255,255,.1);border-color:rgba(108,99,255,.5)}
+.bw{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#25D366,#128C7E);color:white!important;text-decoration:none!important;padding:16px 36px;border-radius:50px;font-weight:700;font-size:1rem;transition:all .3s;box-shadow:0 4px 25px rgba(37,211,102,.3)}
+.bw:hover{transform:translateY(-3px);box-shadow:0 8px 35px rgba(37,211,102,.45)}
+.sec{padding:100px 20px;position:relative}
+.tg{display:inline-block;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);border-radius:50px;padding:6px 20px;font-size:.75rem;color:#6C63FF;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+.st{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;color:#FAFAFA;line-height:1.2;margin-bottom:16px}
+.ss{font-size:1.05rem;color:rgba(255,255,255,.55);line-height:1.7;max-width:600px}
+.stats{display:flex;justify-content:center;gap:60px;flex-wrap:wrap;padding:60px 20px;background:rgba(108,99,255,.04);border-top:1px solid rgba(108,99,255,.1);border-bottom:1px solid rgba(108,99,255,.1)}
+.stat{text-align:center}
+.sn{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;background:linear-gradient(135deg,#6C63FF,#00D4AA);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sl{font-size:.8rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:2px;margin-top:4px}
+.gc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px;backdrop-filter:blur(10px);transition:all .4s;height:100%}
+.gc:hover{transform:translateY(-8px);border-color:rgba(108,99,255,.3);box-shadow:0 20px 60px rgba(108,99,255,.1)}
+.ci{font-size:2.5rem;margin-bottom:16px}
+.ct{font-size:1.15rem;font-weight:700;color:#FAFAFA;margin-bottom:10px}
+.cx{font-size:.9rem;color:rgba(255,255,255,.55);line-height:1.6}
+.pc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;transition:all .4s;margin-bottom:24px}
+.pc:hover{transform:translateY(-8px);border-color:rgba(108,99,255,.4);box-shadow:0 20px 60px rgba(108,99,255,.15)}
+.pi{width:100%;height:240px;object-fit:cover;display:block}
+.pf{padding:24px}
+.pk{font-size:.7rem;color:#6C63FF;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:8px}
+.pn{font-size:1.2rem;font-weight:700;color:#FAFAFA;margin-bottom:8px}
+.pd{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:16px}
+.tc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px;transition:all .3s}
+.tc:hover{border-color:rgba(108,99,255,.3)}
+.tq{font-size:3rem;color:rgba(108,99,255,.3);font-family:'Playfair Display',serif;line-height:1;margin-bottom:8px}
+.tt{font-size:.95rem;color:rgba(255,255,255,.7);line-height:1.7;font-style:italic;margin-bottom:16px}
+.ta{font-size:.85rem;font-weight:600;color:#6C63FF}
+.ts{color:#FFD700;font-size:.9rem;margin-bottom:12px}
+.qc{background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,170,.05));border:1px solid rgba(108,99,255,.2);border-radius:24px;padding:48px;max-width:700px;margin:0 auto}
+.qp{height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:32px;overflow:hidden}
+.qpb{height:100%;background:linear-gradient(90deg,#6C63FF,#00D4AA);border-radius:2px;transition:width .5s}
+.qq{font-size:1.3rem;font-weight:600;color:#FAFAFA;margin-bottom:24px;text-align:center}
+.snum{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:white;margin:0 auto 16px}
+.sc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px 24px;text-align:center;transition:all .4s;height:100%}
+.sc:hover{transform:translateY(-5px);border-color:rgba(108,99,255,.3)}
+.foot{text-align:center;padding:40px 20px;border-top:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.3);font-size:.75rem}
+.foot a{color:rgba(108,99,255,.6)!important;text-decoration:none!important}
+.waf{position:fixed;bottom:24px;right:24px;z-index:9999;width:60px;height:60px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 25px rgba(37,211,102,.4);transition:all .3s;animation:bn 2s infinite}
+.waf:hover{transform:scale(1.1)}
+.waf svg{width:32px;height:32px;fill:white}
+@keyframes bn{0%,20%,50%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}60%{transform:translateY(-4px)}}
+@keyframes fu{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fd{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.stTextInput>div>div>input,.stTextArea>div>div>textarea{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:12px!important;color:white!important;font-family:'Inter',sans-serif!important;padding:12px 16px!important}
+.stTextInput>div>div>input:focus,.stTextArea>div>div>textarea:focus{border-color:#6C63FF!important;box-shadow:0 0 0 2px rgba(108,99,255,.2)!important}
+.stRadio>div{background:rgba(255,255,255,.03)!important;border-radius:12px!important;padding:12px!important}
+div.stButton>button{background:linear-gradient(135deg,#6C63FF,#8B5CF6)!important;color:white!important;border:none!important;border-radius:50px!important;padding:12px 32px!important;font-weight:600!important;font-family:'Inter',sans-serif!important;transition:all .3s!important;box-shadow:0 4px 20px rgba(108,99,255,.3)!important}
+div.stButton>button:hover{transform:translateY(-2px)!important;box-shadow:0 8px 30px rgba(108,99,255,.45)!important}
+@media(max-width:768px){.nav{padding:10px 16px}.nav-l{display:none}.stats{gap:30px}.hero{padding:100px 16px 60px}.sec{padding:60px 16px}.qc{padding:32px 20px}}
+</style>""", unsafe_allow_html=True)
+# NAV
+st.markdown(f"""<div class="nav"><div class="nav-b">✨ Pauli Wellness</div><div class="nav-l"><a href="#productos">Productos</a><a href="#ciencia">Ciencia</a><a href="#resultados">Resultados</a><a href="#experiencias">Testimonios</a><a href="#equipo">Unete</a><a href="{WA_URL}" target="_blank" class="nav-c">Contactame</a></div></div>""", unsafe_allow_html=True)
+# WHATSAPP FLOAT
+st.markdown(f"""<a href="{WA_URL}" target="_blank" class="waf" title="WhatsApp"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.8-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.3-5-3.7-10.5-6.6z"/></svg></a>""", unsafe_allow_html=True)
+# HERO
+st.markdown(f"""<div class="hero"><div class="hero-c"><div class="badge">Tecnologia Patentada · +200 Patentes Mundiales</div><h1 class="ht">Tu cuerpo sabe sanarse.<br/><span class="gr">Solo necesita recordar como.</span></h1><p class="hs">Descubre la fototerapia que activa tus celulas madre con luz — sin quimicos, sin inyecciones, sin efectos secundarios. Respaldado por ciencia real y mas de 80 estudios clinicos.</p><div class="hb"><a href="{WA_URL}" target="_blank" class="bp">Quiero Saber Mas</a><a href="#ciencia" class="bs">Ver la Ciencia</a></div></div></div>""", unsafe_allow_html=True)
+# STATS
+st.markdown("""<div class="stats"><div class="stat"><div class="sn">200+</div><div class="sl">Patentes Mundiales</div></div><div class="stat"><div class="sn">80+</div><div class="sl">Estudios Clinicos</div></div><div class="stat"><div class="sn">20+</div><div class="sl">Anos de Investigacion</div></div><div class="stat"><div class="sn">80+</div><div class="sl">Paises</div></div></div>""", unsafe_allow_html=True)
+# PROBLEM
+st.markdown("""<div class="sec" style="text-align:center"><div class="tg">El Problema</div><h2 class="st" style="max-width:700px;margin:0 auto 16px">A medida que envejecemos, nuestras celulas se ralentizan</h2><p class="ss" style="margin:0 auto 48px;max-width:600px">Menos celulas activas significa recuperacion mas lenta, menos energia y signos visibles de envejecimiento.</p></div>""", unsafe_allow_html=True)
+pc = st.columns(4)
+for i,(icon,t,d) in enumerate([("😴","Fatiga y Baja Energia","Te sientes agotado/a sin razon aparente."),("🤕","Dolor y Rigidez","Dolores articulares y musculares que limitan tu dia a dia."),("😶‍🌫️","Sueno Deficiente","No logras un descanso profundo y reparador."),("🪞","Envejecimiento Visible","Lineas de expresion, piel opaca, cabello debilitado.")]):
+    with pc[i]:
+        st.markdown(f'<div class="gc"><div class="ci">{icon}</div><div class="ct">{t}</div><div class="cx">{d}</div></div>', unsafe_allow_html=True)
+# SOLUTION
+st.markdown(f"""<div class="sec" style="text-align:center"><div style="background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(0,212,170,.06));border:1px solid rgba(108,99,255,.2);border-radius:24px;padding:48px 32px;max-width:900px;margin:0 auto"><div class="tg" style="background:rgba(0,212,170,.15);border-color:rgba(0,212,170,.3);color:#00D4AA">La Solucion</div><h2 class="st" style="margin-bottom:16px">No es una pastilla, crema ni inyeccion.<br/><span style="background:linear-gradient(135deg,#6C63FF,#00D4AA);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Es una categoria completamente nueva.</span></h2><p class="ss" style="margin:0 auto;max-width:650px">Un parche no transdermico que usa luz para enviar una senal a tus celulas. Nada entra en tu cuerpo. Solo activa lo que ya esta dentro de ti.</p></div></div>""", unsafe_allow_html=True)
+# SCIENCE
+st.markdown('<div id="ciencia"></div>', unsafe_allow_html=True)
+st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">La Ciencia</div><h2 class="st">Por que la luz?</h2><p class="ss" style="margin:0 auto">La fototerapia tiene mas de 100 anos de historia cientifica.</p></div></div>""", unsafe_allow_html=True)
+s1,s2 = st.columns(2)
+with s1:
+    st.markdown("""<div class="gc" style="height:auto"><div class="ci">💡</div><div class="ct" style="font-size:1.3rem">Como Funciona?</div><div class="cx" style="margin-bottom:16px">La luz es informacion, y tu cuerpo siempre esta a la escucha. Nuestro parche patentado refleja longitudes de onda especificas de luz que estimulan la piel para elevar <strong style="color:#00D4AA">GHK-Cu</strong>, el peptido de cobre clinicamente probado para reparar y regenerar celulas.</div><div class="cx">Es como la acupuntura unida a la biologia cuantica — sin agujas ni complejidades.</div></div>""", unsafe_allow_html=True)
+with s2:
+    st.markdown("""<div class="gc" style="height:auto"><div class="ci">🧬</div><div class="ct" style="font-size:1.3rem">GHK-Cu: El Superpeptido</div><div class="cx" style="margin-bottom:16px">A medida que envejecemos, los niveles naturales de GHK-Cu disminuyen drasticamente. Con ellos, nuestra capacidad de reparacion y regeneracion.</div><div class="cx" style="margin-bottom:16px">Esta clinicamente probado que nuestro parche eleva GHK-Cu a <strong style="color:#6C63FF">niveles juveniles</strong>.</div><div style="background:rgba(108,99,255,.1);border-radius:12px;padding:16px;margin-top:8px"><div style="font-size:.8rem;color:rgba(255,255,255,.6)">✅ +4,000 genes se resetean · ✅ Aumento del 73% en GHK-Cu · ✅ Reduccion visible de arrugas</div></div></div>""", unsafe_allow_html=True)
 # PRODUCTS
-# ââââââââââââââââââââââââââââââââââââââââââââââ
 st.markdown('<div id="productos"></div>', unsafe_allow_html=True)
-st.markdown("""
-<div class="section" style="text-align: center;">
-    <div class="section-tag">Productos</div>
-    <h2 class="section-title">Tu Bienestar, Tu Eleccion</h2>
-    <p class="section-subtitle" style="margin: 0 auto 48px;">
-        Cada parche esta disenado para una necesidad especifica.
-    </p>
-</div>
-""", unsafe_allow_html=True)
-
-products = [
-    ("X39", "Vitalidad Â· Estrella", "Eleva GHK-Cu para activar celulas madre, regeneracion celular y energia renovada.", "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=600&h=400&fit=crop", True),
-    ("X49", "Rendimiento", "Mejora rendimiento fisico, fuerza, recuperacion muscular y flexibilidad.", "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop", False),
-    ("Aeon", "Anti-Estres", "Reduce estres e inflamacion. Promueve calma interior y bienestar.", "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop", False),
-    ("Silent Nights", "Sueno", "Mejora calidad y duracion del sueno de forma natural.", "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=600&h=400&fit=crop", False),
-    ("Energy Enhancer", "Energia", "Aumenta energia y resistencia sin estimulantes.", "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600&h=400&fit=crop", False),
-    ("IceWave", "Dolor", "Alivio del dolor natural y localizado. Dolores musculares y articulares.", "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop", False),
-]
-
-prod_cols = st.columns(3)
-for i, (name, cat, desc, img, popular) in enumerate(products):
-    with prod_cols[i % 3]:
-        border = "border-color: rgba(108, 99, 255, 0.4);" if popular else ""
-        badge = '<span style="position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#6C63FF,#00D4AA);color:white;padding:4px 12px;border-radius:20px;font-size:0.7rem;font-weight:700;">MAS POPULAR</span>' if popular else ""
-        st.markdown(f"""
-        <div class="product-card" style="margin-bottom: 24px; position: relative; {border}">
-            {badge}
-            <img class="product-image" src="{img}" alt="{name}" />
-            <div class="product-info">
-                <div class="product-category">{cat}</div>
-                <div class="product-name">{name}</div>
-                <div class="product-desc">{desc}</div>
-            </div>
-        </div>
-       """, unsafe_allow_html=True)
-
-st.markdown(f"""
-    <div style="text-align: center; margin: 32px 0 0;">
-        <a href="{WHATSAPP_URL}" target="_blank" class="btn-primary" style="font-size: 1.05rem; padding: 16px 40px;">
-            Preguntame por Precios y Paquetes
-        </a>
-        <p style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 12px;">
-            Garantia de devolucion de 30/90 dias Â·  Envio disponible
-    </p>
-</div>
-""", unsafe_allow_html=True)
-
-# ââââââââââââââââââââââââââââââââââââââââââââââ
+st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Productos</div><h2 class="st">Conoce la Linea LifeWave</h2><p class="ss" style="margin:0 auto">Cada parche esta disenado para activar una respuesta especifica en tu cuerpo.</p></div></div>""", unsafe_allow_html=True)
+prods = [("✨","ESTRELLA","X39","Activa celulas madre, eleva GHK-Cu y rejuvenece tu cuerpo desde adentro."),("⚡","RENDIMIENTO","X49","Mejora la resistencia fisica y la recuperacion muscular."),("🌙","BIENESTAR","Aeon","Reduce el estres oxidativo y promueve la calma interior."),("😴","DESCANSO","Silent Nights","Mejora la calidad del sueno sin quimicos ni melatonina."),("🔋","ENERGIA","Energy Enhancer","Aumenta la energia natural y la resistencia fisica."),("❄️","ALIVIO","IceWave","Alivia el dolor de forma natural y sin medicamentos.")]
+cols = st.columns(3)
+for i,(icon,cat,name,desc) in enumerate(prods):
+    with cols[i%3]:
+        st.markdown(f'<div class="pc"><div class="pf"><div class="pk">{cat}</div><div class="pn">{icon} {name}</div><div class="pd">{desc}</div><a href="{WA_URL}" target="_blank" class="bp" style="font-size:.8rem;padding:10px 24px;width:100%;justify-content:center">Consultar</a></div></div>', unsafe_allow_html=True)
 # HOW IT WORKS
-# ââââââââââââââââââââââââââââââââââââââââââââââ
-st.markdown("""
-<div class="section" style="text-align: center;">
-    <div class="section-tag">Como Funciona</div>
-    <h2 class="section-title">Simple como 1, 2, 3</h2>
-    <p class="section-subtitle" style="margin: 0 auto 48px;">Solo despega, pega y vive tu dia.</p>
-</div>
-""", unsafe_allow_html=True)
-
-step_cols = st.columns(4)
-steps = [
-    ("1", "Aplica", "Sobre piel limpia y seca en los puntos recomendados."),
-    ("2", "Usa 12 horas", "Lleva el parche durante 12 horas, luego descansa 12."),
-    ("3", "Hidrata", "Bebe abundante agua para potenciar los resultados."),
-    ("4", "Repite", "Usa un parche nuevo cada dia y siente la diferencia."),
-]
-for i, (num, title, desc) in enumerate(steps):
-    with step_cols[i]:
-        st.markdown(f"""
-        <div class="step-card">
-            <div class="step-number">{num}</div>
-            <div class="card-title">{title}</div>
-            <div class="card-text">{desc}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-# ââââââââââââââââââââââââââââââââââââââââââââââ
-# TIMELINE
-# ââââââââââââââââââââââââââââââââââââââââââââââ
+st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Como Empezar</div><h2 class="st">4 Pasos Simples</h2></div></div>""", unsafe_allow_html=True)
+steps = [("#6C63FF","1","Contactame","Escribeme por WhatsApp y cuéntame tu situacion."),("#00D4AA","2","Evaluacion","Te ayudo a elegir el parche ideal para ti."),("#FFD700","3","Aplicacion","Coloca tu parche y deja que la luz haga el trabajo."),("#FF6B6B","4","Resultados","Siente la diferencia en los primeros dias.")]
+sc = st.columns(4)
+for i,(color,num,title,desc) in enumerate(steps):
+    with sc[i]:
+        st.markdown(f'<div class="sc"><div class="snum" style="background:{color}">{num}</div><div class="ct">{title}</div><div class="cx">{desc}</div></div>', unsafe_allow_html=True)
+# QUIZ
 st.markdown('<div id="resultados"></div>', unsafe_allow_html=True)
-st.markdown("""
-<div class="section" style="text-align: center;">
-    <div class="section-tag">Linea de Tiempo</div>
-    <h2 class="section-title">Que puedes esperar?</h2>
-</div>
-""", unsafe_allow_html=True)
-
-timeline = [
-    ("#6C63FF", "Primeros Dias", "+4,000 genes comienzan a reiniciarse. Tu cuerpo inicia su proceso de reparacion."),
-    ("#8B5CF6", "4 Semanas", "Se activa la reparacion celular profunda. Trabaja donde tu cuerpo mas lo necesita."),
-    ("#00D4AA", "6 Semanas", "Tu cerebro y tu energia entran en equilibrio. Mayor claridad mental y vitalidad."),
-    ("#FFD700", "3-6 Meses", "Aumenta el colageno natural. La piel se suaviza, la recuperacion se acelera."),
-    ("#FF6B6B", "12 Meses", "No solo te sientes mejor â te ves y vives como tal. Transformacion completa."),
-]
-
-tl_col1, tl_col2, tl_col3 = st.columns([1, 3, 1])
-with tl_col2:
-    for color, title, desc in timeline:
-        st.markdown(f"""
-        <div class="timeline-item">
-            <div class="timeline-dot" style="background: {color};">â¦</div>
-            <div class="timeline-content"><h4>{title}</h4><p>{desc}</p></div>
-        </div>
-        """, unsafe_allow_html=True)
-
-# ââââââââââââââââââââââââââââââââââââââââââH)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)HÈUTÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\È]Û\ÜÏHÙXÝ[Û]YÈ]Z^\ÛÛ[^YÏÙ]Û\ÜÏHÙXÝ[Û]]HÝX[\ÚH\ÈYX[\HOÏÚÛ\ÜÏHÙXÝ[Û\ÝX]HÝ[OHX\Ú[]]ÈÌÈ\ÜÛHÈYÝ[\ÈH\ØÝXHHÛÛXÚ[Û\ÛÛ[^YKÜÙ][ØYWØ[Ý×Ú[UYJB]Z^Ü]Y\Ý[ÛÈHÂÈHÝX[\ÈHX^[Ü[ØÝ\XÚ[ÛHØ[YZÜHZ\Û[ÏÈÜ[ÛÈÈ]YØHÈZH[\ÚXHÛÜ]\ØÝ[\È\XÝ[\ÝY[ÈYXÚY[H[ZXÚ[ZY[ÈÈY[\Ý\ÈÈ[ÚYYY_KÈH]YH[XÝ]ËØH\ÈH\Ý[ÈHYOÈÜ[ÛÈÈÙY[\[È[Ù\Y[Y[HXÝ]È]^HXÝ]ÈÈ\Ü\ÝH_KÜH\ÈØYÈÛÛXÚ[Û\È]\[\È[\ÏÈÜ[ÛÈÈÚKHYH[Ú[Û\ÛÚK\ÈÚ[\Ý[YÜÈË\ÈZH[Y\H^_KBXÛÛKXÛÛXÛÛÈHÝÛÛ[[ÊÌKËWJBÚ]XÛÛÝ\HÝÙ\ÜÚ[ÛÜÝ]K]Z^ÜÝ\YÝ\[]Z^Ü]Y\Ý[ÛÊNÙÜ\ÜÈH
-Ý\È[]Z^Ü]Y\Ý[ÛÊJH
-LÝX\ÙÝÛ]Û\ÜÏH]Z^XÛÛZ[\]Û\ÜÏH]Z^\ÙÜ\ÜÈ]Û\ÜÏH]Z^\ÙÜ\ÜËX\Ý[OHÚYÜÙÜ\ÜßINÈÙ]Ù]]Û\ÜÏH]Z^\]Y\Ý[ÛÜ]Z^Ü]Y\Ý[ÛÖÜÝ\VÉÜI×_OÙ]Ù][ØYWØ[Ý×Ú[UYJB[ÝÙ\HÝY[ÊÙ[XØÚ[ÛN]Z^Ü]Y\Ý[ÛÖÜÝ\VÉÛÜ[ÛÉ×KÙ^OY]Z^Ü^ÜÝ\HX[Ý\ÚX[]OHÛÛ\ÙYBYÝ]ÛÚYÝZY[H8¡¤Ù^OY]Z^ØÞÜÝ\HNÝÙ\ÜÚ[ÛÜÝ]K]Z^Ø[ÝÙ\ÖÜÝ\HH[ÝÙ\ÝÙ\ÜÚ[ÛÜÝ]K]Z^ÜÝ\
-ÏHBÝ\[
-B[ÙN[ÝÙ\ÈHÝÙ\ÜÚ[ÛÜÝ]K]Z^Ø[ÝÙ\ÂÛÛÙ\H[ÝÙ\ËÙ]
-BYÛÜ[ÛÛÙ\XËX\ÛÛHXÙUØ]H
-ÈÎH[][È[ÛÜH\\XÚ[ÛÙ[[\[YÝY[È[ÛÛÙ\XËX\ÛÛHÚ[[YÚÈ
-ÈÎHÝY[È\\YÈHYÙ[\XÚ[Û[Y[ZXÚ[ZY[È[ÛÛÙ\XËX\ÛÛHÎH
-ÈY[ÛZ][XÚ[ZY[ÈÙ[[\H[KY\Ý\È[Y\Ý\È[ÛÛÙ\XËX\ÛÛHY[Û
-ÈÚ[[YÚÈØ[XH[\[ÜH\ØØ[ÛÈÙ[È[ÙNXËX\ÛÛHÎHYÙ[\XÚ[ÛÙ[[\ÛÛ\]HH[\ÚXH[ÝYHÝX\ÙÝÛ]Û\ÜÏH]Z^XÛÛZ[\Ý[OH^X[YÛÙ[\È]Ý[OHÛ\Ú^NÜ[NÈX\Ú[XÝÛNMÈ¼'ã OÙ]ÈÝ[OHÛÛÜÑQQNÈÛY[Z[N	Ô^YZ\\Ü^IËÙ\YÈÛ\Ú^NK\[NÈX\Ú[XÝÛNLÈHXÛÛY[XÚ[Û\ÛÛ[^YOÚÏ]Ý[OHXÚÙÜÝ[[X\YÜYY[
-LÍYYËÍÍÑÌ
-PJNÈ]ÙXÚ]XXÚÙÜÝ[XÛ\^È]ÙXÚ]]^Y[XÛÛÜ[Ü\[ÈÛ\Ú^N[NÈÛ]ÙZYÚÈX\Ú[MÈÜXßBÙ]Ý[OHÛÛÜØJMKMKMKNÈÛ\Ú^NM\[NÈX\Ú[XÝÛNÈYX[\HÝÛÈÝ[OHÛÛÜÌ
-PNÈÜX\ÛÛOÜÝÛÏÜHYHÕÒUÐTÕTH\Ù]HØ[ÈÛ\ÜÏH]Ú]Ø\Ý[OH\Ü^N[[KY^È]ZY\ÈZHÜXßOØOÙ][ØYWØ[Ý×Ú[UYJBYÝ]ÛÛ\H[\^\NÝÙ\ÜÚ[ÛÜÝ]K]Z^ÜÝ\HÝÙ\ÜÚ[ÛÜÝ]K]Z^Ø[ÝÙ\ÈHßBÝ\[
-BÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈSQUÂÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\È]Û\ÜÏHÙXÝ[Û]YÈ[YXÚ[ÜÎÙ]¢g²#ç·&V7ÓÂöFcà¢Ç7GÆSÒ&6öÆ÷#¢&v&#SRÃ#SRÃ#SRÃãb²föçB×6¦S¢ãW&VÓ²Ö&vâÖ&÷GFöÓ¢#G²#äFVÂ&Ç7G&öær7GÆSÒ&6öÆ÷#¢3CD²#ç·&V6öçÓÂ÷7G&öæsãÂ÷à¢Æ&VcÒ'µtE4õU$ÇÒ"F&vWCÒ%ö&Ææ²"6Æ73Ò&'Fâ×vG6"7GÆSÒ&F7Æ¢æÆæRÖfÆW²#åVW&òÖ·&V7ÓÂöà¢ÂöFcà¢"""ÂVç6fUöÆÆ÷uöFÖÃÕG'VR¢b7Bæ'WGFöâ%föÇfW"V×W¦"" ¢7Bç6W76öå÷7FFRçV¥÷7FWÒ ¢7Bç6W76öå÷7FFRçV¥öç7vW'2Ò·Ð¢7Bç&W'Vâ ¢2)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H ¢2$TäTdE0¢2)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H §7BæÖ&¶F÷vâ"" £ÆFb6Æ73Ò'6V7Föâ"7GÆSÒ'FWBÖÆvã¢6VçFW#²#à¢ÆFb6Æ73Ò'6V7Föâ×Fr#ä&VæVf6÷3ÂöFcà¢Æ"6Æ73Ò'6V7Föâ×FFÆR#äÖvæFW7W'F"66FFÂö#à£ÂöFcà¢"""ÂVç6fUöÆÆ÷uöFÖÃÕG'VR ¦&Våö6öÇ2Ò7Bæ6öÇVÖç22¦&VæVfG2Ò°¢.)ª"Â$VæW&v&Væ÷fF"Â$VæW&vVRFRÆÆWfFöFòVÂF(	B6â6fVææW7F×VÆçFW2â"À¢/	øÉ"Â%7VVæò&ögVæFò"Â$FW66ç6ò&W&F÷"VRGR7VW'òæV6W6F&&VvVæW&'6Râ"À¢/	úz"Â$6Æ&FBÖVçFÂ"Â$Ö÷"6öæ6VçG&6öâÂVæf÷VRæFFW¢6övæFfâ"À¢.)Ê"Â%VÂ&FçFR"Â$7Ff6öâæGW&ÂFR6öÆvVæò&VæVÂÖ2¦÷fVââ"À¢/	øø2"Â%&V7WW&6öâ&F"Â$FVÂV¦W&66òòFRÆfF(	BGR7VW'ò6R&V7WW&Ö2&Fòâ"À¢/	ù*¢"Â$&VæW7F"F÷FÂ"Â$Æ6öæfç¦FR6&W"VRGR7VW'ògVVÇfRW7F"FRGRÆFòâ"À¥Ð¦f÷"Â6öâÂFFÆRÂFW62âVçVÖW&FR&VæVfG2 ¢vF&Våö6öÇ5¶R5Ó ¢7BæÖ&¶F÷vâb"" ¢ÆFb6Æ73Ò&vÆ72Ö6&B"7GÆSÒ&Ö&vâÖ&÷GFöÓ¢#²#à¢ÆFb6Æ73Ò&6&BÖ6öâ#ç¶6öçÓÂöFcà¢ÆFb6Æ73Ò&6&B×FFÆR#ç·FFÆWÓÂöFcà¢ÆFb6Æ73Ò&6&B×FWB#ç¶FW67ÓÂöFcà¢ÂöFcà¢"""ÂVç6fUöÆÆ÷uöFÖÃÕG'VR ¢2)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)HÈTÕSSÓPSÂÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛÏ]YH^\Y[ÚX\ÈÙ]Ë[ØYWØ[Ý×Ú[UYJBÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\È]Û\ÜÏHÙXÝ[Û]YÈ^\Y[ÚX\ÈX[\ÏÙ]Û\ÜÏHÙXÝ[Û]]HÈ]YHXÙ[]ZY[\ÈXHÈØ\ÛÚÙ][ØYWØ[Ý×Ú[UYJB\ÝØÛÛÈHÝÛÛ[[ÊÊB\Ý[[ÛX[ÈHÂ
-]XH[ÜÈÛÛÛÜÜÛXÛÈH\Ü[K[\È[Y\\ÈÙ[X[\ÈÙ[H[HY\[ÚXHX[ZHØ[YYHYHØ[X[ÈÛÛ\][Y[KX\XHËY^XÛÈK
-\H\ØÙ\XØH[[Ú\[Ë\ÈXÚYHØ\ZÜHY\[ÈYZÜ[ÛÈX\È[\ÚXHHZHY[ÙHH\ÚX[Y[HX\ÈÝ[]\HÛÛÛXXHK
-ÛÛ[È\Ü\ÝKHXÝ\\XÚ[Û\ÈÛ]KÜÈ\Ú\ÈYH[YÈ[H[ZH]YHÈXXH[ÛÛYÈÛÛ[Ý[Ý\[Y[ËØ\ÜÈK\Ü[HKBÜK
-^]]ÜÛÝ[JH[[[Y\]J\Ý[[ÛX[ÊNÚ]\ÝØÛÛÖÚWNÝX\ÙÝÛ]Û\ÜÏH\Ý[[ÛX[XØ\]Û\ÜÏH\Ý[[ÛX[\][ÝHÙ]]Û\ÜÏH\Ý[[ÛX[\Ý\È¸¦!x¦!x¦!x¦!x¦!OÙ]]Û\ÜÏH\Ý[[ÛX[]^Ý^OÙ]]Û\ÜÏH\Ý[[ÛX[X]]ÜØ]]ÜH0­ÈØÛÝ[_OÙ]Ù][ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈPÕUUSBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\È]Û\ÜÏHÙXÝ[Û]YÈÛØHZOÙ]Û\ÜÏHÙXÝ[Û]]HÛKÛÞH][OÚ]Ý[OHX^]ÚY
-ÌÈX\Ú[]]ÎÈÛ\ÜÏHÙXÝ[Û\ÝX]HÝ[OHX^]ÚYL	NÈX\Ú[XÝÛNMÈÛÞHÛÛÝ[ÜH[\[Y[HHYUØ]HH\\Ú[ÛYHÜ[Y[\Ý\\ØÝXHÜÈ\Ú\ÈHÝÝ\\XHÜXÛÛY[XÚ[ÛH\ÜY\ÈH^\[Y[\ÜÈ\Ý[YÜÈ[ZHÜXHYKXÚYHÛÛ\\\ÈÛÛÝÜËÜÛ\ÜÏHÙXÝ[Û\ÝX]HÝ[OHX^]ÚYL	NÈX\Ú[XÝÛNÈZHZ\Ú[Û\È^]Y\HH\ØÝX\[HÜXH]\[H\Ü[YHÜHÚY[ÚXBHÙ[\HYZÜØYHXK\ÝÞH\]ZH\HÝZX\HHXÛÛ\[\KÜHYHÕÒUÐTÕTH\Ù]HØ[ÈÛ\ÜÏH]Ú]Ø\Ý[OH\Ü^N[[KY^ÈÚ]XHÛÛZYÛÏØOÙ]Ù][ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÒSPSBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ	Ï]YH\]Z\ÈÙ]Ë[ØYWØ[Ý×Ú[UYJBÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\È]Û\ÜÏHÙXÝ[Û]YÈÜÜ[YYÙ]Û\ÜÏHÙXÝ[Û]]H]ZY\\È[\HHZH\]Z\ÏÏÚÛ\ÜÏHÙXÝ[Û\ÝX]HÝ[OHX\Ú[]]ÈMÈÛÛÝ^YHHÜ[ÈYÛØÚ[ÈHY[\Ý\Ú[Ü\[ÜÈZÜËÚ[Y\Ë\ÙHÛH\Ý\ËÜÙ][ØYWØ[Ý×Ú[UYJBÜØÛÛÈHÝÛÛ[[ÊÊBÜÈHÂ
-¼'ä¬[Ü\ÛÜÈ^X\ÈÙ[\H[Ü\ÛÜÈÛÛ\\Y[ÈÙXÝÜÈ]YH[Ú[Û[ÛÛZ\Ú[Û\ÈÜ[H\XÝHHÛÜÈH\]Z\ËK
-¼'äâÜXÚ[ZY[ÈÛØ[YUØ]HÜ\H[X\ÈHZ\Ù\ËHYÛØÚ[ÈÈY[HÛ\\ËK
-¼'ã¤ÈØ\XÚ]XÚ[ÛÛÛ\]HH[[È\ÛÛ[Y[HHY[\ÈXØÙ\ÛÈ[Ú\Ý[XHHÜXXÚ[ÛHYUØ]KKBÜK
-XÛÛ]K\ØÊH[[[Y\]JÜÊNÚ]ÜØÛÛÖÚWNÝX\ÙÝÛ]Û\ÜÏHÛ\ÜËXØ\]Û\ÜÏHØ\ZXÛÛÚXÛÛOÙ]]Û\ÜÏHØ\]]HÝ]_OÙ]]Û\ÜÏHØ\]^Ù\ØßOÙ]Ù][ØYWØ[Ý×Ú[UYJBÝX\ÙÝÛÏ[ØYWØ[Ý×Ú[UYJBÛÛKÛÛÛÛÈHÝÛÛ[[ÊÌKWJBÚ]ÛÛÝX\ÙÝÛ	ÏÈÝ[OHÛÛÜÑQQNÈÛY[Z[N	Ô^YZ\\Ü^W	ËÙ\YÈ^X[YÛÙ[\ÈÛÛXÚ]H[ÜXXÚ[ÛÚ[ÛÛ\ÛZ\ÛÏÚÏË[ØYWØ[Ý×Ú[UYJBÚ]ÝÜJX[WÙÜHÛX\ÛÛÜÝXZ]UYJNKHÝÛÛ[[ÊBÚ]NX[WÛ[YHHÝ^Ú[]
-HÛXHÛÛ\]ÈXÙZÛ\HÛXHH\[YÈBÚ]X[WÙ[XZ[HÝ^Ú[]
-[XZ[XÙZÛ\HP[XZ[ÛÛHBË
-HÝÛÛ[[ÊBÚ]ÎX[WÜÛHHÝ^Ú[]
-Ú]Ð\È[YÛÈXÙZÛ\HÍLBÚ]
-X[WØÚ]HHÝ^Ú[]
-Ú]YYÈZ\ÈXÙZÛ\H[Û\^KVBX[WÝÚHHÝ^Ø\XJÜ]YHH[\\ØH[\OÈXÙZÛ\HÝY[[YH[ØÛÈÛØHKZYÚLL
-BX[WÜÝXZ]HÝÜWÜÝXZ]Ø]Û[X\ÛÛXÚ]Y\ÙWØÛÛZ[\ÝÚYUYJBYX[WÜÝXZ]YX[WÛ[YH[X[WÙ[XZ[Ø]WÝX[WÜ\]Y\Ý
-X[WÛ[YKX[WÙ[XZ[X[WÜÛKX[WØÚ]KX[WÝÚJBÝÝXØÙ\ÜÊ°¨TÛÛXÚ]Y[XYHHHÛÛXÝ\H]^HÛËBÝ[ÛÛÊ
-B[ÙNÝØ\[ÊÜ]ÜÛÛ\]H[Y[ÜÈHÛXHH[XZ[BÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÓÓPÕÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ	Ï]YHÛÛXÝÈÙ]Ë[ØYWØ[Ý×Ú[UYJBÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\È]Û\ÜÏHÙXÝ[Û]YÈÛÛXÝÏÙ]Û\ÜÏHÙXÝ[Û]]HY[\ÈY\ÏÈ\ØÜX[YOÚÙ][ØYWØ[Ý×Ú[UYJBØÛÛKØÛÛØÛÛÈHÝÛÛ[[ÊÌKWJBÚ]ØÛÛÚ]ÝÜJÛÛXÝÙÜHÛX\ÛÛÜÝXZ]UYJNÌKÌHÝÛÛ[[ÊBÚ]ÌNÛÛXÝÛ[YHHÝ^Ú[]
-ÛXHXÙZÛ\HHÛXHÙ^OH×Û[YHBÚ]ÌÛÛXÝÙ[XZ[HÝ^Ú[]
-[XZ[XÙZÛ\HP[XZ[ÛÛHÙ^OH×Ù[XZ[BÛÛXÝÜÛHHÝ^Ú[]
-Ú]Ð\
-ÜÚ[Û[
-HXÙZÛ\HËÍLÙ^OH×ÜÛHBÛÛXÝÛ\ÙÈHÝ^Ø\XJHY[ØZHXÙZÛ\HÝY[[YH]YHHÝ\Ý\XHØX\ZYÚLLÙ^OH×Û\ÙÈBÛÛXÝÜÝXZ]HÝÜWÜÝXZ]Ø]Û[X\Y[ØZH\ÙWØÛÛZ[\ÝÚYUYJBYÛÛXÝÜÝXZ]YÛÛXÝÛ[YH[ÛÛXÝÛ\ÙÎØ]WØÛÛXÝ
-ÛÛXÝÛ[YKÛÛXÝÙ[XZ[ÛÛXÝÜÛKÛÛXÝÛ\ÙÊBÝÝXØÙ\ÜÊ°¨SY[ØZH[XYÈHH\ÜÛ\HÈ[\ÈÜÚXKB[ÙNÝØ\[ÊÜ]ÜÛÛ\]H[Y[ÜÈHÛXHHY[ØZKBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈSSÕBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\ÈY[ÎÈÛ\ÜÏHÙXÝ[Û]]HÝ[OHÛ\Ú^NÛ[\
-[K
-]ËË[JNÈX\Ú[XÝÛNMÈ\ÝKÛÈ\HÙ[\HY\[ÚXOÂÚÛ\ÜÏHÙXÝ[Û\ÝX]HÝ[OHX\Ú[]]ÈÌÈX^]ÚY
-MLÈHÝY\ÈXHY[HÙÈÈ]YHXÙ\Ú]H\HØ[\ÛÛÈXÙ\Ú]HHÙ[[ÛÜXÝKÜHYHÕÒUÐTÕTH\Ù]HØ[ÈÛ\ÜÏH]Ú]Ø\Ý[OH\Ü^N[[KY^ÈÛ\Ú^NK\[NÈY[ÎN
-È[\^\ZÜHÛÛ][BØOÝ[OHÛÛÜØJMKMKMKÍJNÈÛ\Ú^N[NÈX\Ú[]ÜMÈØ\[XHH]ÛXÚ[ÛHÌÎLX\È0­ÈÚ[Y\ÙÛÜÂÜÙ][ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈTBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏHÙXÝ[ÛÝ[OH^X[YÛÙ[\È]Û\ÜÏHÙXÝ[Û]YÈTOÙ]Û\ÜÏHÙXÝ[Û]]HYÝ[\ÈXÝY[\ÏÚÙ][ØYWØ[Ý×Ú[UYJB\WØÛÛK\WØÛÛ\WØÛÛÈHÝÛÛ[[ÊÌKËWJBÚ]\WØÛÛ\\ÈHÂ
-ÛÛÙYÝ\ÜÈÜÈ\Ú\ÏÈÚKÜÈ\Ú\ÈÛÛÈ[Ù\ZXÛÜÈ8 %YH[H[HÝY\ËÛÛÈYZ[^\H\Ý[][\\ÈÜX\ÈÙ[[\Ë\Ý[\Ü[YÜÈÜX\ÈH][\ÈH][\\È\ÝY[ÜÈÛ[XÛÜËK
-ÝX[ÈÞHHÝ\\Ý[YÜÏÈØYH\ÛÛH\ÈY\[K[Ý[ÜÈÝ[Ø[X[ÜÈ[ÜÈ[Y\ÜÈX\ËH\\XÚ[ÛÙ[[\Ù[HÛÛZY[H[YYX][Y[K\ÈÜÈØ[X[ÜÈ\ÚX\ÈÝY[[Ý\ÙH[H
-LLÙ[X[\ËK
-Y[[Ø\[XHH]ÛXÚ[ÛÈÚKÛY[\ÈZ[Ü\Ý\ÈHY\[\ÎLX\ËÛØÚ[ÜÈHX\ØNÌX\ËÚHÈ\Ý\ÈØ]\ÙXÚËØKÙHH]Y[HH[\ËK
-ÛÛ[ÈYYÈÛÛ\\È\ØÜX[YHÜÚ]Ð\HHÝZ[È\ÛÈH\ÛËH^]YÈH[YÚ\[ÙXÝÈYX[HH^XÛÈ\ÈÜÚ[Û\ÈH\]Y]\ËK
-YYÈ\Ø\ÜÈ\Ú\ÈÛÛ[Ý[HÛÛXÚ[ÛYYXØOÈÜÈ\Ú\ÈÈY[\^[[][ZY[ÈYYXÛËÚHY[\È[Ý[HÛÛXÚ[ÛÛÛÝ[HÛÛHYYXÛÈ[\ÈH\Ø\ÝX[]ZY\ÙXÝÈHY[\Ý\K
-ÛÛ[È[Ú[ÛHHÜÜ[YYHYÛØÚ[ÏÈÛÛ[È[\\YY\ÈÙ[\\[Ü\ÛÜÈÛÛ\\Y[ÈÜÈÙXÝÜËH[[È\ÛÛ[Y[HHY[\ÈXØÙ\ÛÈHÙ\È\È\[ZY[\Ë\ØÜX[YH\HX\È][\ÈÚ[ÛÛ\ÛZ\ÛËKBÜKH[\\ÎÚ]Ý^[\JNÝX\ÙÝÛÏÝ[OHÛÛÜØJMKMKMKNÈ[KZZYÚKÎÈÛ\Ú^N\[NÈØ_OÜË[ØYWØ[Ý×Ú[UYJBÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÈÓÕTÈ8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ 8¥ ÝX\ÙÝÛ]Û\ÜÏHÛÝ\Ý[OHX^]ÚY
-ÌÈX\Ú[]]ÈMÈ[KZZYÚKÈÝÛÏ]\ÛÎÜÝÛÏÜÈ\Ú\ÈYUØ]HÙH\Ø[[H[ÜXHHHÝÝ\\XKÈ\Ý[\Ù[YÜÈ\HXYÛÜÝXØ\]\Ý\\È][\[Ý[H[\YYYÛÛÝ[HHÝHYYXÛÈ[\ÈH[XÚX\ÝX[]ZY\ÙÜ[XHHY[\Ý\ÜÈ\Ý[YÜÈYY[\X\Ü	ÛÜNÆ#¢VÆvVÆÆæW72)ÈR'&æB'FæW"æFWVæFVçFRFP¢Æ&VcÒ&GG3¢ò÷wwræÆfWvfRæ6öÒ"F&vWCÒ%ö&Ææ²#äÆfUvfSÂöãÆ'"óà¢V6ò6öâÇW¢FV6æöÆöv¢Â÷à£ÂöFcà¢"""ÂVç6fUöÆÆ÷uöFÖÃÕG'VR ¢2)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H ¢24DT$"ÄTB4EU$P¢2)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H)H ¦b7Bç6W76öå÷7FFRç6÷uöÆVE÷÷WæBæ÷B7Bç6W76öå÷7FFRæÆVEö6GW&VC ¢vF7Bç6FV&# ¢7BæÖ&¶F÷vâ"" ¢ÆFb7GÆSÒ'FWBÖÆvã¢6VçFW#²FFæs¢#²#à¢ÆFb7GÆSÒ&föçB×6¦S¢"ãW&VÓ²Ö&vâÖ&÷GFöÓ¢'²#ï	øèÂöFcà¢Æ27GÆSÒ&6öÆ÷#¢4ddd²föçBÖfÖÇ¢uÆf"F7ÆrÂ6W&c²föçB×6¦S¢ã7&VÓ²#äwVw&GVFÂö3à¢Ç7GÆSÒ&6öÆ÷#¢&v&#SRÃ#SRÃ#SRÃãb²föçB×6¦S¢ãW&VÓ²ÆæRÖVvC¢ãS²#à¢FW66&vÖwV£Æ'"óà¢Ç7G&öær7GÆSÒ&6öÆ÷#¢3d3c4dc²#â#R6VæÆW2FRVRGR7VW'òæV6W6FVF#Â÷7G&öæsà¢Â÷à¢ÂöFcà¢"""ÂVç6fUöÆÆ÷uöFÖÃÕG'VR¢vF7Bæf÷&Ò&ÆVEöf÷&Ò" ¢ÆVEöæÖRÒ7BçFWEöçWB%GRæöÖ'&R"ÂÆ6VöÆFW#Ò$æöÖ'&R"¢ÆVEöVÖÂÒ7BçFWEöçWB%GRVÖÂ"ÂÆ6VöÆFW#Ò'GTVÖÂæ6öÒ"¢ÆVE÷öæRÒ7BçFWEöçWB%vG4÷6öæÂ"ÂÆ6VöÆFW#Ò"³S"âââ"¢ÆVE÷7V&ÖBÒ7Bæf÷&Õ÷7V&ÖEö'WGFöâ$FW66&v"w&F2"ÂW6Uö6öçFæW%÷vGFÕG'VR¢bÆVE÷7V&ÖBæBÆVEöæÖRæBÆVEöVÖÃ ¢6fUöÆVBÆVEöæÖRÂÆVEöVÖÂÂÆVE÷öæRÂ&wVFU÷÷W"¢7Bç6W76öå÷7FFRæÆVEö6GW&VBÒG'VP¢7Bç7V66W72,*Æ7FòFRVçf&RÆwV÷"VÖÂâ"¢7Bæ&ÆÆööç2
+st.markdown("""<div class="sec" style="text-align:center"><div class="tg">Descubre tu Parche</div><h2 class="st">Cual es el parche ideal para ti?</h2><p class="ss" style="margin:0 auto 40px">Responde 3 preguntas y te recomendamos el producto perfecto.</p></div>""", unsafe_allow_html=True)
+qs = [("Cual es tu principal preocupacion?",["Falta de energia","Dolor cronico","Mal dormir","Envejecimiento"]),("Que edad tienes?",["25-35","36-45","46-55","56+"]),("Has probado parches antes?",["Si","No","No se que son"])]
+if st.session_state.qz < len(qs):
+    q,opts = qs[st.session_state.qz]
+    st.markdown(f'<div class="qc"><div class="qp"><div class="qpb" style="width:{(st.session_state.qz+1)/len(qs)*100}%"></div></div><div class="qq">{q}</div></div>', unsafe_allow_html=True)
+    ans = st.radio("", opts, key=f"q{st.session_state.qz}", label_visibility="collapsed")
+    if st.button("Siguiente →" if st.session_state.qz < len(qs)-1 else "Ver Resultado"):
+        st.session_state.qa[st.session_state.qz] = ans
+        st.session_state.qz += 1
+        st.rerun()
+else:
+    recs = {"Falta de energia":"Energy Enhancer + X39","Dolor cronico":"IceWave + X39","Mal dormir":"Silent Nights + Aeon","Envejecimiento":"X39 + Aeon"}
+    rec = recs.get(st.session_state.qa.get(0,""), "X39")
+    st.markdown(f"""<div class="qc" style="text-align:center"><div style="font-size:3rem;margin-bottom:16px">🎯</div><div class="st" style="font-size:1.5rem">Tu combinacion ideal:</div><div style="font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#6C63FF,#00D4AA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:16px 0">{rec}</div><a href="{WA_URL}" target="_blank" class="bw" style="margin-top:16px">📲 Consultar por WhatsApp</a></div>""", unsafe_allow_html=True)
+    if st.button("Repetir Quiz"):
+        st.session_state.qz = 0
+        st.session_state.qa = {}
+        st.rerun()
+# BENEFITS
+st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Beneficios</div><h2 class="st">Por que elegir LifeWave?</h2></div></div>""", unsafe_allow_html=True)
+bens = [("🧬","Celulas Madre","Activa la regeneracion celular natural."),("💊","Sin Quimicos","Nada entra en tu cuerpo. 100% no invasivo."),("📊","Clinicamente Probado","Mas de 80 estudios respaldan la tecnologia."),("⚡","Resultados Rapidos","Muchos usuarios sienten cambios en horas."),("🌍","Global","Disponible en mas de 80 paises."),("🏆","Patentado","Mas de 200 patentes mundiales protegen esta tecnologia.")]
+bc = st.columns(3)
+for i,(icon,t,d) in enumerate(bens):
+    with bc[i%3]:
+        st.markdown(f'<div class="gc" style="text-align:center;margin-bottom:24px"><div class="ci">{icon}</div><div class="ct">{t}</div><div class="cx">{d}</div></div>', unsafe_allow_html=True)
+# TESTIMONIALS
+st.markdown('<div id="experiencias"></div>', unsafe_allow_html=True)
+st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Experiencias</div><h2 class="st">Lo que dicen nuestros usuarios</h2></div></div>""", unsafe_allow_html=True)
+tests = [("⭐⭐⭐⭐⭐","Despues de 2 semanas con X39, mi energia cambio completamente. Ya no necesito 3 cafes al dia.","Maria G., 45 anos"),("⭐⭐⭐⭐⭐","Llevaba anos con dolor de rodillas. Con IceWave senti alivio desde el primer dia.","Carlos R., 58 anos"),("⭐⭐⭐⭐⭐","Mis amigas me preguntan que me hice en la cara. Solo uso X39 y Aeon.","Laura M., 52 anos")]
+tc = st.columns(3)
+for i,(stars,quote,author) in enumerate(tests):
+    with tc[i]:
+        st.markdown(f'<div class="tc"><div class="ts">{stars}</div><div class="tq">"</div><div class="tt">{quote}</div><div class="ta">— {author}</div></div>', unsafe_allow_html=True)
+# ABOUT
+st.markdown(f"""<div class="sec" style="text-align:center"><div style="background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,170,.05));border:1px solid rgba(108,99,255,.2);border-radius:24px;padding:48px;max-width:800px;margin:0 auto"><div style="font-size:4rem;margin-bottom:16px">👩‍⚕️</div><div class="tg">Tu Guia</div><h2 class="st">Soy Pauli</h2><p class="ss" style="margin:0 auto 24px;max-width:550px">Brand Partner oficial de LifeWave. Mi mision es ayudarte a descubrir el poder de la fototerapia y acompanarte en tu camino hacia el bienestar.</p><a href="{WA_URL}" target="_blank" class="bw">📲 Habla Conmigo</a></div></div>""", unsafe_allow_html=True)
+# JOIN TEAM
+st.markdown('<div id="equipo"></div>', unsafe_allow_html=True)
+st.markdown("""<div class="sec" style="text-align:center"><div class="tg">Oportunidad</div><h2 class="st">Unete al Equipo</h2><p class="ss" style="margin:0 auto 32px">Emprende tu propio negocio con LifeWave. Te acompano paso a paso.</p></div>""", unsafe_allow_html=True)
+with st.form("join"):
+    c1,c2 = st.columns(2)
+    jn = c1.text_input("Nombre completo")
+    je = c2.text_input("Email")
+    jt = c1.text_input("Telefono / WhatsApp")
+    jc = c2.text_input("Ciudad / Pais")
+    jm = st.text_area("Por que te interesa LifeWave?", height=100)
+    if st.form_submit_button("Quiero Unirme al Equipo"):
+        if jn and je:
+            save_csv(DATA_DIR/"team.csv", [datetime.now().isoformat(),jn,je,jt,jc,jm], ["fecha","nombre","email","telefono","ciudad","motivacion"])
+            st.success("Gracias! Pauli te contactara pronto.")
+        else:
+            st.warning("Por favor completa nombre y email.")
+# CONTACT
+st.markdown("""<div class="sec" style="text-align:center"><div class="tg">Contacto</div><h2 class="st">Tienes preguntas?</h2><p class="ss" style="margin:0 auto 32px">Escribeme y te respondo personalmente.</p></div>""", unsafe_allow_html=True)
+with st.form("contact"):
+    cc1,cc2 = st.columns(2)
+    cn = cc1.text_input("Tu nombre")
+    ce = cc2.text_input("Tu email")
+    cm = st.text_area("Tu mensaje", height=100)
+    if st.form_submit_button("Enviar Mensaje"):
+        if cn and ce and cm:
+            save_csv(DATA_DIR/"contacts.csv", [datetime.now().isoformat(),cn,ce,cm], ["fecha","nombre","email","mensaje"])
+            st.success("Mensaje enviado! Te respondere pronto.")
+        else:
+            st.warning("Por favor completa todos los campos.")
+# CTA
+st.markdown(f"""<div class="sec" style="text-align:center;padding:80px 20px"><h2 class="st" style="font-size:clamp(2rem,5vw,3.5rem)">Listo para <span class="gr">transformar tu bienestar</span>?</h2><p class="ss" style="margin:0 auto 32px;max-width:550px">Miles de personas ya estan experimentando los beneficios de LifeWave. Tu siguiente paso esta a un mensaje de distancia.</p><a href="{WA_URL}" target="_blank" class="bw" style="font-size:1.1rem;padding:18px 40px">📲 Contactar a Pauli por WhatsApp</a></div>""", unsafe_allow_html=True)
+# FAQ
+st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">FAQ</div><h2 class="st">Preguntas Frecuentes</h2></div></div>""", unsafe_allow_html=True)
+faqs = [("Es seguro?","Si. Los parches LifeWave son 100% no invasivos. Nada entra en tu cuerpo. Estan respaldados por mas de 80 estudios clinicos y tienen certificaciones internacionales."),("Como funciona la fototerapia?","Tu cuerpo emite calor (luz infrarroja). Nuestros parches reflejan longitudes de onda especificas que estimulan la piel y activan respuestas biologicas como la produccion de peptidos regenerativos."),("Cuanto tiempo tarda en hacer efecto?","Muchos usuarios reportan cambios en las primeras horas. Los resultados optimos se ven entre 1-3 meses de uso continuo."),("Puedo usar varios parches a la vez?","Si. De hecho, las combinaciones de parches potencian los resultados. Te ayudo a encontrar la combinacion perfecta para ti."),("Tiene efectos secundarios?","No se han reportado efectos secundarios significativos. Al ser no transdermico, no introduce sustancias en tu cuerpo."),("Como puedo comprar?","Contactame directamente por WhatsApp. Te guio en todo el proceso y te ayudo a elegir los productos ideales para ti.")]
+for q,a in faqs:
+    with st.expander(q):
+        st.write(a)
+# FOOTER
+st.markdown(f"""<div class="foot"><p>© 2024 Pauli Wellness · Brand Partner Independiente de <a href="https://www.lifewave.com" target="_blank">LifeWave</a></p><p style="margin-top:8px">📱 <a href="{WA_URL}" target="_blank">WhatsApp</a> · Ecuador 🇪🇨</p><p style="margin-top:16px;font-size:.65rem;color:rgba(255,255,255,.2)">Los parches LifeWave no son dispositivos medicos y no estan destinados a diagnosticar, tratar, curar o prevenir ninguna enfermedad.</p></div>""", unsafe_allow_html=True)
+# SIDEBAR LEAD CAPTURE
+with st.sidebar:
+    st.markdown("### 🎁 Guia Gratis")
+    st.markdown("Descarga nuestra guia sobre fototerapia y celulas madre.")
+    with st.form("lead"):
+        ln = st.text_input("Tu nombre")
+        le = st.text_input("Tu email")
+        if st.form_submit_button("Descargar Guia"):
+            if ln and le:
+                save_csv(DATA_DIR/"leads.csv", [datetime.now().isoformat(),ln,le], ["fecha","nombre","email"])
+                st.success("Revisa tu WhatsApp! Te enviare la guia.")
+            else:
+                st.warning("Completa nombre y email.")
