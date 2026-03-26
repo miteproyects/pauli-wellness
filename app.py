@@ -20,79 +20,79 @@ if "qa" not in st.session_state: st.session_state.qa = {}
 st.markdown("""<style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 *{box-sizing:border-box}
-.stApp{background:#050508!important;font-family:'Inter',sans-serif!important}
+.stApp{background:#FFFFFF!important;color:#373F41!important;font-family:'Inter',sans-serif!important}
 .block-container{padding-top:0!important;padding-bottom:0!important;max-width:100%!important}
 header[data-testid="stHeader"]{display:none!important}
 #MainMenu,footer,.stDeployButton{visibility:hidden!important;display:none!important}
 div[data-testid="stSidebarCollapsedControl"]{display:none!important}
-.nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(5,5,8,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(108,99,255,.15);padding:12px 40px;display:flex;justify-content:space-between;align-items:center}
-.nav-b{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,#6C63FF,#00D4AA);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(25,79,144,.15);padding:12px 40px;display:flex;justify-content:space-between;align-items:center}
+.nav-b{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,#194F90,#5EB3E4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .nav-l{display:flex;gap:24px;align-items:center}
-.nav-l a{color:rgba(255,255,255,.7)!important;text-decoration:none!important;font-size:.85rem;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .3s}
-.nav-l a:hover{color:#6C63FF!important}
-.nav-c{background:linear-gradient(135deg,#6C63FF,#8B5CF6)!important;-webkit-text-fill-color:white!important;-webkit-background-clip:unset!important;padding:8px 20px;border-radius:25px;font-weight:600!important;font-size:.8rem!important}
+.nav-l a{color:rgba(25,79,144,.75)!important;text-decoration:none!important;font-size:.85rem;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .3s}
+.nav-l a:hover{color:#194F90!important}
+.nav-c{background:linear-gradient(135deg,#194F90,#2B6CB0)!important;-webkit-text-fill-color:white!important;-webkit-background-clip:unset!important;padding:8px 20px;border-radius:25px;font-weight:600!important;font-size:.8rem!important}
 .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(108,99,255,.06) 60deg,transparent 120deg,rgba(0,212,170,.04) 180deg,transparent 240deg,rgba(255,107,107,.03) 300deg,transparent 360deg);animation:hr 30s linear infinite}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(25,79,144,.03) 60deg,transparent 120deg,rgba(94,179,228,.02) 180deg,transparent 240deg,rgba(236,245,250,.5) 300deg,transparent 360deg);animation:hr 30s linear infinite}
 @keyframes hr{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .hero-c{position:relative;z-index:2;max-width:900px}
-.badge{display:inline-block;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);border-radius:50px;padding:8px 24px;font-size:.8rem;color:#6C63FF;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
-.ht{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;line-height:1.1;margin-bottom:24px;color:#FAFAFA}
-.gr{background:linear-gradient(135deg,#6C63FF 0%,#00D4AA 50%,#FFD700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:sh 3s ease-in-out infinite}
+.badge{display:inline-block;background:rgba(25,79,144,.15);border:1px solid rgba(25,79,144,.3);border-radius:50px;padding:8px 24px;font-size:.8rem;color:#194F90;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.ht{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;line-height:1.1;margin-bottom:24px;color:#194F90}
+.gr{background:linear-gradient(135deg,#194F90 0%,#5EB3E4 50%,#2B6CB0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:sh 3s ease-in-out infinite}
 @keyframes sh{0%,100%{background-position:0% center}50%{background-position:200% center}}
-.hs{font-size:clamp(1rem,2vw,1.25rem);color:rgba(255,255,255,.65);line-height:1.7;max-width:650px;margin:0 auto 40px}
+.hs{font-size:clamp(1rem,2vw,1.25rem);color:rgba(55,63,65,.7);line-height:1.7;max-width:650px;margin:0 auto 40px}
 .hb{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.bp{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#6C63FF,#8B5CF6);color:white!important;text-decoration:none!important;padding:14px 32px;border-radius:50px;font-weight:600;font-size:.95rem;transition:all .3s;box-shadow:0 4px 25px rgba(108,99,255,.3)}
-.bp:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(108,99,255,.45)}
-.bs{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.2);color:white!important;text-decoration:none!important;padding:14px 32px;border-radius:50px;font-weight:600;font-size:.95rem;transition:all .3s}
-.bs:hover{background:rgba(255,255,255,.1);border-color:rgba(108,99,255,.5)}
+.bp{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#194F90,#2B6CB0);color:white!important;text-decoration:none!important;padding:14px 32px;border-radius:50px;font-weight:600;font-size:.95rem;transition:all .3s;box-shadow:0 4px 25px rgba(25,79,144,.3)}
+.bp:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(25,79,144,.45)}
+.bs{display:inline-flex;align-items:center;gap:8px;background:rgba(25,79,144,.06);border:1px solid rgba(25,79,144,.25);color:#194F90!important;text-decoration:none!important;padding:14px 32px;border-radius:50px;font-weight:600;font-size:.95rem;transition:all .3s}
+.bs:hover{background:rgba(25,79,144,.08);border-color:rgba(25,79,144,.5)}
 .bw{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#25D366,#128C7E);color:white!important;text-decoration:none!important;padding:16px 36px;border-radius:50px;font-weight:700;font-size:1rem;transition:all .3s;box-shadow:0 4px 25px rgba(37,211,102,.3)}
 .bw:hover{transform:translateY(-3px);box-shadow:0 8px 35px rgba(37,211,102,.45)}
 .sec{padding:100px 20px;position:relative}
-.tg{display:inline-block;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);border-radius:50px;padding:6px 20px;font-size:.75rem;color:#6C63FF;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
-.st{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;color:#FAFAFA;line-height:1.2;margin-bottom:16px}
-.ss{font-size:1.05rem;color:rgba(255,255,255,.55);line-height:1.7;max-width:600px}
-.stats{display:flex;justify-content:center;gap:60px;flex-wrap:wrap;padding:60px 20px;background:rgba(108,99,255,.04);border-top:1px solid rgba(108,99,255,.1);border-bottom:1px solid rgba(108,99,255,.1)}
+.tg{display:inline-block;background:rgba(25,79,144,.12);border:1px solid rgba(25,79,144,.25);border-radius:50px;padding:6px 20px;font-size:.75rem;color:#194F90;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+.st{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;color:#194F90;line-height:1.2;margin-bottom:16px}
+.ss{font-size:1.05rem;color:rgba(55,63,65,.65);line-height:1.7;max-width:600px}
+.stats{display:flex;justify-content:center;gap:60px;flex-wrap:wrap;padding:60px 20px;background:rgba(25,79,144,.04);border-top:1px solid rgba(25,79,144,.1);border-bottom:1px solid rgba(25,79,144,.1)}
 .stat{text-align:center}
-.sn{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;background:linear-gradient(135deg,#6C63FF,#00D4AA);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sl{font-size:.8rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:2px;margin-top:4px}
-.gc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px;backdrop-filter:blur(10px);transition:all .4s;height:100%}
-.gc:hover{transform:translateY(-8px);border-color:rgba(108,99,255,.3);box-shadow:0 20px 60px rgba(108,99,255,.1)}
+.sn{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;background:linear-gradient(135deg,#194F90,#5EB3E4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sl{font-size:.8rem;color:rgba(55,63,65,.55);text-transform:uppercase;letter-spacing:2px;margin-top:4px}
+.gc{background:rgba(236,245,250,.8);border:1px solid rgba(25,79,144,.06);border-radius:20px;padding:32px;backdrop-filter:blur(10px);transition:all .4s;height:100%}
+.gc:hover{transform:translateY(-8px);border-color:rgba(25,79,144,.3);box-shadow:0 20px 60px rgba(25,79,144,.1)}
 .ci{font-size:2.5rem;margin-bottom:16px}
-.ct{font-size:1.15rem;font-weight:700;color:#FAFAFA;margin-bottom:10px}
-.cx{font-size:.9rem;color:rgba(255,255,255,.55);line-height:1.6}
-.pc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;transition:all .4s;margin-bottom:24px}
-.pc:hover{transform:translateY(-8px);border-color:rgba(108,99,255,.4);box-shadow:0 20px 60px rgba(108,99,255,.15)}
+.ct{font-size:1.15rem;font-weight:700;color:#194F90;margin-bottom:10px}
+.cx{font-size:.9rem;color:rgba(55,63,65,.65);line-height:1.6}
+.pc{background:rgba(236,245,250,.8);border:1px solid rgba(25,79,144,.06);border-radius:24px;overflow:hidden;transition:all .4s;margin-bottom:24px}
+.pc:hover{transform:translateY(-8px);border-color:rgba(25,79,144,.4);box-shadow:0 20px 60px rgba(25,79,144,.15)}
 .pi{width:100%;height:240px;object-fit:cover;display:block}
 .pf{padding:24px}
-.pk{font-size:.7rem;color:#6C63FF;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:8px}
-.pn{font-size:1.2rem;font-weight:700;color:#FAFAFA;margin-bottom:8px}
-.pd{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:16px}
-.tc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px;transition:all .3s}
-.tc:hover{border-color:rgba(108,99,255,.3)}
-.tq{font-size:3rem;color:rgba(108,99,255,.3);font-family:'Playfair Display',serif;line-height:1;margin-bottom:8px}
-.tt{font-size:.95rem;color:rgba(255,255,255,.7);line-height:1.7;font-style:italic;margin-bottom:16px}
-.ta{font-size:.85rem;font-weight:600;color:#6C63FF}
+.pk{font-size:.7rem;color:#194F90;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:8px}
+.pn{font-size:1.2rem;font-weight:700;color:#194F90;margin-bottom:8px}
+.pd{font-size:.85rem;color:rgba(55,63,65,.55);line-height:1.5;margin-bottom:16px}
+.tc{background:rgba(236,245,250,.8);border:1px solid rgba(25,79,144,.06);border-radius:20px;padding:32px;transition:all .3s}
+.tc:hover{border-color:rgba(25,79,144,.3)}
+.tq{font-size:3rem;color:rgba(25,79,144,.3);font-family:'Playfair Display',serif;line-height:1;margin-bottom:8px}
+.tt{font-size:.95rem;color:rgba(55,63,65,.8);line-height:1.7;font-style:italic;margin-bottom:16px}
+.ta{font-size:.85rem;font-weight:600;color:#194F90}
 .ts{color:#FFD700;font-size:.9rem;margin-bottom:12px}
-.qc{background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,170,.05));border:1px solid rgba(108,99,255,.2);border-radius:24px;padding:48px;max-width:700px;margin:0 auto}
-.qp{height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:32px;overflow:hidden}
-.qpb{height:100%;background:linear-gradient(90deg,#6C63FF,#00D4AA);border-radius:2px;transition:width .5s}
-.qq{font-size:1.3rem;font-weight:600;color:#FAFAFA;margin-bottom:24px;text-align:center}
-.snum{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:white;margin:0 auto 16px}
-.sc{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px 24px;text-align:center;transition:all .4s;height:100%}
-.sc:hover{transform:translateY(-5px);border-color:rgba(108,99,255,.3)}
-.foot{text-align:center;padding:40px 20px;border-top:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.3);font-size:.75rem}
-.foot a{color:rgba(108,99,255,.6)!important;text-decoration:none!important}
+.qc{background:linear-gradient(135deg,rgba(25,79,144,.08),rgba(94,179,228,.05));border:1px solid rgba(25,79,144,.2);border-radius:24px;padding:48px;max-width:700px;margin:0 auto}
+.qp{height:4px;background:rgba(25,79,144,.08);border-radius:2px;margin-bottom:32px;overflow:hidden}
+.qpb{height:100%;background:linear-gradient(90deg,#194F90,#5EB3E4);border-radius:2px;transition:width .5s}
+.qq{font-size:1.3rem;font-weight:600;color:#194F90;margin-bottom:24px;text-align:center}
+.snum{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#194F90,#2B6CB0);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:white;margin:0 auto 16px}
+.sc{background:rgba(236,245,250,.8);border:1px solid rgba(25,79,144,.06);border-radius:20px;padding:32px 24px;text-align:center;transition:all .4s;height:100%}
+.sc:hover{transform:translateY(-5px);border-color:rgba(25,79,144,.3)}
+.foot{text-align:center;padding:40px 20px;border-top:1px solid rgba(25,79,144,.12);background:#27455C;color:rgba(255,255,255,.6);font-size:.75rem}
+.foot a{color:rgba(94,179,228,.9)!important;text-decoration:none!important}
 .waf{position:fixed;bottom:24px;right:24px;z-index:9999;width:60px;height:60px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 25px rgba(37,211,102,.4);transition:all .3s;animation:bn 2s infinite}
 .waf:hover{transform:scale(1.1)}
 .waf svg{width:32px;height:32px;fill:white}
 @keyframes bn{0%,20%,50%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}60%{transform:translateY(-4px)}}
 @keyframes fu{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fd{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
-.stTextInput>div>div>input,.stTextArea>div>div>textarea{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:12px!important;color:white!important;font-family:'Inter',sans-serif!important;padding:12px 16px!important}
-.stTextInput>div>div>input:focus,.stTextArea>div>div>textarea:focus{border-color:#6C63FF!important;box-shadow:0 0 0 2px rgba(108,99,255,.2)!important}
-.stRadio>div{background:rgba(255,255,255,.03)!important;border-radius:12px!important;padding:12px!important}
-div.stButton>button{background:linear-gradient(135deg,#6C63FF,#8B5CF6)!important;color:white!important;border:none!important;border-radius:50px!important;padding:12px 32px!important;font-weight:600!important;font-family:'Inter',sans-serif!important;transition:all .3s!important;box-shadow:0 4px 20px rgba(108,99,255,.3)!important}
-div.stButton>button:hover{transform:translateY(-2px)!important;box-shadow:0 8px 30px rgba(108,99,255,.45)!important}
+.stTextInput>div>div>input,.stTextArea>div>div>textarea{background:rgba(25,79,144,.04)!important;border:1px solid rgba(25,79,144,.15)!important;border-radius:12px!important;color:#373F41!important;font-family:'Inter',sans-serif!important;padding:12px 16px!important}
+.stTextInput>div>div>input:focus,.stTextArea>div>div>textarea:focus{border-color:#194F90!important;box-shadow:0 0 0 2px rgba(25,79,144,.2)!important}
+.stRadio>div{background:rgba(236,245,250,1)!important;border-radius:12px!important;padding:12px!important}
+div.stButton>button{background:linear-gradient(135deg,#194F90,#2B6CB0)!important;color:white!important;border:none!important;border-radius:50px!important;padding:12px 32px!important;font-weight:600!important;font-family:'Inter',sans-serif!important;transition:all .3s!important;box-shadow:0 4px 20px rgba(25,79,144,.3)!important}
+div.stButton>button:hover{transform:translateY(-2px)!important;box-shadow:0 8px 30px rgba(25,79,144,.45)!important}
 @media(max-width:768px){.nav{padding:10px 16px}.nav-l{display:none}.stats{gap:30px}.hero{padding:100px 16px 60px}.sec{padding:60px 16px}.qc{padding:32px 20px}}
 </style>""", unsafe_allow_html=True)
 # NAV
@@ -110,15 +110,15 @@ for i,(icon,t,d) in enumerate([("😴","Fatiga y Baja Energia","Te sientes agota
     with pc[i]:
         st.markdown(f'<div class="gc"><div class="ci">{icon}</div><div class="ct">{t}</div><div class="cx">{d}</div></div>', unsafe_allow_html=True)
 # SOLUTION
-st.markdown(f"""<div class="sec" style="text-align:center"><div style="background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(0,212,170,.06));border:1px solid rgba(108,99,255,.2);border-radius:24px;padding:48px 32px;max-width:900px;margin:0 auto"><div class="tg" style="background:rgba(0,212,170,.15);border-color:rgba(0,212,170,.3);color:#00D4AA">La Solucion</div><h2 class="st" style="margin-bottom:16px">No es una pastilla, crema ni inyeccion.<br/><span style="background:linear-gradient(135deg,#6C63FF,#00D4AA);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Es una categoria completamente nueva.</span></h2><p class="ss" style="margin:0 auto;max-width:650px">Un parche no transdermico que usa luz para enviar una senal a tus celulas. Nada entra en tu cuerpo. Solo activa lo que ya esta dentro de ti.</p></div></div>""", unsafe_allow_html=True)
+st.markdown(f"""<div class="sec" style="text-align:center"><div style="background:linear-gradient(135deg,rgba(25,79,144,.1),rgba(94,179,228,.06));border:1px solid rgba(25,79,144,.2);border-radius:24px;padding:48px 32px;max-width:900px;margin:0 auto"><div class="tg" style="background:rgba(94,179,228,.15);border-color:rgba(94,179,228,.3);color:#2B6CB0">La Solucion</div><h2 class="st" style="margin-bottom:16px">No es una pastilla, crema ni inyeccion.<br/><span style="background:linear-gradient(135deg,#194F90,#5EB3E4);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Es una categoria completamente nueva.</span></h2><p class="ss" style="margin:0 auto;max-width:650px">Un parche no transdermico que usa luz para enviar una senal a tus celulas. Nada entra en tu cuerpo. Solo activa lo que ya esta dentro de ti.</p></div></div>""", unsafe_allow_html=True)
 # SCIENCE
 st.markdown('<div id="ciencia"></div>', unsafe_allow_html=True)
 st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">La Ciencia</div><h2 class="st">Por que la luz?</h2><p class="ss" style="margin:0 auto">La fototerapia tiene mas de 100 anos de historia cientifica.</p></div></div>""", unsafe_allow_html=True)
 s1,s2 = st.columns(2)
 with s1:
-    st.markdown("""<div class="gc" style="height:auto"><div class="ci">💡</div><div class="ct" style="font-size:1.3rem">Como Funciona?</div><div class="cx" style="margin-bottom:16px">La luz es informacion, y tu cuerpo siempre esta a la escucha. Nuestro parche patentado refleja longitudes de onda especificas de luz que estimulan la piel para elevar <strong style="color:#00D4AA">GHK-Cu</strong>, el peptido de cobre clinicamente probado para reparar y regenerar celulas.</div><div class="cx">Es como la acupuntura unida a la biologia cuantica — sin agujas ni complejidades.</div></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="gc" style="height:auto"><div class="ci">💡</div><div class="ct" style="font-size:1.3rem">Como Funciona?</div><div class="cx" style="margin-bottom:16px">La luz es informacion, y tu cuerpo siempre esta a la escucha. Nuestro parche patentado refleja longitudes de onda especificas de luz que estimulan la piel para elevar <strong style="color:#5EB3E4">GHK-Cu</strong>, el peptido de cobre clinicamente probado para reparar y regenerar celulas.</div><div class="cx">Es como la acupuntura unida a la biologia cuantica — sin agujas ni complejidades.</div></div>""", unsafe_allow_html=True)
 with s2:
-    st.markdown("""<div class="gc" style="height:auto"><div class="ci">🧬</div><div class="ct" style="font-size:1.3rem">GHK-Cu: El Superpeptido</div><div class="cx" style="margin-bottom:16px">A medida que envejecemos, los niveles naturales de GHK-Cu disminuyen drasticamente. Con ellos, nuestra capacidad de reparacion y regeneracion.</div><div class="cx" style="margin-bottom:16px">Esta clinicamente probado que nuestro parche eleva GHK-Cu a <strong style="color:#6C63FF">niveles juveniles</strong>.</div><div style="background:rgba(108,99,255,.1);border-radius:12px;padding:16px;margin-top:8px"><div style="font-size:.8rem;color:rgba(255,255,255,.6)">✅ +4,000 genes se resetean · ✅ Aumento del 73% en GHK-Cu · ✅ Reduccion visible de arrugas</div></div></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="gc" style="height:auto"><div class="ci">🧬</div><div class="ct" style="font-size:1.3rem">GHK-Cu: El Superpeptido</div><div class="cx" style="margin-bottom:16px">A medida que envejecemos, los niveles naturales de GHK-Cu disminuyen drasticamente. Con ellos, nuestra capacidad de reparacion y regeneracion.</div><div class="cx" style="margin-bottom:16px">Esta clinicamente probado que nuestro parche eleva GHK-Cu a <strong style="color:#194F90">niveles juveniles</strong>.</div><div style="background:rgba(25,79,144,.1);border-radius:12px;padding:16px;margin-top:8px"><div style="font-size:.8rem;color:rgba(255,255,255,.6)">✅ +4,000 genes se resetean · ✅ Aumento del 73% en GHK-Cu · ✅ Reduccion visible de arrugas</div></div></div>""", unsafe_allow_html=True)
 # PRODUCTS
 st.markdown('<div id="productos"></div>', unsafe_allow_html=True)
 st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Productos</div><h2 class="st">Conoce la Linea LifeWave</h2><p class="ss" style="margin:0 auto">Cada parche esta disenado para activar una respuesta especifica en tu cuerpo.</p></div></div>""", unsafe_allow_html=True)
@@ -129,7 +129,7 @@ for i,(icon,cat,name,desc) in enumerate(prods):
         st.markdown(f'<div class="pc"><div class="pf"><div class="pk">{cat}</div><div class="pn">{icon} {name}</div><div class="pd">{desc}</div><a href="{WA_URL}" target="_blank" class="bp" style="font-size:.8rem;padding:10px 24px;width:100%;justify-content:center">Consultar</a></div></div>', unsafe_allow_html=True)
 # HOW IT WORKS
 st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Como Empezar</div><h2 class="st">4 Pasos Simples</h2></div></div>""", unsafe_allow_html=True)
-steps = [("#6C63FF","1","Contactame","Escribeme por WhatsApp y cuéntame tu situacion."),("#00D4AA","2","Evaluacion","Te ayudo a elegir el parche ideal para ti."),("#FFD700","3","Aplicacion","Coloca tu parche y deja que la luz haga el trabajo."),("#FF6B6B","4","Resultados","Siente la diferencia en los primeros dias.")]
+steps = [("#194F90","1","Contactame","Escribeme por WhatsApp y cuéntame tu situacion."),("#5EB3E4","2","Evaluacion","Te ayudo a elegir el parche ideal para ti."),("#FFD700","3","Aplicacion","Coloca tu parche y deja que la luz haga el trabajo."),("#D98471","4","Resultados","Siente la diferencia en los primeros dias.")]
 sc = st.columns(4)
 for i,(color,num,title,desc) in enumerate(steps):
     with sc[i]:
@@ -149,7 +149,7 @@ if st.session_state.qz < len(qs):
 else:
     recs = {"Falta de energia":"Energy Enhancer + X39","Dolor cronico":"IceWave + X39","Mal dormir":"Silent Nights + Aeon","Envejecimiento":"X39 + Aeon"}
     rec = recs.get(st.session_state.qa.get(0,""), "X39")
-    st.markdown(f"""<div class="qc" style="text-align:center"><div style="font-size:3rem;margin-bottom:16px">🎯</div><div class="st" style="font-size:1.5rem">Tu combinacion ideal:</div><div style="font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#6C63FF,#00D4AA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:16px 0">{rec}</div><a href="{WA_URL}" target="_blank" class="bw" style="margin-top:16px">📲 Consultar por WhatsApp</a></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="qc" style="text-align:center"><div style="font-size:3rem;margin-bottom:16px">🎯</div><div class="st" style="font-size:1.5rem">Tu combinacion ideal:</div><div style="font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#194F90,#5EB3E4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:16px 0">{rec}</div><a href="{WA_URL}" target="_blank" class="bw" style="margin-top:16px">📲 Consultar por WhatsApp</a></div>""", unsafe_allow_html=True)
     if st.button("Repetir Quiz"):
         st.session_state.qz = 0
         st.session_state.qa = {}
@@ -170,7 +170,7 @@ for i,(stars,quote,author) in enumerate(tests):
     with tc[i]:
         st.markdown(f'<div class="tc"><div class="ts">{stars}</div><div class="tq">"</div><div class="tt">{quote}</div><div class="ta">— {author}</div></div>', unsafe_allow_html=True)
 # ABOUT
-st.markdown(f"""<div class="sec" style="text-align:center"><div style="background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,170,.05));border:1px solid rgba(108,99,255,.2);border-radius:24px;padding:48px;max-width:800px;margin:0 auto"><div style="font-size:4rem;margin-bottom:16px">👩‍⚕️</div><div class="tg">Tu Guia</div><h2 class="st">Soy Pauli</h2><p class="ss" style="margin:0 auto 24px;max-width:550px">Brand Partner oficial de LifeWave. Mi mision es ayudarte a descubrir el poder de la fototerapia y acompanarte en tu camino hacia el bienestar.</p><a href="{WA_URL}" target="_blank" class="bw">📲 Habla Conmigo</a></div></div>""", unsafe_allow_html=True)
+st.markdown(f"""<div class="sec" style="text-align:center"><div style="background:linear-gradient(135deg,rgba(25,79,144,.08),rgba(94,179,228,.05));border:1px solid rgba(25,79,144,.2);border-radius:24px;padding:48px;max-width:800px;margin:0 auto"><div style="font-size:4rem;margin-bottom:16px">👩‍⚕️</div><div class="tg">Tu Guia</div><h2 class="st">Soy Pauli</h2><p class="ss" style="margin:0 auto 24px;max-width:550px">Brand Partner oficial de LifeWave. Mi mision es ayudarte a descubrir el poder de la fototerapia y acompanarte en tu camino hacia el bienestar.</p><a href="{WA_URL}" target="_blank" class="bw">📲 Habla Conmigo</a></div></div>""", unsafe_allow_html=True)
 # JOIN TEAM
 st.markdown('<div id="equipo"></div>', unsafe_allow_html=True)
 st.markdown("""<div class="sec" style="text-align:center"><div class="tg">Oportunidad</div><h2 class="st">Unete al Equipo</h2><p class="ss" style="margin:0 auto 32px">Emprende tu propio negocio con LifeWave. Te acompano paso a paso.</p></div>""", unsafe_allow_html=True)
@@ -209,7 +209,7 @@ for q,a in faqs:
     with st.expander(q):
         st.write(a)
 # FOOTER
-st.markdown(f"""<div class="foot"><p>© 2024 Pauli Wellness · Brand Partner Independiente de <a href="https://www.lifewave.com" target="_blank">LifeWave</a></p><p style="margin-top:8px">📱 <a href="{WA_URL}" target="_blank">WhatsApp</a> · Ecuador 🇪🇨</p><p style="margin-top:16px;font-size:.65rem;color:rgba(255,255,255,.2)">Los parches LifeWave no son dispositivos medicos y no estan destinados a diagnosticar, tratar, curar o prevenir ninguna enfermedad.</p></div>""", unsafe_allow_html=True)
+st.markdown(f"""<div class="foot"><p>© 2024 Pauli Wellness · Brand Partner Independiente de <a href="https://www.lifewave.com" target="_blank">LifeWave</a></p><p style="margin-top:8px">📱 <a href="{WA_URL}" target="_blank">WhatsApp</a> · Ecuador 🇪🇨</p><p style="margin-top:16px;font-size:.65rem;color:rgba(255,255,255,.35)">Los parches LifeWave no son dispositivos medicos y no estan destinados a diagnosticar, tratar, curar o prevenir ninguna enfermedad.</p></div>""", unsafe_allow_html=True)
 # SIDEBAR LEAD CAPTURE
 with st.sidebar:
     st.markdown("### 🎁 Guia Gratis")
