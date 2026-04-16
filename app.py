@@ -1,225 +1,314 @@
-"""Pauli Wellness - LifeWave Landing Page"""
+"""Pauli Wellness - LifeWave Landing Page (ES) - Exact replica of whythelight.com"""
 import streamlit as st
-import csv
-from datetime import datetime
-from pathlib import Path
-
 st.set_page_config(page_title="Pauli Wellness | LifeWave", page_icon="✨", layout="wide", initial_sidebar_state="collapsed")
-DATA_DIR = Path(__file__).parent / "data"
-DATA_DIR.mkdir(exist_ok=True)
-def save_csv(fp, row, hdr):
-    e = fp.exists()
-    with open(fp, "a", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        if not e: w.writerow(hdr)
-        w.writerow(row)
 WA = "593939890499"
 WA_URL = f"https://wa.me/{WA}?text=Hola%20Pauli!%20Vi%20tu%20pagina%20y%20me%20gustaria%20saber%20mas%20sobre%20los%20parches%20LifeWave"
-if "qz" not in st.session_state: st.session_state.qz = 0
-if "qa" not in st.session_state: st.session_state.qa = {}
-st.markdown("""<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
-*{box-sizing:border-box}
-.stApp{background:#FFFFFF!important;color:#373F41!important;font-family:'Inter',sans-serif!important}
-.block-container{padding-top:0!important;padding-bottom:0!important;max-width:100%!important}
+# Image URLs from whythelight.com
+IMG = {
+    "hero": "https://whythelight.com/wp-content/uploads/2025/09/Woman-patchOnBack-600x400-1.png",
+    "aging": "https://whythelight.com/wp-content/uploads/2025/11/womanAging-battery-1-1024x981.png",
+    "video_thumb": "https://whythelight.com/wp-content/uploads/2025/11/3-MinuteVideo-thumbnail-2-1.png",
+    "patch_place": "https://whythelight.com/wp-content/uploads/2025/09/SN-Patch-placement-scaled-1-690x1024.jpg",
+    "couple": "https://whythelight.com/wp-content/uploads/2025/09/490141872_10162757194347458_245241563246855534_n-1024x1024.jpg",
+    "mountain": "https://whythelight.com/wp-content/uploads/2025/11/Man-frontOfMtn-819x1024.png",
+    "patches": "https://whythelight.com/wp-content/uploads/2025/09/Phototherapy-LifeWave-patches-clean-1024x1024.jpg",
+    "tl_days": "https://whythelight.com/wp-content/uploads/2025/09/timeline-firstFewDays-2.png",
+    "tl_6w": "https://whythelight.com/wp-content/uploads/2025/09/timeline-6weeks-2.png",
+    "tl_3m": "https://whythelight.com/wp-content/uploads/2025/09/timeline-3months-2.png",
+    "tl_women": "https://whythelight.com/wp-content/uploads/2025/09/timeline-3women.png",
+    "tl_med": "https://whythelight.com/wp-content/uploads/2025/09/timeline-meditation.png",
+    "holding": "https://whythelight.com/wp-content/uploads/2025/11/HoldingPatch-clean-cropped-1024x1024.png",
+    "badge": "https://whythelight.com/wp-content/uploads/2025/09/MoneyBack-badge-1.png",
+}
+VIMEO_MAIN = "1107969285"
+VIMEO_DS = "1022736477"
+# Testimonial Vimeo video IDs
+TEST_VIDS = [
+    ("1049988653","Tendinitis en Codo"),
+    ("1049981959","Ojos, Digestión, Piel"),
+    ("1049987570","Rodilla"),
+    ("1049987675","Dolor de Espalda"),
+    ("1049989437","Energía y Sueño"),
+    ("1049983588","Piel y Recuperación"),
+    ("1049985898","Claridad Mental"),
+    ("1072261891","Artritis"),
+    ("1049982670","Inflamación"),
+]
+CSS = """<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+.stApp{background:#fff!important;font-family:'Inter',sans-serif!important}
+.block-container{padding:0!important;max-width:100%!important}
 header[data-testid="stHeader"]{display:none!important}
-#MainMenu,footer,.stDeployButton{visibility:hidden!important;display:none!important}
+#MainMenu,footer,.stDeployButton{display:none!important}
 div[data-testid="stSidebarCollapsedControl"]{display:none!important}
-.nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(25,79,144,.15);padding:12px 40px;display:flex;justify-content:space-between;align-items:center}
-.nav-b{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,#194F90,#5EB3E4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-l{display:flex;gap:24px;align-items:center}
-.nav-l a{color:rgba(25,79,144,.75)!important;text-decoration:none!important;font-size:.85rem;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .3s}
-.nav-l a:hover{color:#194F90!important}
-.nav-c{background:linear-gradient(135deg,#194F90,#2B6CB0)!important;-webkit-text-fill-color:white!important;-webkit-background-clip:unset!important;padding:8px 20px;border-radius:25px;font-weight:600!important;font-size:.8rem!important}
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(25,79,144,.03) 60deg,transparent 120deg,rgba(94,179,228,.02) 180deg,transparent 240deg,rgba(236,245,250,.5) 300deg,transparent 360deg);animation:hr 30s linear infinite}
-@keyframes hr{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-.hero-c{position:relative;z-index:2;max-width:900px}
-.badge{display:inline-block;background:rgba(25,79,144,.15);border:1px solid rgba(25,79,144,.3);border-radius:50px;padding:8px 24px;font-size:.8rem;color:#194F90;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
-.ht{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;line-height:1.1;margin-bottom:24px;color:#194F90}
-.gr{background:linear-gradient(135deg,#194F90 0%,#5EB3E4 50%,#2B6CB0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:sh 3s ease-in-out infinite}
-@keyframes sh{0%,100%{background-position:0% center}50%{background-position:200% center}}
-.hs{font-size:clamp(1rem,2vw,1.25rem);color:rgba(55,63,65,.7);line-height:1.7;max-width:650px;margin:0 auto 40px}
-.hb{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.bp{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#194F90,#2B6CB0);color:white!important;text-decoration:none!important;padding:14px 32px;border-radius:50px;font-weight:600;font-size:.95rem;transition:all .3s;box-shadow:0 4px 25px rgba(25,79,144,.3)}
-.bp:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(25,79,144,.45)}
-.bs{display:inline-flex;align-items:center;gap:8px;background:rgba(25,79,144,.06);border:1px solid rgba(25,79,144,.25);color:#194F90!important;text-decoration:none!important;padding:14px 32px;border-radius:50px;font-weight:600;font-size:.95rem;transition:all .3s}
-.bs:hover{background:rgba(25,79,144,.08);border-color:rgba(25,79,144,.5)}
-.bw{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#25D366,#128C7E);color:white!important;text-decoration:none!important;padding:16px 36px;border-radius:50px;font-weight:700;font-size:1rem;transition:all .3s;box-shadow:0 4px 25px rgba(37,211,102,.3)}
-.bw:hover{transform:translateY(-3px);box-shadow:0 8px 35px rgba(37,211,102,.45)}
-.sec{padding:100px 20px;position:relative}
-.tg{display:inline-block;background:rgba(25,79,144,.12);border:1px solid rgba(25,79,144,.25);border-radius:50px;padding:6px 20px;font-size:.75rem;color:#194F90;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
-.st{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;color:#194F90;line-height:1.2;margin-bottom:16px}
-.ss{font-size:1.05rem;color:rgba(55,63,65,.65);line-height:1.7;max-width:600px}
-.stats{display:flex;justify-content:center;gap:60px;flex-wrap:wrap;padding:60px 20px;background:rgba(25,79,144,.04);border-top:1px solid rgba(25,79,144,.1);border-bottom:1px solid rgba(25,79,144,.1)}
-.stat{text-align:center}
-.sn{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;background:linear-gradient(135deg,#194F90,#5EB3E4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sl{font-size:.8rem;color:rgba(55,63,65,.55);text-transform:uppercase;letter-spacing:2px;margin-top:4px}
-.gc{background:rgba(236,245,250,.8);border:1px solid rgba(25,79,144,.06);border-radius:20px;padding:32px;backdrop-filter:blur(10px);transition:all .4s;height:100%}
-.gc:hover{transform:translateY(-8px);border-color:rgba(25,79,144,.3);box-shadow:0 20px 60px rgba(25,79,144,.1)}
-.ci{font-size:2.5rem;margin-bottom:16px}
-.ct{font-size:1.15rem;font-weight:700;color:#194F90;margin-bottom:10px}
-.cx{font-size:.9rem;color:rgba(55,63,65,.65);line-height:1.6}
-.pc{background:rgba(236,245,250,.8);border:1px solid rgba(25,79,144,.06);border-radius:24px;overflow:hidden;transition:all .4s;margin-bottom:24px}
-.pc:hover{transform:translateY(-8px);border-color:rgba(25,79,144,.4);box-shadow:0 20px 60px rgba(25,79,144,.15)}
-.pi{width:100%;height:240px;object-fit:cover;display:block}
-.pf{padding:24px}
-.pk{font-size:.7rem;color:#194F90;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:8px}
-.pn{font-size:1.2rem;font-weight:700;color:#194F90;margin-bottom:8px}
-.pd{font-size:.85rem;color:rgba(55,63,65,.55);line-height:1.5;margin-bottom:16px}
-.tc{background:rgba(236,245,250,.8);border:1px solid rgba(25,79,144,.06);border-radius:20px;padding:32px;transition:all .3s}
-.tc:hover{border-color:rgba(25,79,144,.3)}
-.tq{font-size:3rem;color:rgba(25,79,144,.3);font-family:'Playfair Display',serif;line-height:1;margin-bottom:8px}
-.tt{font-size:.95rem;color:rgba(55,63,65,.8);line-height:1.7;font-style:italic;margin-bottom:16px}
-.ta{font-size:.85rem;font-weight:600;color:#194F90}
-.ts{color:#FFD700;font-size:.9rem;margin-bottom:12px}
-.qc{background:linear-gradient(135deg,rgba(25,79,144,.08),rgba(94,179,228,.05));border:1px solid rgba(25,79,144,.2);border-radius:24px;padding:48px;max-width:700px;margin:0 auto}
-.qp{height:4px;background:rgba(25,79,144,.08);border-radius:2px;margin-bottom:32px;overflow:hidden}
-.qpb{height:100%;background:linear-gradient(90deg,#194F90,#5EB3E4);border-radius:2px;transition:width .5s}
-.qq{font-size:1.3rem;font-weight:600;color:#194F90;margin-bottom:24px;text-align:center}
-.snum{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#194F90,#2B6CB0);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:white;margin:0 auto 16px}
-.sc{background:rgba(236,245,250,.8);border:1px solid rgba(25,79,144,.06);border-radius:20px;padding:32px 24px;text-align:center;transition:all .4s;height:100%}
-.sc:hover{transform:translateY(-5px);border-color:rgba(25,79,144,.3)}
-.foot{text-align:center;padding:40px 20px;border-top:1px solid rgba(25,79,144,.12);background:#27455C;color:rgba(255,255,255,.6);font-size:.75rem}
-.foot a{color:rgba(94,179,228,.9)!important;text-decoration:none!important}
-.waf{position:fixed;bottom:24px;right:24px;z-index:9999;width:60px;height:60px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 25px rgba(37,211,102,.4);transition:all .3s;animation:bn 2s infinite}
-.waf:hover{transform:scale(1.1)}
-.waf svg{width:32px;height:32px;fill:white}
-@keyframes bn{0%,20%,50%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}60%{transform:translateY(-4px)}}
-@keyframes fu{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fd{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
-.stTextInput>div>div>input,.stTextArea>div>div>textarea{background:rgba(25,79,144,.04)!important;border:1px solid rgba(25,79,144,.15)!important;border-radius:12px!important;color:#373F41!important;font-family:'Inter',sans-serif!important;padding:12px 16px!important}
-.stTextInput>div>div>input:focus,.stTextArea>div>div>textarea:focus{border-color:#194F90!important;box-shadow:0 0 0 2px rgba(25,79,144,.2)!important}
-.stRadio>div{background:rgba(236,245,250,1)!important;border-radius:12px!important;padding:12px!important}
-div.stButton>button{background:linear-gradient(135deg,#194F90,#2B6CB0)!important;color:white!important;border:none!important;border-radius:50px!important;padding:12px 32px!important;font-weight:600!important;font-family:'Inter',sans-serif!important;transition:all .3s!important;box-shadow:0 4px 20px rgba(25,79,144,.3)!important}
-div.stButton>button:hover{transform:translateY(-2px)!important;box-shadow:0 8px 30px rgba(25,79,144,.45)!important}
-@media(max-width:768px){.nav{padding:10px 16px}.nav-l{display:none}.stats{gap:30px}.hero{padding:100px 16px 60px}.sec{padding:60px 16px}.qc{padding:32px 20px}}
-</style>""", unsafe_allow_html=True)
-# NAV
-st.markdown(f"""<div class="nav"><div class="nav-b">✨ Pauli Wellness</div><div class="nav-l"><a href="#productos">Productos</a><a href="#ciencia">Ciencia</a><a href="#resultados">Resultados</a><a href="#experiencias">Testimonios</a><a href="#equipo">Unete</a><a href="{WA_URL}" target="_blank" class="nav-c">Contactame</a></div></div>""", unsafe_allow_html=True)
-# WHATSAPP FLOAT
-st.markdown(f"""<a href="{WA_URL}" target="_blank" class="waf" title="WhatsApp"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.8-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.3-5-3.7-10.5-6.6z"/></svg></a>""", unsafe_allow_html=True)
+section[data-testid="stSidebar"]{display:none!important}
+.wa-float{position:fixed;bottom:25px;right:25px;z-index:9999;width:60px;height:60px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,.4);transition:transform .3s;text-decoration:none}
+.wa-float:hover{transform:scale(1.1)}
+.wa-float svg{width:35px;height:35px;fill:#fff}
+.hero-section{position:relative;width:100%;min-height:90vh;background:linear-gradient(135deg,rgba(59,71,119,.85),rgba(27,42,74,.7)),url('HERO_BG') center/cover;display:flex;flex-direction:column;justify-content:center;padding:60px 8%}
+.hero-top{font-size:clamp(28px,4.5vw,58px);font-weight:800;color:#fff;text-transform:uppercase;line-height:1.15;max-width:900px;margin-bottom:40px}
+.hero-sub{font-size:clamp(18px,2.5vw,32px);color:#fff;text-align:right;max-width:700px;margin-left:auto;line-height:1.5}
+.hero-sub2{font-size:clamp(16px,2vw,26px);color:#fff;text-align:right;max-width:700px;margin-left:auto;font-style:italic;margin-top:15px;line-height:1.5}
+.sec{padding:60px 8%;width:100%}
+.sec-dark{background:#1B2A4A;color:#fff}
+.sec-light{background:#f5f5f5;color:#1a1a1a}
+.sec-white{background:#fff;color:#1a1a1a}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.ttl{font-size:clamp(28px,4vw,52px);font-weight:800;text-transform:uppercase;line-height:1.15;margin-bottom:20px}
+.ttl-center{text-align:center}
+.stxt{font-size:clamp(16px,1.5vw,22px);line-height:1.7}
+.stxt-it{font-style:italic}
+.img-full{width:100%;height:auto;border-radius:8px;display:block}
+.check-list{list-style:none;padding:0;margin:20px 0}
+.check-list li{font-size:clamp(16px,1.4vw,20px);padding:8px 0;display:flex;align-items:center;gap:12px}
+.check-list li::before{content:"›";font-size:24px;color:#1B2A4A;font-weight:bold;min-width:20px}
+.check-dark li::before{color:#7eb8ff}
+.benefit-list{list-style:none;padding:0;margin:20px 0}
+.benefit-list li{font-size:clamp(16px,1.4vw,20px);padding:10px 0;display:flex;align-items:center;gap:12px}
+.benefit-list li::before{content:"✔";color:#4CAF50;font-size:20px;min-width:24px}
+.btn{display:inline-block;padding:16px 36px;background:#1B2A4A;color:#fff;text-decoration:none;border-radius:50px;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:1px;transition:all .3s;border:none;cursor:pointer}
+.btn:hover{background:#2d4470;transform:translateY(-2px)}
+.btn-wa{background:#25D366}.btn-wa:hover{background:#1da851}
+.video-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.step-num{width:50px;height:50px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#1B2A4A;flex-shrink:0}
+.step-row{display:flex;align-items:center;gap:20px;margin:25px 0}
+.step-txt{font-size:clamp(16px,1.5vw,22px);color:#fff}
+.tl-card{background:rgba(255,255,255,.06);backdrop-filter:blur(10px);border-radius:16px;padding:30px;text-align:center;border:1px solid rgba(255,255,255,.1)}
+.tl-card h3{font-size:clamp(18px,1.8vw,24px);color:#7eb8ff;margin-bottom:5px}
+.tl-card h4{font-size:clamp(16px,1.5vw,20px);font-weight:700;margin-bottom:5px}
+.tl-card p{font-size:14px;opacity:.8}
+.tl-card img{width:100%;border-radius:12px;margin-bottom:15px}
+.tl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px;margin-top:30px}
+.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:30px}
+.test-card{border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.test-card .video-wrap{border-radius:0;box-shadow:none}
+.test-label{padding:10px;text-align:center;font-weight:600;font-size:14px;background:#f8f8f8}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}
+.about-txt{font-size:clamp(15px,1.3vw,18px);line-height:1.8;color:rgba(255,255,255,.9)}
+.about-txt b{color:#fff}
+.footer{background:#0a0f1a;color:rgba(255,255,255,.7);padding:40px 8%;text-align:center;font-size:13px;line-height:1.8}
+@media(max-width:768px){
+.grid2,.about-grid{grid-template-columns:1fr;gap:25px}
+.hero-section{min-height:auto;padding:40px 5%}
+.hero-sub,.hero-sub2{text-align:left;margin-left:0}
+.sec{padding:40px 5%}
+.tl-grid{grid-template-columns:1fr 1fr}
+.test-grid{grid-template-columns:1fr}
+}
+</style>"""
+# WhatsApp floating button
+WA_BTN = f'''<a href="{WA_URL}" target="_blank" class="wa-float" aria-label="WhatsApp">
+<svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>'''
+# Build page
+st.markdown(CSS, unsafe_allow_html=True)
+st.markdown(WA_BTN, unsafe_allow_html=True)
 # HERO
-st.markdown(f"""<div class="hero"><div class="hero-c"><div class="badge">Tecnologia Patentada · +200 Patentes Mundiales</div><h1 class="ht">Tu cuerpo sabe sanarse.<br/><span class="gr">Solo necesita recordar como.</span></h1><p class="hs">Descubre la fototerapia que activa tus celulas madre con luz — sin quimicos, sin inyecciones, sin efectos secundarios. Respaldado por ciencia real y mas de 80 estudios clinicos.</p><div class="hb"><a href="{WA_URL}" target="_blank" class="bp">Quiero Saber Mas</a><a href="#ciencia" class="bs">Ver la Ciencia</a></div></div></div>""", unsafe_allow_html=True)
-# STATS
-st.markdown("""<div class="stats"><div class="stat"><div class="sn">200+</div><div class="sl">Patentes Mundiales</div></div><div class="stat"><div class="sn">80+</div><div class="sl">Estudios Clinicos</div></div><div class="stat"><div class="sn">20+</div><div class="sl">Anos de Investigacion</div></div><div class="stat"><div class="sn">80+</div><div class="sl">Paises</div></div></div>""", unsafe_allow_html=True)
-# PROBLEM
-st.markdown("""<div class="sec" style="text-align:center"><div class="tg">El Problema</div><h2 class="st" style="max-width:700px;margin:0 auto 16px">A medida que envejecemos, nuestras celulas se ralentizan</h2><p class="ss" style="margin:0 auto 48px;max-width:600px">Menos celulas activas significa recuperacion mas lenta, menos energia y signos visibles de envejecimiento.</p></div>""", unsafe_allow_html=True)
-pc = st.columns(4)
-for i,(icon,t,d) in enumerate([("😴","Fatiga y Baja Energia","Te sientes agotado/a sin razon aparente."),("🤕","Dolor y Rigidez","Dolores articulares y musculares que limitan tu dia a dia."),("😶‍🌫️","Sueno Deficiente","No logras un descanso profundo y reparador."),("🪞","Envejecimiento Visible","Lineas de expresion, piel opaca, cabello debilitado.")]):
-    with pc[i]:
-        st.markdown(f'<div class="gc"><div class="ci">{icon}</div><div class="ct">{t}</div><div class="cx">{d}</div></div>', unsafe_allow_html=True)
-# SOLUTION
-st.markdown(f"""<div class="sec" style="text-align:center"><div style="background:linear-gradient(135deg,rgba(25,79,144,.1),rgba(94,179,228,.06));border:1px solid rgba(25,79,144,.2);border-radius:24px;padding:48px 32px;max-width:900px;margin:0 auto"><div class="tg" style="background:rgba(94,179,228,.15);border-color:rgba(94,179,228,.3);color:#2B6CB0">La Solucion</div><h2 class="st" style="margin-bottom:16px">No es una pastilla, crema ni inyeccion.<br/><span style="background:linear-gradient(135deg,#194F90,#5EB3E4);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Es una categoria completamente nueva.</span></h2><p class="ss" style="margin:0 auto;max-width:650px">Un parche no transdermico que usa luz para enviar una senal a tus celulas. Nada entra en tu cuerpo. Solo activa lo que ya esta dentro de ti.</p></div></div>""", unsafe_allow_html=True)
-# SCIENCE
-st.markdown('<div id="ciencia"></div>', unsafe_allow_html=True)
-st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">La Ciencia</div><h2 class="st">Por que la luz?</h2><p class="ss" style="margin:0 auto">La fototerapia tiene mas de 100 anos de historia cientifica.</p></div></div>""", unsafe_allow_html=True)
-s1,s2 = st.columns(2)
-with s1:
-    st.markdown("""<div class="gc" style="height:auto"><div class="ci">💡</div><div class="ct" style="font-size:1.3rem">Como Funciona?</div><div class="cx" style="margin-bottom:16px">La luz es informacion, y tu cuerpo siempre esta a la escucha. Nuestro parche patentado refleja longitudes de onda especificas de luz que estimulan la piel para elevar <strong style="color:#5EB3E4">GHK-Cu</strong>, el peptido de cobre clinicamente probado para reparar y regenerar celulas.</div><div class="cx">Es como la acupuntura unida a la biologia cuantica — sin agujas ni complejidades.</div></div>""", unsafe_allow_html=True)
-with s2:
-    st.markdown("""<div class="gc" style="height:auto"><div class="ci">🧬</div><div class="ct" style="font-size:1.3rem">GHK-Cu: El Superpeptido</div><div class="cx" style="margin-bottom:16px">A medida que envejecemos, los niveles naturales de GHK-Cu disminuyen drasticamente. Con ellos, nuestra capacidad de reparacion y regeneracion.</div><div class="cx" style="margin-bottom:16px">Esta clinicamente probado que nuestro parche eleva GHK-Cu a <strong style="color:#194F90">niveles juveniles</strong>.</div><div style="background:rgba(25,79,144,.1);border-radius:12px;padding:16px;margin-top:8px"><div style="font-size:.8rem;color:rgba(255,255,255,.6)">✅ +4,000 genes se resetean · ✅ Aumento del 73% en GHK-Cu · ✅ Reduccion visible de arrugas</div></div></div>""", unsafe_allow_html=True)
-# PRODUCTS
-st.markdown('<div id="productos"></div>', unsafe_allow_html=True)
-st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Productos</div><h2 class="st">Conoce la Linea LifeWave</h2><p class="ss" style="margin:0 auto">Cada parche esta disenado para activar una respuesta especifica en tu cuerpo.</p></div></div>""", unsafe_allow_html=True)
-prods = [("✨","ESTRELLA","X39","Activa celulas madre, eleva GHK-Cu y rejuvenece tu cuerpo desde adentro."),("⚡","RENDIMIENTO","X49","Mejora la resistencia fisica y la recuperacion muscular."),("🌙","BIENESTAR","Aeon","Reduce el estres oxidativo y promueve la calma interior."),("😴","DESCANSO","Silent Nights","Mejora la calidad del sueno sin quimicos ni melatonina."),("🔋","ENERGIA","Energy Enhancer","Aumenta la energia natural y la resistencia fisica."),("❄️","ALIVIO","IceWave","Alivia el dolor de forma natural y sin medicamentos.")]
-cols = st.columns(3)
-for i,(icon,cat,name,desc) in enumerate(prods):
-    with cols[i%3]:
-        st.markdown(f'<div class="pc"><div class="pf"><div class="pk">{cat}</div><div class="pn">{icon} {name}</div><div class="pd">{desc}</div><a href="{WA_URL}" target="_blank" class="bp" style="font-size:.8rem;padding:10px 24px;width:100%;justify-content:center">Consultar</a></div></div>', unsafe_allow_html=True)
-# HOW IT WORKS
-st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Como Empezar</div><h2 class="st">4 Pasos Simples</h2></div></div>""", unsafe_allow_html=True)
-steps = [("#194F90","1","Contactame","Escribeme por WhatsApp y cuéntame tu situacion."),("#5EB3E4","2","Evaluacion","Te ayudo a elegir el parche ideal para ti."),("#FFD700","3","Aplicacion","Coloca tu parche y deja que la luz haga el trabajo."),("#D98471","4","Resultados","Siente la diferencia en los primeros dias.")]
-sc = st.columns(4)
-for i,(color,num,title,desc) in enumerate(steps):
-    with sc[i]:
-        st.markdown(f'<div class="sc"><div class="snum" style="background:{color}">{num}</div><div class="ct">{title}</div><div class="cx">{desc}</div></div>', unsafe_allow_html=True)
-# QUIZ
-st.markdown('<div id="resultados"></div>', unsafe_allow_html=True)
-st.markdown("""<div class="sec" style="text-align:center"><div class="tg">Descubre tu Parche</div><h2 class="st">Cual es el parche ideal para ti?</h2><p class="ss" style="margin:0 auto 40px">Responde 3 preguntas y te recomendamos el producto perfecto.</p></div>""", unsafe_allow_html=True)
-qs = [("Cual es tu principal preocupacion?",["Falta de energia","Dolor cronico","Mal dormir","Envejecimiento"]),("Que edad tienes?",["25-35","36-45","46-55","56+"]),("Has probado parches antes?",["Si","No","No se que son"])]
-if st.session_state.qz < len(qs):
-    q,opts = qs[st.session_state.qz]
-    st.markdown(f'<div class="qc"><div class="qp"><div class="qpb" style="width:{(st.session_state.qz+1)/len(qs)*100}%"></div></div><div class="qq">{q}</div></div>', unsafe_allow_html=True)
-    ans = st.radio("", opts, key=f"q{st.session_state.qz}", label_visibility="collapsed")
-    if st.button("Siguiente →" if st.session_state.qz < len(qs)-1 else "Ver Resultado"):
-        st.session_state.qa[st.session_state.qz] = ans
-        st.session_state.qz += 1
-        st.rerun()
-else:
-    recs = {"Falta de energia":"Energy Enhancer + X39","Dolor cronico":"IceWave + X39","Mal dormir":"Silent Nights + Aeon","Envejecimiento":"X39 + Aeon"}
-    rec = recs.get(st.session_state.qa.get(0,""), "X39")
-    st.markdown(f"""<div class="qc" style="text-align:center"><div style="font-size:3rem;margin-bottom:16px">🎯</div><div class="st" style="font-size:1.5rem">Tu combinacion ideal:</div><div style="font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#194F90,#5EB3E4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:16px 0">{rec}</div><a href="{WA_URL}" target="_blank" class="bw" style="margin-top:16px">📲 Consultar por WhatsApp</a></div>""", unsafe_allow_html=True)
-    if st.button("Repetir Quiz"):
-        st.session_state.qz = 0
-        st.session_state.qa = {}
-        st.rerun()
-# BENEFITS
-st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Beneficios</div><h2 class="st">Por que elegir LifeWave?</h2></div></div>""", unsafe_allow_html=True)
-bens = [("🧬","Celulas Madre","Activa la regeneracion celular natural."),("💊","Sin Quimicos","Nada entra en tu cuerpo. 100% no invasivo."),("📊","Clinicamente Probado","Mas de 80 estudios respaldan la tecnologia."),("⚡","Resultados Rapidos","Muchos usuarios sienten cambios en horas."),("🌍","Global","Disponible en mas de 80 paises."),("🏆","Patentado","Mas de 200 patentes mundiales protegen esta tecnologia.")]
-bc = st.columns(3)
-for i,(icon,t,d) in enumerate(bens):
-    with bc[i%3]:
-        st.markdown(f'<div class="gc" style="text-align:center;margin-bottom:24px"><div class="ci">{icon}</div><div class="ct">{t}</div><div class="cx">{d}</div></div>', unsafe_allow_html=True)
-# TESTIMONIALS
-st.markdown('<div id="experiencias"></div>', unsafe_allow_html=True)
-st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">Experiencias</div><h2 class="st">Lo que dicen nuestros usuarios</h2></div></div>""", unsafe_allow_html=True)
-tests = [("⭐⭐⭐⭐⭐","Despues de 2 semanas con X39, mi energia cambio completamente. Ya no necesito 3 cafes al dia.","Maria G., 45 anos"),("⭐⭐⭐⭐⭐","Llevaba anos con dolor de rodillas. Con IceWave senti alivio desde el primer dia.","Carlos R., 58 anos"),("⭐⭐⭐⭐⭐","Mis amigas me preguntan que me hice en la cara. Solo uso X39 y Aeon.","Laura M., 52 anos")]
-tc = st.columns(3)
-for i,(stars,quote,author) in enumerate(tests):
-    with tc[i]:
-        st.markdown(f'<div class="tc"><div class="ts">{stars}</div><div class="tq">"</div><div class="tt">{quote}</div><div class="ta">— {author}</div></div>', unsafe_allow_html=True)
-# ABOUT
-st.markdown(f"""<div class="sec" style="text-align:center"><div style="background:linear-gradient(135deg,rgba(25,79,144,.08),rgba(94,179,228,.05));border:1px solid rgba(25,79,144,.2);border-radius:24px;padding:48px;max-width:800px;margin:0 auto"><div style="font-size:4rem;margin-bottom:16px">👩‍⚕️</div><div class="tg">Tu Guia</div><h2 class="st">Soy Pauli</h2><p class="ss" style="margin:0 auto 24px;max-width:550px">Brand Partner oficial de LifeWave. Mi mision es ayudarte a descubrir el poder de la fototerapia y acompanarte en tu camino hacia el bienestar.</p><a href="{WA_URL}" target="_blank" class="bw">📲 Habla Conmigo</a></div></div>""", unsafe_allow_html=True)
-# JOIN TEAM
-st.markdown('<div id="equipo"></div>', unsafe_allow_html=True)
-st.markdown("""<div class="sec" style="text-align:center"><div class="tg">Oportunidad</div><h2 class="st">Unete al Equipo</h2><p class="ss" style="margin:0 auto 32px">Emprende tu propio negocio con LifeWave. Te acompano paso a paso.</p></div>""", unsafe_allow_html=True)
-with st.form("join"):
-    c1,c2 = st.columns(2)
-    jn = c1.text_input("Nombre completo")
-    je = c2.text_input("Email")
-    jt = c1.text_input("Telefono / WhatsApp")
-    jc = c2.text_input("Ciudad / Pais")
-    jm = st.text_area("Por que te interesa LifeWave?", height=100)
-    if st.form_submit_button("Quiero Unirme al Equipo"):
-        if jn and je:
-            save_csv(DATA_DIR/"team.csv", [datetime.now().isoformat(),jn,je,jt,jc,jm], ["fecha","nombre","email","telefono","ciudad","motivacion"])
-            st.success("Gracias! Pauli te contactara pronto.")
-        else:
-            st.warning("Por favor completa nombre y email.")
-# CONTACT
-st.markdown("""<div class="sec" style="text-align:center"><div class="tg">Contacto</div><h2 class="st">Tienes preguntas?</h2><p class="ss" style="margin:0 auto 32px">Escribeme y te respondo personalmente.</p></div>""", unsafe_allow_html=True)
-with st.form("contact"):
-    cc1,cc2 = st.columns(2)
-    cn = cc1.text_input("Tu nombre")
-    ce = cc2.text_input("Tu email")
-    cm = st.text_area("Tu mensaje", height=100)
-    if st.form_submit_button("Enviar Mensaje"):
-        if cn and ce and cm:
-            save_csv(DATA_DIR/"contacts.csv", [datetime.now().isoformat(),cn,ce,cm], ["fecha","nombre","email","mensaje"])
-            st.success("Mensaje enviado! Te respondere pronto.")
-        else:
-            st.warning("Por favor completa todos los campos.")
-# CTA
-st.markdown(f"""<div class="sec" style="text-align:center;padding:80px 20px"><h2 class="st" style="font-size:clamp(2rem,5vw,3.5rem)">Listo para <span class="gr">transformar tu bienestar</span>?</h2><p class="ss" style="margin:0 auto 32px;max-width:550px">Miles de personas ya estan experimentando los beneficios de LifeWave. Tu siguiente paso esta a un mensaje de distancia.</p><a href="{WA_URL}" target="_blank" class="bw" style="font-size:1.1rem;padding:18px 40px">📲 Contactar a Pauli por WhatsApp</a></div>""", unsafe_allow_html=True)
-# FAQ
-st.markdown("""<div class="sec"><div style="text-align:center;margin-bottom:48px"><div class="tg">FAQ</div><h2 class="st">Preguntas Frecuentes</h2></div></div>""", unsafe_allow_html=True)
-faqs = [("Es seguro?","Si. Los parches LifeWave son 100% no invasivos. Nada entra en tu cuerpo. Estan respaldados por mas de 80 estudios clinicos y tienen certificaciones internacionales."),("Como funciona la fototerapia?","Tu cuerpo emite calor (luz infrarroja). Nuestros parches reflejan longitudes de onda especificas que estimulan la piel y activan respuestas biologicas como la produccion de peptidos regenerativos."),("Cuanto tiempo tarda en hacer efecto?","Muchos usuarios reportan cambios en las primeras horas. Los resultados optimos se ven entre 1-3 meses de uso continuo."),("Puedo usar varios parches a la vez?","Si. De hecho, las combinaciones de parches potencian los resultados. Te ayudo a encontrar la combinacion perfecta para ti."),("Tiene efectos secundarios?","No se han reportado efectos secundarios significativos. Al ser no transdermico, no introduce sustancias en tu cuerpo."),("Como puedo comprar?","Contactame directamente por WhatsApp. Te guio en todo el proceso y te ayudo a elegir los productos ideales para ti.")]
-for q,a in faqs:
-    with st.expander(q):
-        st.write(a)
+st.markdown(f'''<div class="hero-section" style="background:linear-gradient(135deg,rgba(59,71,119,.85),rgba(27,42,74,.7)),url('{IMG["hero"]}') center/cover">
+<div class="hero-top">DESPUÉS DE 10 AÑOS DE INVESTIGACIÓN EN CÉLULAS MADRE Y MÁS DE 200 PATENTES GLOBALES . . .</div>
+<div class="hero-sub">descubrimos una forma de usar luz, no químicos, para estimular la producción celular de tu propio cuerpo.</div>
+<div class="hero-sub2">Es como activar el interruptor de reparación de tu cuerpo — de forma segura, sin esfuerzo y desde adentro.</div>
+</div>''', unsafe_allow_html=True)
+# WHY ALL THE RESEARCH
+st.markdown(f'''<div class="sec sec-light">
+<div class="grid2">
+<div><img src="{IMG["aging"]}" class="img-full" alt="Envejecimiento celular"></div>
+<div>
+<h2 class="ttl">¿POR QUÉ TANTA INVESTIGACIÓN?</h2>
+<p class="stxt">A medida que envejeces, las células de reparación natural de tu cuerpo se ralentizan.</p>
+<p class="stxt" style="margin-top:15px">Menos células activas significan que tu cuerpo sana más lentamente y muestra signos de envejecimiento más rápido.</p>
+<p class="stxt stxt-it" style="margin-top:15px">Y... comienzas a sentirlo —</p>
+<ul class="check-list">
+<li>Dolores y rigidez</li>
+<li>Mal sueño y recuperación lenta</li>
+<li>Baja energía y concentración</li>
+<li>Líneas finas, cabello debilitado e inflamación</li>
+</ul>
+<p class="stxt" style="margin-top:15px">Si pudieras reparar y regenerar de forma segura y asequible desde adentro hacia afuera — <b><i>¿no querrías hacerlo?</i></b></p>
+</div>
+</div>
+</div>''', unsafe_allow_html=True)
+# THIS ISN'T A BETTER PILL
+st.markdown(f'''<div class="sec sec-white">
+<div class="grid2">
+<div>
+<h2 class="ttl">ESTO NO ES UNA MEJOR PASTILLA, CREMA, INYECTABLE O TENDENCIA.</h2>
+<p class="stxt" style="margin-top:15px">Esta es una categoría completamente nueva.</p>
+<p class="stxt" style="margin-top:15px">Un parche portátil, no transdérmico, con resultados reales respaldados por ciencia, estudios clínicos y patentes globales.</p>
+<p class="stxt" style="margin-top:20px"><b>Sin medicamentos. Sin inyecciones. Sin adivinanzas. Sin efectos secundarios.</b></p>
+<p class="stxt stxt-it" style="margin-top:10px">Solo luz — enviando una señal que tu cuerpo olvidó . . . hasta ahora.</p>
+</div>
+<div class="video-wrap">
+<iframe src="https://player.vimeo.com/video/{VIMEO_MAIN}?autoplay=0&title=0&byline=0&portrait=0" allow="autoplay;fullscreen" allowfullscreen></iframe>
+</div>
+</div>
+</div>''', unsafe_allow_html=True)
+# WATCH VIDEO CTA
+st.markdown(f'''<div class="sec sec-dark" style="text-align:center;padding:50px 8%">
+<div style="max-width:800px;margin:0 auto">
+<div class="video-wrap" style="margin-bottom:20px">
+<iframe src="https://player.vimeo.com/video/{VIMEO_MAIN}?autoplay=0&title=0&byline=0&portrait=0" allow="autoplay;fullscreen" allowfullscreen></iframe>
+</div>
+<p style="font-size:clamp(20px,2.5vw,32px);font-weight:700;color:#fff;margin-top:20px">← Mira Cómo Funciona el Parche<br>Video de 3 minutos</p>
+</div>
+</div>''', unsafe_allow_html=True)
+# WHY LIGHT
+st.markdown(f'''<div class="sec sec-white">
+<div class="grid2">
+<div>
+<h2 class="ttl">¿POR QUÉ LA LUZ?</h2>
+<p class="stxt" style="font-size:clamp(18px,2vw,26px)">La luz es información — y tu cuerpo siempre está escuchando.</p>
+<p class="stxt" style="margin-top:15px">Es acupuntura combinada con biología cuántica — sin agujas ni complejidad.</p>
+<p class="stxt" style="margin-top:15px">Nuestro parche patentado refleja longitudes de onda específicas de luz que estimulan tu piel para elevar el <b>GHK-Cu</b>, el péptido de cobre clínicamente comprobado para reparar y regenerar células dañadas.</p>
+<p class="stxt" style="margin-top:15px">Nada entra en tu cuerpo. Solo una señal limpia que despierta lo que ya está dentro de ti.</p>
+<p class="stxt stxt-it" style="margin-top:15px"><b>Tu cuerpo sabe qué hacer. El parche simplemente se lo recuerda.</b></p>
+</div>
+<div><img src="{IMG["patches"]}" class="img-full" alt="Parches LifeWave"></div>
+</div>
+</div>''', unsafe_allow_html=True)
+# NOT ABOUT QUICK FIXES
+st.markdown(f'''<div class="sec sec-dark">
+<div class="grid2">
+<div><img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600" class="img-full" alt="Persona activa" style="border-radius:12px"></div>
+<div>
+<h2 class="ttl">ESTO NO SE TRATA DE SOLUCIONES RÁPIDAS NI DE ENMASCARAR SÍNTOMAS</h2>
+<p class="stxt" style="margin-top:15px">Imagina despertar con energía que no proviene de la cafeína. Piel que refleja tu vitalidad. Un cuerpo que responde como si recordara para qué fue creado.</p>
+<ul class="benefit-list" style="margin-top:20px">
+<li>Energía renovada que te acompaña todo el día</li>
+<li>Sueño profundo y reparador con mayor claridad mental</li>
+<li>Piel más suave y joven con soporte natural de colágeno</li>
+<li>Recuperación más rápida — del ejercicio o de la vida</li>
+<li>Regeneración que comienza desde adentro hacia afuera</li>
+<li>y lo más importante… <b><i>¡sentirte tú mismo/a de nuevo!</i></b></li>
+</ul>
+</div>
+</div>
+</div>''', unsafe_allow_html=True)
+# GHK-Cu
+st.markdown(f'''<div class="sec sec-light">
+<div class="grid2">
+<div>
+<h2 class="ttl" style="color:#1B2A4A">GHK-Cu Péptido de Cobre</h2>
+<p class="stxt" style="font-size:clamp(18px,2vw,24px);color:#1B2A4A;font-weight:600;margin-bottom:15px">¡El súper péptido de tu propio cuerpo!</p>
+<p class="stxt">El interruptor maestro que reactiva la capacidad de curación de tu cuerpo.</p>
+<p class="stxt" style="margin-top:15px">A medida que envejecemos, los niveles naturales de <b>GHK-Cu</b> en nuestro cuerpo disminuyen — y con ellos, nuestra capacidad de reparar, renovar y regenerar.</p>
+<p class="stxt" style="margin-top:15px">Nuestro parche está clínicamente comprobado para elevar el GHK-Cu, restaurando este péptido de cobre vital a niveles juveniles.</p>
+<p class="stxt" style="margin-top:15px">Incluso si no sientes algo de inmediato, tus células ya están trabajando arduamente — reparando lo más importante primero, luego avanzando hacia los cambios que puedes ver y sentir.</p>
+<a href="https://whythelight.com/ghk-cu/" target="_blank" class="btn" style="margin-top:20px">APRENDE MÁS SOBRE GHK ➜</a>
+</div>
+<div><img src="{IMG["mountain"]}" class="img-full" alt="Hombre en la montaña"></div>
+</div>
+</div>''', unsafe_allow_html=True)
+# SKEPTICAL
+st.markdown('''<div class="sec sec-white" style="text-align:center">
+<h2 class="ttl ttl-center">SI ERES ESCÉPTICO/A, BIEN . . .</h2>
+<p class="stxt" style="text-align:center">Muchos de nuestros clientes también lo fueron.</p>
+</div>''', unsafe_allow_html=True)
+# Testimonials
+test_html = '<div class="sec sec-light"><div class="test-grid">'
+for vid_id, label in TEST_VIDS[:6]:
+    test_html += f'''<div class="test-card">
+<div class="video-wrap"><iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>
+<div class="test-label">{label}</div></div>'''
+test_html += '</div></div>'
+st.markdown(test_html, unsafe_allow_html=True)
+# HOW TO WEAR
+st.markdown(f'''<div class="sec sec-dark">
+<div class="grid2">
+<div>
+<h2 class="ttl">CÓMO USAR EL PARCHE</h2>
+<p class="stxt" style="font-size:clamp(18px,2vw,26px);font-weight:600;margin-bottom:20px">¡Simplemente despega y pega!</p>
+<div class="step-row"><div class="step-num">1</div><div class="step-txt">Aplica sobre piel limpia y seca.</div></div>
+<div class="step-row"><div class="step-num">2</div><div class="step-txt">Úsalo hasta 12 horas puesto, luego 12 horas sin él.</div></div>
+<div class="step-row"><div class="step-num">3</div><div class="step-txt">Desecha el parche o colócalo en tu mascota.</div></div>
+<div class="step-row"><div class="step-num">4</div><div class="step-txt">Pon un parche nuevo y repite diariamente.</div></div>
+<p class="stxt" style="margin-top:20px">Para mejores resultados, asegúrate de tomar <b>mucha agua</b>.</p>
+</div>
+<div><img src="{IMG["patch_place"]}" class="img-full" alt="Colocación del parche"></div>
+</div>
+</div>''', unsafe_allow_html=True)
+# TIMELINE
+st.markdown(f'''<div class="sec sec-white" style="text-align:center">
+<h2 class="ttl ttl-center" style="color:#1B2A4A">QUÉ ESPERAR</h2>
+<div class="tl-grid">
+<div class="tl-card" style="background:#f0f4ff;border-color:#d0d8f0">
+<img src="{IMG["tl_days"]}" alt="Primeros días">
+<h3 style="color:#1B2A4A">En los Primeros Días</h3>
+<h4>4,000 Genes Comienzan a Reiniciarse</h4>
+</div>
+<div class="tl-card" style="background:#f0f4ff;border-color:#d0d8f0">
+<img src="{IMG["tl_6w"]}" alt="6 semanas">
+<h3 style="color:#1B2A4A">Dentro de 4 Semanas</h3>
+<h4>La Reparación Celular se Activa</h4>
+<p style="color:#555">Trabajando silenciosamente en lo que tu cuerpo más necesita</p>
+</div>
+<div class="tl-card" style="background:#f0f4ff;border-color:#d0d8f0">
+<img src="{IMG["tl_women"]}" alt="6 semanas balance">
+<h3 style="color:#1B2A4A">Dentro de 6 Semanas</h3>
+<h4>Tu Cerebro y Energía Entran en Balance</h4>
+<p style="color:#555">*Respaldado por estudios de PSY-TEK Labs y The Center for Biofield Sciences</p>
+</div>
+<div class="tl-card" style="background:#f0f4ff;border-color:#d0d8f0">
+<img src="{IMG["tl_3m"]}" alt="3-6 meses">
+<h3 style="color:#1B2A4A">En 3-6 Meses</h3>
+<h4>El Colágeno Aumenta</h4>
+<p style="color:#555">La piel se suaviza, la recuperación se acelera</p>
+</div>
+<div class="tl-card" style="background:#f0f4ff;border-color:#d0d8f0">
+<img src="{IMG["tl_med"]}" alt="12 meses">
+<h3 style="color:#1B2A4A">A los 12 Meses</h3>
+<h4>No solo te sientes mejor—</h4>
+<p style="color:#555">te ves y vives como tal</p>
+</div>
+</div>
+</div>''', unsafe_allow_html=True)
+# ABOUT THE COMPANY
+st.markdown(f'''<div class="sec sec-dark">
+<div class="about-grid">
+<div class="video-wrap">
+<iframe src="https://player.vimeo.com/video/{VIMEO_DS}?title=0&byline=0&portrait=0" allow="autoplay;fullscreen" allowfullscreen></iframe>
+</div>
+<div>
+<h2 class="ttl">ACERCA DE LA EMPRESA</h2>
+<h3 style="font-size:clamp(18px,2vw,26px);margin-bottom:20px;color:#fff">David Schmidt<br>Fundador, Inventor + CEO</h3>
+<p class="about-txt">Desde 2004, hemos ayudado a personas en todo el mundo a sentirse mejor, verse más jóvenes y llevar vidas más plenas. Lo hacemos a través de productos de bienestar que aprovechan la energía natural y la resiliencia del cuerpo, y a través de oportunidades de negocio que inspiran la realización personal y profesional.</p>
+<p class="about-txt" style="margin-top:15px">A nivel global, David es titular de más de <b>200 patentes otorgadas</b> con muchas más en proceso. Más de setenta de esas patentes están en el campo de la ciencia y tecnología regenerativa.</p>
+<p class="about-txt" style="margin-top:15px">A lo largo de los años, LifeWave ha recibido múltiples premios, incluyendo el reciente <b>Premio Biotech Breakthrough 2025 por "Innovación en Células Madre del Año"</b></p>
+</div>
+</div>
+</div>''', unsafe_allow_html=True)
+# PATENTS & RISK FREE
+st.markdown(f'''<div class="sec sec-white" style="text-align:center">
+<div class="grid2">
+<div><img src="{IMG["holding"]}" class="img-full" alt="Sosteniendo parche"></div>
+<div style="text-align:left">
+<img src="{IMG["badge"]}" style="width:120px;margin-bottom:15px" alt="Garantía">
+<h2 class="ttl">PATENTES Y ESTUDIOS</h2>
+<p class="stxt" style="font-size:clamp(20px,2.5vw,32px);font-weight:700">¡Experimenta los beneficios con confianza!</p>
+<p class="stxt" style="font-size:clamp(18px,2vw,26px);margin-top:10px">Prueba nuestro parche <b>Sin Riesgo por 30/90 días*</b></p>
+</div>
+</div>
+</div>''', unsafe_allow_html=True)
+# CTA SECTION
+st.markdown(f'''<div class="sec sec-light">
+<div class="grid2">
+<div>
+<h2 class="ttl">¿CURIOSO/A SOBRE CÓMO ESTO ENCAJA EN TU PROPIO CAMINO DE SALUD?</h2>
+<p class="stxt" style="font-size:clamp(18px,2vw,24px);margin-top:15px">No estás solo/a.</p>
+<p class="stxt" style="font-size:clamp(18px,2vw,24px)">Comunícate con la persona que compartió este sitio web contigo.</p>
+<div style="margin-top:25px;display:flex;gap:15px;flex-wrap:wrap">
+<a href="{WA_URL}" target="_blank" class="btn btn-wa">💬 ESCRÍBEME POR WHATSAPP</a>
+</div>
+</div>
+<div><img src="{IMG["couple"]}" class="img-full" alt="Pareja feliz"></div>
+</div>
+</div>''', unsafe_allow_html=True)
 # FOOTER
-st.markdown(f"""<div class="foot"><p>© 2024 Pauli Wellness · Brand Partner Independiente de <a href="https://www.lifewave.com" target="_blank">LifeWave</a></p><p style="margin-top:8px">📱 <a href="{WA_URL}" target="_blank">WhatsApp</a> · Ecuador 🇪🇨</p><p style="margin-top:16px;font-size:.65rem;color:rgba(255,255,255,.35)">Los parches LifeWave no son dispositivos medicos y no estan destinados a diagnosticar, tratar, curar o prevenir ninguna enfermedad.</p></div>""", unsafe_allow_html=True)
-# SIDEBAR LEAD CAPTURE
-with st.sidebar:
-    st.markdown("### 🎁 Guia Gratis")
-    st.markdown("Descarga nuestra guia sobre fototerapia y celulas madre.")
-    with st.form("lead"):
-        ln = st.text_input("Tu nombre")
-        le = st.text_input("Tu email")
-        if st.form_submit_button("Descargar Guia"):
-            if ln and le:
-                save_csv(DATA_DIR/"leads.csv", [datetime.now().isoformat(),ln,le], ["fecha","nombre","email"])
-                st.success("Revisa tu WhatsApp! Te enviare la guia.")
-            else:
-                st.warning("Completa nombre y email.")
+st.markdown(f'''<div class="footer">
+<p>Aviso legal: Nuestros parches se basan en la teoría de la fototerapia.<br>
+Los parches no están comprobados según los estándares de la medicina convencional y no deben usarse en lugar de la atención médica.</p>
+<p style="margin-top:12px">*Garantía de devolución de dinero de 90 días para Clientes Minoristas y Preferidos. Garantía de devolución de 30 días para Socios de Marca Mayoristas.</p>
+<p style="margin-top:12px;font-size:11px">Nuestros productos no están destinados a diagnosticar, tratar, curar o prevenir ninguna enfermedad o condición médica. El contenido presentado es de naturaleza general y se proporciona solo con fines informativos. No asumimos responsabilidad por daños o lesiones a personas o propiedades que surjan de cualquier uso de cualquier producto, información, ideas o instrucciones contenidas en los materiales proporcionados.</p>
+<p style="margin-top:20px;font-size:14px;color:rgba(255,255,255,.5)">©2026 Pauli Wellness | Todos los derechos reservados.</p>
+</div>''', unsafe_allow_html=True)
