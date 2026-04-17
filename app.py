@@ -118,6 +118,7 @@ CSS = """<style>
   --nav-bg:rgba(0,0,0,.92);--nav-border:#1a1a1a;
   --footer-text:#8a8a8a;--footer-border:#1a1a1a;
   --tl-title:#1B2A4A;
+  --hero-veil:rgba(0,0,0,.62);
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -179,10 +180,10 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
 .grid2-rev{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
 
-.hero-wrap{padding:100px 8% 90px;text-align:center}
-.hero-top{font-size:clamp(26px,4vw,52px);font-weight:800;line-height:1.2;max-width:1100px;margin:0 auto 35px;letter-spacing:.5px;color:var(--text)}
+.hero-wrap{position:relative;padding:100px 8% 90px;text-align:center;background-image:linear-gradient(var(--hero-veil),var(--hero-veil)),url("https://whythelight.com/wp-content/uploads/2025/09/SN-Patch-placement-scaled-1-690x1024.jpg");background-size:cover;background-position:center 30%;background-repeat:no-repeat;overflow:hidden}
+.hero-top{position:relative;font-size:clamp(26px,4vw,52px);font-weight:800;line-height:1.2;max-width:1100px;margin:0 auto 35px;letter-spacing:.5px;color:var(--text)}
 .hero-highlight{color:var(--accent)}
-.hero-sub{font-size:clamp(18px,2.2vw,28px);max-width:950px;margin:0 auto;line-height:1.55;color:var(--text);opacity:.85}
+.hero-sub{position:relative;font-size:clamp(18px,2.2vw,28px);max-width:950px;margin:0 auto;line-height:1.55;color:var(--text);opacity:.92}
 
 .ttl{font-size:clamp(28px,3.6vw,48px);font-weight:800;text-transform:uppercase;line-height:1.15;margin-bottom:20px;letter-spacing:.4px;color:var(--text)}
 .ttl-center{text-align:center}
@@ -302,6 +303,7 @@ LIGHT_CSS = """<style>
   --nav-bg:rgba(255,255,255,.96);--nav-border:#e2e2e2;
   --footer-text:#555;--footer-border:#e2e2e2;
   --tl-title:#1B2A4A;
+  --hero-veil:rgba(250,250,250,.82);
 }
 .test-arrow{background:rgba(255,255,255,.96)!important;color:#111!important;box-shadow:0 4px 14px rgba(0,0,0,.12)!important}
 .study-item,.fact-card{background:#f5f5f5!important}
