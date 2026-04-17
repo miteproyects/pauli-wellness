@@ -768,108 +768,93 @@ def render_resultados_es():
 
 
 # ─── Page: Estudios (Spanish) ────────────────────────────────────────────────
+STUDIES = [
+    ("PSY-TEK Subtle Energy Sciences Laboratory · California, EE.UU.",
+     "Análisis biofotónicos y de respuesta energética",
+     "Mediciones de cambios en la respuesta biofotónica de sujetos antes y después del uso de los parches, utilizando técnicas de imagen y análisis del campo biofísico. Observaron variaciones consistentes en marcadores energéticos."),
+    ("The Center for Biofield Sciences · India",
+     "Mediciones de respuesta biofísica",
+     "Estudios sobre variables fisiológicas y subjetivas en usuarios de los parches, con protocolos aplicados por investigadores independientes, centrados en bienestar percibido y marcadores de equilibrio energético."),
+    ("Estudios de seguridad dérmica",
+     "Hipoalergenicidad y compatibilidad con la piel",
+     "Pruebas realizadas por laboratorios independientes de certificación dermatológica para evaluar la seguridad del adhesivo y del material del parche en pieles sensibles. Los parches utilizan adhesivo acrílico hipoalergénico de grado médico de 3M."),
+    ("Medición del GHK-Cu",
+     "Evaluación pre/post del péptido de cobre",
+     "Estudios piloto que analizaron los niveles de GHK-Cu en usuarios antes y después del uso continuado del parche X39, con el objetivo de documentar la elevación del péptido asociada a la exposición a longitudes de onda específicas."),
+    ("Regulación génica",
+     "Cambios en la expresión de genes asociados a reparación",
+     "Observaciones sobre la expresión de miles de genes relacionados con reparación tisular y respuesta celular en sujetos tras el uso del parche durante períodos cortos, documentados en informes técnicos de la empresa."),
+    ("Recuperación en deporte",
+     "Observaciones en atletas y personas activas",
+     "Reportes sobre recuperación después del entrenamiento y tolerancia al esfuerzo en deportistas que usan los parches, incluyendo tiempos de cicatrización de micro-lesiones y retorno a la actividad."),
+]
+
+
 def render_estudios_es():
-    st.markdown(f'''
-<section class="sec page-hero">
-  <div class="kicker">Ciencia y patentes</div>
-  <h1>Estudios y patentes</h1>
-  <p class="lede">A lo largo de más de dos décadas, LifeWave ha invertido en investigación independiente y en protección intelectual de su tecnología. Estos son los puntos más relevantes.</p>
-</section>
+    # Hero
+    st.markdown(
+        '<section class="sec page-hero">'
+        '<div class="kicker">Ciencia y patentes</div>'
+        '<h1>Estudios y patentes</h1>'
+        '<p class="lede">A lo largo de más de dos décadas, LifeWave ha invertido en investigación independiente y en protección intelectual de su tecnología. Estos son los puntos más relevantes.</p>'
+        '</section>',
+        unsafe_allow_html=True,
+    )
 
-<section class="sec">
-  <div style="max-width:1100px;margin:0 auto">
-    <h2 class="ttl ttl-center">EN NÚMEROS</h2>
-    <div class="fact-grid">
-      <div class="fact-card">
-        <span class="big">+200</span>
-        <h3>Patentes otorgadas</h3>
-        <p>A nivel global, con varias adicionales en trámite.</p>
-      </div>
-      <div class="fact-card">
-        <span class="big">+70</span>
-        <h3>Patentes en regeneración</h3>
-        <p>Directamente ligadas a ciencia y tecnología de regeneración celular.</p>
-      </div>
-      <div class="fact-card">
-        <span class="big">20+</span>
-        <h3>Años de desarrollo</h3>
-        <p>Investigación continua desde la fundación de la empresa en 2004.</p>
-      </div>
-      <div class="fact-card">
-        <span class="big">2025</span>
-        <h3>Biotech Breakthrough Award</h3>
-        <p>Categoría «Innovación en células madre del año».</p>
-      </div>
-    </div>
-  </div>
-</section>
+    # Numbers / facts
+    st.markdown(
+        '<section class="sec"><div style="max-width:1100px;margin:0 auto">'
+        '<h2 class="ttl ttl-center">EN NÚMEROS</h2>'
+        '<div class="fact-grid">'
+        '<div class="fact-card"><span class="big">+200</span><h3>Patentes otorgadas</h3><p>A nivel global, con varias adicionales en trámite.</p></div>'
+        '<div class="fact-card"><span class="big">+70</span><h3>Patentes en regeneración</h3><p>Directamente ligadas a ciencia y tecnología de regeneración celular.</p></div>'
+        '<div class="fact-card"><span class="big">20+</span><h3>Años de desarrollo</h3><p>Investigación continua desde la fundación de la empresa en 2004.</p></div>'
+        '<div class="fact-card"><span class="big">2025</span><h3>Biotech Breakthrough Award</h3><p>Categoría «Innovación en células madre del año».</p></div>'
+        '</div></div></section>',
+        unsafe_allow_html=True,
+    )
 
-<section class="sec sec-alt">
-  <div class="study-list">
-    <h2 class="ttl ttl-center">INVESTIGACIÓN INDEPENDIENTE</h2>
-    <p class="stxt ttl-center" style="text-align:center;max-width:750px;margin:0 auto 30px">Distintos laboratorios y centros de investigación han evaluado la tecnología de los parches. A continuación, una selección.</p>
+    # Independent research — built as one single-line string to avoid markdown
+    # code-block trap (4-space indent after blank line → interpreted as code).
+    items_html = "".join(
+        f'<div class="study-item"><span class="org">{org}</span><h3>{title}</h3><p>{desc}</p></div>'
+        for (org, title, desc) in STUDIES
+    )
+    st.markdown(
+        '<section class="sec sec-alt"><div class="study-list">'
+        '<h2 class="ttl ttl-center">INVESTIGACIÓN INDEPENDIENTE</h2>'
+        '<p class="stxt ttl-center" style="text-align:center;max-width:750px;margin:0 auto 30px">'
+        'Distintos laboratorios y centros de investigación han evaluado la tecnología de los parches. A continuación, una selección.'
+        '</p>'
+        + items_html +
+        '</div></section>',
+        unsafe_allow_html=True,
+    )
 
-    <div class="study-item">
-      <span class="org">PSY-TEK Subtle Energy Sciences Laboratory · California, EE.UU.</span>
-      <h3>Análisis biofotónicos y de respuesta energética</h3>
-      <p>Mediciones de cambios en la respuesta biofotónica de sujetos antes y después del uso de los parches, utilizando técnicas de imagen y análisis del campo biofísico. Observaron variaciones consistentes en marcadores energéticos.</p>
-    </div>
+    # Recognitions
+    st.markdown(
+        '<section class="sec"><div style="max-width:950px;margin:0 auto">'
+        '<h2 class="ttl ttl-center">RECONOCIMIENTOS</h2>'
+        '<ul class="check-list" style="max-width:750px;margin:0 auto">'
+        '<li><b>Premio Biotech Breakthrough 2025</b> — «Innovación en células madre del año»</li>'
+        '<li>Múltiples premios a la innovación en tecnología de bienestar en ediciones previas</li>'
+        '<li>Presencia en más de cien países con red de distribuidores y socios de marca</li>'
+        '<li>David Schmidt, fundador, es autor e inventor titular de más de 200 patentes a nivel global</li>'
+        '</ul></div></section>',
+        unsafe_allow_html=True,
+    )
 
-    <div class="study-item">
-      <span class="org">The Center for Biofield Sciences · India</span>
-      <h3>Mediciones de respuesta biofísica</h3>
-      <p>Estudios sobre variables fisiológicas y subjetivas en usuarios de los parches, con protocolos aplicados por investigadores independientes, centrados en bienestar percibido y marcadores de equilibrio energético.</p>
-    </div>
-
-    <div class="study-item">
-      <span class="org">Estudios de seguridad dérmica</span>
-      <h3>Hipoalergenicidad y compatibilidad con la piel</h3>
-      <p>Pruebas realizadas por laboratorios independientes de certificación dermatológica para evaluar la seguridad del adhesivo y del material del parche en pieles sensibles. Los parches utilizan adhesivo acrílico hipoalergénico de grado médico de 3M.</p>
-    </div>
-
-    <div class="study-item">
-      <span class="org">Medición del GHK-Cu</span>
-      <h3>Evaluación pre/post del péptido de cobre</h3>
-      <p>Estudios piloto que analizaron los niveles de GHK-Cu en usuarios antes y después del uso continuado del parche X39, con el objetivo de documentar la elevación del péptido asociada a la exposición a longitudes de onda específicas.</p>
-    </div>
-
-    <div class="study-item">
-      <span class="org">Regulación génica</span>
-      <h3>Cambios en la expresión de genes asociados a reparación</h3>
-      <p>Observaciones sobre la expresión de miles de genes relacionados con reparación tisular y respuesta celular en sujetos tras el uso del parche durante períodos cortos, documentados en informes técnicos de la empresa.</p>
-    </div>
-
-    <div class="study-item">
-      <span class="org">Recuperación en deporte</span>
-      <h3>Observaciones en atletas y personas activas</h3>
-      <p>Reportes sobre recuperación después del entrenamiento y tolerancia al esfuerzo en deportistas que usan los parches, incluyendo tiempos de cicatrización de micro-lesiones y retorno a la actividad.</p>
-    </div>
-  </div>
-</section>
-
-<section class="sec">
-  <div style="max-width:950px;margin:0 auto">
-    <h2 class="ttl ttl-center">RECONOCIMIENTOS</h2>
-    <ul class="check-list" style="max-width:750px;margin:0 auto">
-      <li><b>Premio Biotech Breakthrough 2025</b> — «Innovación en células madre del año»</li>
-      <li>Múltiples premios a la innovación en tecnología de bienestar en ediciones previas</li>
-      <li>Presencia en más de cien países con red de distribuidores y socios de marca</li>
-      <li>David Schmidt, fundador, es autor e inventor titular de más de 200 patentes a nivel global</li>
-    </ul>
-  </div>
-</section>
-
-<section class="sec sec-alt">
-  <div style="text-align:center;max-width:800px;margin:0 auto">
-    <h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">¿Querés entender cómo esto te aplica a ti?</h2>
-    <p class="stxt" style="text-align:center">Escribinos y te contamos qué hay detrás, con calma y con datos.</p>
-    <div class="cta-btns" style="justify-content:center;margin-top:20px">
-      <a href="{WA}" target="_blank" class="btn btn-wa">💬 Hablar por WhatsApp</a>
-      <a href="{LINK_GHK}" class="btn btn-outline">Más sobre el GHK-Cu ›</a>
-    </div>
-  </div>
-</section>
-''', unsafe_allow_html=True)
+    # CTA
+    st.markdown(
+        f'<section class="sec sec-alt"><div style="text-align:center;max-width:800px;margin:0 auto">'
+        f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">¿Querés entender cómo esto te aplica a ti?</h2>'
+        f'<p class="stxt" style="text-align:center">Escribinos y te contamos qué hay detrás, con calma y con datos.</p>'
+        f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
+        f'<a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Hablar por WhatsApp</a>'
+        f'<a href="{LINK_GHK}" class="btn btn-outline">Más sobre el GHK-Cu ›</a>'
+        f'</div></div></section>',
+        unsafe_allow_html=True,
+    )
 
 
 # ─── Router ──────────────────────────────────────────────────────────────────
