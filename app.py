@@ -30,8 +30,9 @@ theme_title = theme_title_es if lang == "es" else theme_title_en
 
 # ─── Config ──────────────────────────────────────────────────────────────────
 WA_NUM = "593939890499"
-WA_TXT = "Hola%20Pauli!%20Vi%20tu%20pagina%20y%20me%20gustaria%20saber%20mas%20sobre%20los%20parches%20LifeWave"
-WA = f"https://wa.me/{WA_NUM}?text={WA_TXT}"
+WA_TXT_ES = "Hola%20Pauli!%20Vi%20tu%20pagina%20y%20me%20gustaria%20saber%20mas%20sobre%20los%20parches%20LifeWave"
+WA_TXT_EN = "Hi%20Pauli!%20I%20saw%20your%20site%20and%20I%27d%20love%20to%20learn%20more%20about%20the%20LifeWave%20patches"
+WA = f"https://wa.me/{WA_NUM}?text=" + (WA_TXT_ES if lang == "es" else WA_TXT_EN)
 
 # Internal page routes (replaces prior whythelight.com links)
 # All routes preserve current lang + theme so theme persists across navigation.
@@ -305,7 +306,7 @@ NAV = f"""
       <a href="{LINK_GHK}" class="{active('ghk').strip()}">{t['nav_ghk']}</a>
       <a href="{LINK_RESULTS}" class="{active('resultados').strip()}">{t['nav_results']}</a>
       <a href="{LINK_STUDIES}" class="{active('estudios').strip()}">{t['nav_studies']}</a>
-      <a href="{WA}" target="_blank" rel="noopener" class="nav-contact">{t['nav_contact']}</a>
+      <a href="{WA}" class="nav-contact">{t['nav_contact']}</a>
     </div>
     <div class="nav-tools">
       <a href="{LINK_THEME_TOGGLE}" class="theme-tgl" aria-label="{theme_title}" title="{theme_title}">{theme_icon}</a>
@@ -319,12 +320,22 @@ NAV = f"""
 </nav>
 """
 
-WA_BTN = f'''<a href="{WA}" target="_blank" class="wa-float" aria-label="WhatsApp Pauli">
+WA_BTN = f'''<a href="{WA}" class="wa-float" aria-label="WhatsApp Pauli">
 <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>'''
 
 
 def footer():
-    return f'''
+    if lang == "en":
+        return '''
+<div class="footer">
+  <p><b>Important notice:</b> our patches work on the principles of phototherapy.<br>
+  They have not been validated under conventional medical standards and are not a substitute for professional medical care.</p>
+  <p style="margin-top:12px">*90-day money-back guarantee for Retail and Preferred Customers. 30-day guarantee for Wholesale Brand Partners.</p>
+  <p style="margin-top:12px;font-size:11px;max-width:1000px;margin-left:auto;margin-right:auto">Our products are not intended to diagnose, treat, cure or prevent any disease or medical condition. The information on this site is shared for general and informational purposes only.</p>
+  <p style="margin-top:22px;font-size:14px;color:var(--muted)">©2026 Pauli Wellness · All rights reserved.</p>
+</div>
+'''
+    return '''
 <div class="footer">
   <p><b>Aviso importante:</b> nuestros parches se basan en los principios de la fototerapia.<br>
   Los parches no han sido validados bajo los estándares de la medicina convencional y no sustituyen la atención médica profesional.</p>
@@ -375,18 +386,6 @@ _persist_js = """
 </script>
 """
 _components.html(_persist_js, height=0)
-
-
-# ─── Page: EN placeholder ────────────────────────────────────────────────────
-def render_en_placeholder():
-    st.markdown(f'''
-<section class="sec coming-soon">
-  <h1>{t["en_soon_title"]}</h1>
-  <p>{t["en_soon_body"]}</p>
-  <a href="{WA}" target="_blank" class="btn btn-wa">💬 {t["en_soon_cta"]}</a>
-  <p style="margin-top:32px"><a href="?page={page}&lang=es" style="color:var(--accent);font-weight:700">← Ver versión en español</a></p>
-</section>
-''', unsafe_allow_html=True)
 
 
 # ─── Page: Home (Spanish) ────────────────────────────────────────────────────
@@ -623,8 +622,8 @@ def render_home_es():
       <p class="stxt stxt-lg">No tienes que decidir solo/a.</p>
       <p class="stxt stxt-lg">Escríbele a quien te compartió esta página — estamos aquí para responderte.</p>
       <div class="cta-btns">
-        <a href="{WA}" target="_blank" class="btn btn-wa">💬 Hablar por WhatsApp</a>
-        <a href="{WA}" target="_blank" class="btn">Paquetes y precios ›</a>
+        <a href="{WA}" class="btn btn-wa">💬 Hablar por WhatsApp</a>
+        <a href="{WA}" class="btn">Paquetes y precios ›</a>
       </div>
     </div>
     <div><img src="{IMG_KITCHEN}" class="img-full" alt="Pareja feliz en la cocina"></div>
@@ -759,7 +758,7 @@ def render_resultados_es():
     <h2 class="ttl ttl-center">¿Querés probarlo?</h2>
     <p class="stxt" style="text-align:center">Lo más sencillo es escribirnos — te contamos qué parche corresponde a lo que buscás, cómo pedirlo, y cómo funciona la garantía.</p>
     <div class="cta-btns" style="justify-content:center;margin-top:20px">
-      <a href="{WA}" target="_blank" class="btn btn-wa">💬 Hablar por WhatsApp</a>
+      <a href="{WA}" class="btn btn-wa">💬 Hablar por WhatsApp</a>
       <a href="{LINK_GHK}" class="btn btn-outline">¿Qué es el GHK-Cu? ›</a>
     </div>
   </div>
@@ -850,8 +849,431 @@ def render_estudios_es():
         f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">¿Querés entender cómo esto te aplica a ti?</h2>'
         f'<p class="stxt" style="text-align:center">Escribinos y te contamos qué hay detrás, con calma y con datos.</p>'
         f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
-        f'<a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Hablar por WhatsApp</a>'
+        f'<a href="{WA}" class="btn btn-wa">💬 Hablar por WhatsApp</a>'
         f'<a href="{LINK_GHK}" class="btn btn-outline">Más sobre el GHK-Cu ›</a>'
+        f'</div></div></section>',
+        unsafe_allow_html=True,
+    )
+
+
+# ─── English testimonial labels ──────────────────────────────────────────────
+TESTIMONIALS_EN = [
+    ("1133177065", "Elbow tendinitis"),
+    ("1118432346", "Eyes, digestion, skin"),
+    ("1118418371", "Energy and hair"),
+    ("1118429044", "Sore fingers"),
+    ("1118429946", "Carpal tunnel, sight, skin"),
+    ("1118433583", "Clear scan"),
+    ("1118418475", "Stem-cell treatments"),
+    ("1118426413", "Overall wellbeing"),
+    ("1153060029", "Customer experience"),
+    ("1118427670", "Testimonial"),
+]
+
+
+# ─── Page: Home (English) ────────────────────────────────────────────────────
+def render_home_en():
+    # 1. HERO
+    st.markdown(
+        '<section class="sec hero-wrap" id="home">'
+        '<h1 class="hero-top">Two decades of science. More than <span class="hero-highlight">200 patents worldwide</span>. And one simple idea: use <span class="hero-highlight">light — not chemicals</span> — to wake up the cellular repair your body already knows how to do.</h1>'
+        '<p class="hero-sub">Like returning a signal your body had forgotten — <i>safe, silent, and from the inside.</i></p>'
+        '</section>',
+        unsafe_allow_html=True,
+    )
+
+    # 2. WHY SO MUCH RESEARCH
+    st.markdown(
+        f'<section class="sec"><div class="grid2">'
+        f'<div>'
+        f'<h2 class="ttl">WHY SO MUCH SCIENCE BEHIND IT?</h2>'
+        f'<p class="stxt">As years pass, the cells in charge of repairing you slow their rhythm.</p>'
+        f'<p class="stxt">Less cellular activity = your body heals more slowly and the marks of time start showing up earlier.</p>'
+        f'<p class="stxt stxt-it">And little by little, you start to notice —</p>'
+        f'<ul class="check-list">'
+        f'<li>Stiffness, aches and pains that weren\'t there before</li>'
+        f'<li>Lighter sleep, slower recovery</li>'
+        f'<li>Energy that dips mid-afternoon</li>'
+        f'<li>Dull skin, thinning hair, inflammation that won\'t fade</li>'
+        f'</ul>'
+        f'<p class="stxt">And if there were a safe, accessible way to switch your own repair machinery back on from within… <b><i>wouldn\'t you want to try it?</i></b></p>'
+        f'</div>'
+        f'<div><img src="{IMG_AGING}" class="img-full" alt="Cellular aging"></div>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 3. NOT A PILL (+ main video)
+    st.markdown(
+        f'<section class="sec" id="how-it-works"><div class="grid2">'
+        f'<div>'
+        f'<h2 class="ttl">NOT ANOTHER PILL, CREAM, SHOT OR TREND.</h2>'
+        f'<p class="stxt stxt-lg">It\'s a whole different category.</p>'
+        f'<p class="stxt">A coin-sized, portable, non-transdermic patch with results documented in clinical studies and protected by patents around the world.</p>'
+        f'<p class="stxt"><b>No drugs. No needles. No supplements. No known side effects.</b></p>'
+        f'<p class="stxt stxt-it">Just light — a signal your body already knows how to read… it had only stopped listening.</p>'
+        f'</div>'
+        f'<div class="video-wrap"><iframe src="https://player.vimeo.com/video/{VIMEO_MAIN}?title=0&byline=0&portrait=0" allow="autoplay;fullscreen" allowfullscreen></iframe></div>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 4. 3-MINUTE VIDEO CTA
+    st.markdown(
+        f'<section class="sec" style="padding-top:20px">'
+        f'<div style="max-width:850px;margin:0 auto;text-align:center">'
+        f'<img src="{IMG_VIDEO_THUMB}" alt="3-minute video" style="max-width:420px;width:100%;margin-bottom:10px">'
+        f'<p style="font-size:clamp(20px,2.4vw,30px);font-weight:800;color:var(--text);margin-top:15px">Understand how it works in 3 minutes</p>'
+        f'<p style="font-size:clamp(16px,1.6vw,20px);color:var(--accent);font-weight:600;margin-top:6px">Press play on the video</p>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 5. WHY LIGHT
+    st.markdown(
+        f'<section class="sec"><div class="grid2">'
+        f'<div>'
+        f'<h2 class="ttl">WHY LIGHT?</h2>'
+        f'<p class="stxt stxt-lg">Light is information. And your body is always listening.</p>'
+        f'<p class="stxt">Think of it as modern acupuncture — no needles, no sessions.</p>'
+        f'<p class="stxt">The patented surface of the patch reflects precise wavelengths back to your skin, helping your body naturally raise <b>GHK-Cu</b>, the copper peptide the scientific literature links to cellular repair and renewal.</p>'
+        f'<p class="stxt">Nothing crosses the skin. Just a clean stimulus that switches on what was already ready inside you.</p>'
+        f'<p class="stxt stxt-it"><b>Your body knows what to do. The patch just reminds it of the path.</b></p>'
+        f'</div>'
+        f'<div><img src="{IMG_PATCHES}" class="img-full" alt="LifeWave patches"></div>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 6. NOT QUICK FIXES
+    st.markdown(
+        f'<section class="sec"><div class="grid2-rev">'
+        f'<div><img src="{IMG_COUPLE}" class="img-full" alt="Couple living with vitality"></div>'
+        f'<div>'
+        f'<h2 class="ttl">WE\'RE NOT TALKING ABOUT PATCHES FOR SYMPTOMS OR QUICK SHORTCUTS</h2>'
+        f'<p class="stxt">We\'re talking about waking up with real energy — not the kind that spikes and crashes with every coffee. Skin that matches how you feel inside. A body that responds the way it used to when everything flowed.</p>'
+        f'<ul class="benefit-list">'
+        f'<li>Sustained energy throughout the day</li>'
+        f'<li>Deeper sleep and clear mornings</li>'
+        f'<li>Skin with more glow and natural collagen support</li>'
+        f'<li>Faster recovery — from exercise or the day</li>'
+        f'<li>Repair that starts inside and shows on the outside</li>'
+        f'<li>and best of all… <b><i>recognizing yourself again!</i></b></li>'
+        f'</ul>'
+        f'</div></div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 7. GHK-Cu
+    st.markdown(
+        f'<section class="sec"><div class="grid2">'
+        f'<div>'
+        f'<h2 class="ttl">GHK-Cu · THE COPPER PEPTIDE</h2>'
+        f'<p class="stxt stxt-lg" style="color:var(--accent);font-weight:700">Your body already makes it. It just needs a small nudge.</p>'
+        f'<p class="stxt">Think of it as the master switch that reactivates your body\'s ability to repair itself.</p>'
+        f'<p class="stxt">With age, <b>GHK-Cu</b> levels drop — and with them, our natural capacity to repair, renew and regenerate.</p>'
+        f'<p class="stxt">The patch is designed to help you raise GHK-Cu in your body, closer to the levels you had in your youth.</p>'
+        f'<a href="{LINK_GHK}" class="btn" style="margin-top:22px">More about GHK ›</a>'
+        f'</div>'
+        f'<div><img src="{IMG_MOUNTAIN}" class="img-full" alt="Man in front of the mountain"></div>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 8. SKEPTICAL + TESTIMONIALS
+    test_html = '<div class="test-scroll">'
+    for vid_id, label in TESTIMONIALS_EN:
+        test_html += (
+            f'<div class="test-card">'
+            f'<div class="video-wrap"><iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>'
+            f'<div class="test-label">{label}</div></div>'
+        )
+    test_html += '</div>'
+    st.markdown(
+        f'<section class="sec" style="text-align:center">'
+        f'<h2 class="ttl ttl-center">SKEPTICAL? GOOD. SO WERE WE.</h2>'
+        f'<p class="stxt stxt-lg" style="text-align:center">Most of the people here today started the same way. These are their stories.</p>'
+        f'{test_html}'
+        f'<p class="scroll-hint">(Swipe to see more experiences)</p>'
+        f'<div style="margin-top:28px"><a href="{LINK_RESULTS}" class="btn btn-outline">See more real experiences ›</a></div>'
+        f'</section>',
+        unsafe_allow_html=True,
+    )
+
+    # 9. HOW TO WEAR
+    st.markdown(
+        f'<section class="sec"><div class="grid2">'
+        f'<div>'
+        f'<h2 class="ttl">HOW TO USE IT</h2>'
+        f'<p class="stxt stxt-lg" style="color:var(--accent);font-weight:700;margin-bottom:18px">Peel, stick, done.</p>'
+        f'<div class="step-row"><div class="step-num">1</div><div class="step-txt">Apply on clean, dry skin.</div></div>'
+        f'<div class="step-row"><div class="step-num">2</div><div class="step-txt">Leave it on up to 12 hours; then rest for another 12.</div></div>'
+        f'<div class="step-row"><div class="step-num">3</div><div class="step-txt">Remove it (you can then use it on your pet if you like).</div></div>'
+        f'<div class="step-row"><div class="step-num">4</div><div class="step-txt">A fresh patch the next day — and every day after.</div></div>'
+        f'<p class="stxt" style="margin-top:18px">For best results, pair the patch with <b>good hydration</b> throughout the day.</p>'
+        f'</div>'
+        f'<div><img src="{IMG_PATCH_PLACEMENT}" class="img-full" alt="Patch placement"></div>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 10. TIMELINE
+    st.markdown(
+        f'<section class="sec" style="text-align:center">'
+        f'<h2 class="ttl ttl-center">WHAT TO EXPECT OVER TIME</h2>'
+        f'<div class="tl-grid">'
+        f'<div class="tl-card"><img src="{IMG_TL_DAYS}" alt="First days"><h3>In the first days</h3><h4>Thousands of genes begin adjusting their expression</h4></div>'
+        f'<div class="tl-card"><img src="{IMG_TL_4W}" alt="4 weeks"><h3>At 4 weeks</h3><h4>Cellular repair starts</h4><p>Your body puts resources where they\'re needed most, without you having to think about it</p></div>'
+        f'<div class="tl-card"><img src="{IMG_TL_6W}" alt="6 weeks"><h3>At 6 weeks</h3><h4>Brain and energy find their balance</h4><p>*Observations backed by PSY-TEK Labs and The Center for Biofield Sciences</p></div>'
+        f'<div class="tl-card"><img src="{IMG_TL_3M}" alt="3-6 months"><h3>Between 3 and 6 months</h3><h4>Collagen rises</h4><p>Skin gains firmness and recovery shortens</p></div>'
+        f'<div class="tl-card"><img src="{IMG_TL_12M}" alt="12 months"><h3>At 12 months</h3><h4>It\'s no longer just how you feel…</h4><p>it also shows in how you live</p></div>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 11. ABOUT
+    st.markdown(
+        f'<section class="sec"><div class="about-grid">'
+        f'<div class="video-wrap"><iframe src="https://player.vimeo.com/video/{VIMEO_DAVID}?title=0&byline=0&portrait=0" allow="autoplay;fullscreen" allowfullscreen></iframe></div>'
+        f'<div>'
+        f'<h2 class="ttl">ABOUT THE COMPANY</h2>'
+        f'<h3 style="font-size:clamp(18px,2vw,24px);margin-bottom:18px;color:var(--text)">David Schmidt<br>Founder, inventor and CEO</h3>'
+        f'<p class="about-txt">Since 2004, LifeWave has supported people in over one hundred countries to feel better, look younger and live more present — with wellness technologies that amplify the energy and resilience your body already has.</p>'
+        f'<p class="about-txt" style="margin-top:14px">Globally, David holds more than <b>200 granted patents</b> — with several more pending. Of those, over seventy are in the field of regeneration science and technology.</p>'
+        f'<p class="about-txt" style="margin-top:14px">LifeWave has received multiple awards over the years; among the most recent, the <b>2025 Biotech Breakthrough Award</b> in the "Stem Cell Innovation of the Year" category.</p>'
+        f'<div style="margin-top:22px"><a href="{LINK_STUDIES}" class="btn btn-outline">Patents and studies ›</a></div>'
+        f'</div></div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 12. RISK-FREE
+    st.markdown(
+        f'<section class="sec"><div class="risk-box">'
+        f'<div class="risk-img-row">'
+        f'<img src="{IMG_HOLDING}" alt="Holding the patch" style="border-radius:14px">'
+        f'<img src="{IMG_BADGE}" class="badge-img" alt="30/90-day guarantee">'
+        f'</div>'
+        f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">Try it with total peace of mind</h2>'
+        f'<p class="stxt stxt-lg" style="margin-top:8px">Risk-free for <b>30/90 days*</b></p>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 13. CTA
+    st.markdown(
+        f'<section class="sec"><div class="cta-grid">'
+        f'<div>'
+        f'<h2 class="ttl">CURIOUS HOW THIS FITS INTO WHAT YOU ALREADY DO FOR YOURSELF?</h2>'
+        f'<p class="stxt stxt-lg">You don\'t have to decide alone.</p>'
+        f'<p class="stxt stxt-lg">Write to whoever shared this page with you — we\'re here to answer.</p>'
+        f'<div class="cta-btns">'
+        f'<a href="{WA}" class="btn btn-wa">💬 Chat on WhatsApp</a>'
+        f'<a href="{WA}" class="btn">Packages and pricing ›</a>'
+        f'</div>'
+        f'</div>'
+        f'<div><img src="{IMG_KITCHEN}" class="img-full" alt="Happy couple in the kitchen"></div>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+
+# ─── Page: GHK-Cu (English) ──────────────────────────────────────────────────
+def render_ghk_en():
+    st.markdown(
+        '<section class="sec page-hero">'
+        '<div class="kicker">Copper peptide</div>'
+        '<h1>GHK-Cu · the peptide your body already knows</h1>'
+        '<p class="lede">A natural tripeptide made by your body, bound to copper, which science links to tissue repair. Here\'s what it is, why it matters with age, and how the patch helps raise it.</p>'
+        '</section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<section class="sec"><div style="max-width:900px;margin:0 auto">'
+        '<h2 class="ttl">WHAT IS GHK-Cu?</h2>'
+        '<p class="stxt">It\'s a small peptide made of three amino acids — glycine, histidine and lysine — bound to a copper atom. It circulates naturally in your body, and research published since the 1970s links it to processes of regeneration, wound healing and cellular renewal.</p>'
+        '<p class="stxt">GHK-Cu was first described in 1973 by Dr. Loren Pickart, who noticed that serum from younger people applied to aged liver tissue seemed to help it recover. That finding opened a line of research still active today.</p>'
+        '</div></section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<section class="sec sec-alt"><div style="max-width:1100px;margin:0 auto">'
+        '<h2 class="ttl ttl-center">WHY IT MATTERS AFTER 30</h2>'
+        '<p class="stxt ttl-center" style="text-align:center;max-width:750px;margin:0 auto 20px">GHK-Cu levels in the blood are not constant through life. Over time, they drop — and with them, your body\'s natural capacity to regenerate.</p>'
+        '<div class="fact-grid">'
+        '<div class="fact-card"><span class="big">~200 ng/mL</span><h3>At age 20</h3><p>Reference range reported in the literature for healthy young adults.</p></div>'
+        '<div class="fact-card"><span class="big">~80 ng/mL</span><h3>At age 60</h3><p>A drop of roughly 60% compared with youth levels.</p></div>'
+        '<div class="fact-card"><span class="big">-60%</span><h3>Regenerative capacity</h3><p>The drop in GHK-Cu coincides with a visible reduction in tissue recovery and repair.</p></div>'
+        '</div></div></section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<section class="sec"><div style="max-width:950px;margin:0 auto">'
+        '<h2 class="ttl">WHAT THE RESEARCH SAYS</h2>'
+        '<p class="stxt">In peer-reviewed scientific publications, GHK-Cu has been observed in connection with:</p>'
+        '<ul class="check-list">'
+        '<li>Fibroblast stimulation and collagen synthesis</li>'
+        '<li>Support in wound healing and closure</li>'
+        '<li>Antioxidant activity and inflammation modulation</li>'
+        '<li>Signaling in nerve regeneration processes</li>'
+        '<li>Expression of genes linked to tissue repair</li>'
+        '</ul>'
+        '<p class="stxt">The literature is broad — if you want to dig deeper, search "GHK-Cu" on PubMed and you\'ll find hundreds of published studies.</p>'
+        '</div></section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f'<section class="sec sec-alt"><div class="grid2">'
+        f'<div>'
+        f'<h2 class="ttl">AND THE PATCH · WHERE DOES IT FIT?</h2>'
+        f'<p class="stxt">The patch <b>does not contain GHK-Cu</b>. It doesn\'t release it into the body either.</p>'
+        f'<p class="stxt">Its patented surface reflects specific wavelengths of light back to your skin. That signal — according to the evidence presented by LifeWave — stimulates the body itself to raise the levels of GHK-Cu it naturally produces.</p>'
+        f'<p class="stxt"><b>No drugs. No injections. No absorption through the skin.</b> Just light.</p>'
+        f'<p class="stxt stxt-it">Think of it as modern acupuncture, without needles, reminding your body of a process it has always known.</p>'
+        f'</div>'
+        f'<div><img src="{IMG_PATCHES}" class="img-full" alt="Patches"></div>'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f'<section class="sec"><div style="text-align:center;max-width:800px;margin:0 auto">'
+        f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">Want to see how this changes real people\'s lives?</h2>'
+        f'<div class="cta-btns" style="justify-content:center">'
+        f'<a href="{LINK_RESULTS}" class="btn">See real results ›</a>'
+        f'<a href="{LINK_STUDIES}" class="btn btn-outline">See studies and patents ›</a>'
+        f'</div></div></section>',
+        unsafe_allow_html=True,
+    )
+
+
+# ─── Page: Resultados (English) ──────────────────────────────────────────────
+def render_resultados_en():
+    grid_html = '<div class="test-grid">'
+    for vid_id, label in TESTIMONIALS_EN:
+        grid_html += (
+            f'<div class="test-card">'
+            f'<div class="video-wrap"><iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>'
+            f'<div class="test-label">{label}</div></div>'
+        )
+    grid_html += '</div>'
+    st.markdown(
+        '<section class="sec page-hero">'
+        '<div class="kicker">Real experiences</div>'
+        '<h1>Results people share</h1>'
+        '<p class="lede">Every testimonial here is from someone who tried the patches and wanted to share what happened. Nothing scripted, nothing paid. Watch, listen, and draw your own conclusions.</p>'
+        '</section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f'<section class="sec sec-alt"><div style="max-width:1200px;margin:0 auto">'
+        f'<h2 class="ttl ttl-center">Video testimonials</h2>'
+        f'<p class="stxt ttl-center" style="text-align:center;max-width:750px;margin:0 auto 30px">Different people, different reasons to start. What they share is that each one noticed something worth telling.</p>'
+        f'{grid_html}'
+        f'</div></section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<section class="sec"><div style="max-width:900px;margin:0 auto">'
+        '<h2 class="ttl">THE CHANGES PEOPLE REPORT MOST OFTEN</h2>'
+        '<p class="stxt">Stories are diverse, but patterns repeat among people who use the patches consistently for weeks or months:</p>'
+        '<ul class="benefit-list">'
+        '<li><b>Pain and stiffness:</b> long-standing discomfort starts to ease, and post-exercise recovery gets shorter.</li>'
+        '<li><b>Sleep:</b> deeper, fewer interruptions, waking up with a clearer head.</li>'
+        '<li><b>Energy and mood:</b> a different kind of stability — without the coffee spikes and crashes.</li>'
+        '<li><b>Skin and hair:</b> more even texture, more glow, less hair fall.</li>'
+        '<li><b>Digestion:</b> smoother processes and less inflammation after meals.</li>'
+        '<li><b>Vision and focus:</b> some people notice better visual focus and mental clarity.</li>'
+        '</ul>'
+        '<p class="stxt stxt-it" style="margin-top:22px">Important: every body is different. What works for one person can show up differently in another — both in what improves and in how long it takes. These are individual experiences — not medical promises.</p>'
+        '</div></section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f'<section class="sec sec-alt"><div style="text-align:center;max-width:800px;margin:0 auto">'
+        f'<h2 class="ttl ttl-center">Want to try it?</h2>'
+        f'<p class="stxt" style="text-align:center">The easiest thing is to message us — we\'ll tell you which patch fits what you\'re looking for, how to order it, and how the guarantee works.</p>'
+        f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
+        f'<a href="{WA}" class="btn btn-wa">💬 Chat on WhatsApp</a>'
+        f'<a href="{LINK_GHK}" class="btn btn-outline">What is GHK-Cu? ›</a>'
+        f'</div></div></section>',
+        unsafe_allow_html=True,
+    )
+
+
+# ─── Page: Estudios (English) ────────────────────────────────────────────────
+STUDIES_EN = [
+    ("PSY-TEK Subtle Energy Sciences Laboratory · California, USA",
+     "Biophotonic and energy-response analyses",
+     "Measurements of changes in subjects' biophotonic response before and after using the patches, using imaging and biophysical field analysis techniques. They observed consistent variations in energy markers."),
+    ("The Center for Biofield Sciences · India",
+     "Biophysical response measurements",
+     "Studies on physiological and subjective variables in patch users, with protocols applied by independent researchers, focused on perceived wellbeing and markers of energetic balance."),
+    ("Dermal safety studies",
+     "Hypoallergenicity and skin compatibility",
+     "Testing by independent dermatological certification labs to evaluate the safety of the adhesive and the patch material on sensitive skin. The patches use medical-grade hypoallergenic 3M acrylic adhesive."),
+    ("GHK-Cu measurement",
+     "Pre/post evaluation of the copper peptide",
+     "Pilot studies analyzing GHK-Cu levels in users before and after continued use of the X39 patch, aiming to document the peptide increase associated with exposure to specific wavelengths."),
+    ("Gene regulation",
+     "Changes in expression of repair-related genes",
+     "Observations on the expression of thousands of genes linked to tissue repair and cellular response in subjects after short-term use of the patch, documented in company technical reports."),
+    ("Sports recovery",
+     "Observations in athletes and active people",
+     "Reports on post-training recovery and effort tolerance in athletes who use the patches, including healing times for micro-injuries and return to activity."),
+]
+
+
+def render_estudios_en():
+    st.markdown(
+        '<section class="sec page-hero">'
+        '<div class="kicker">Science and patents</div>'
+        '<h1>Studies and patents</h1>'
+        '<p class="lede">Over more than two decades, LifeWave has invested in independent research and in intellectual protection of its technology. Here are the most relevant points.</p>'
+        '</section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<section class="sec"><div style="max-width:1100px;margin:0 auto">'
+        '<h2 class="ttl ttl-center">BY THE NUMBERS</h2>'
+        '<div class="fact-grid">'
+        '<div class="fact-card"><span class="big">+200</span><h3>Granted patents</h3><p>Globally, with several more pending.</p></div>'
+        '<div class="fact-card"><span class="big">+70</span><h3>Patents in regeneration</h3><p>Directly tied to regeneration science and technology.</p></div>'
+        '<div class="fact-card"><span class="big">20+</span><h3>Years of development</h3><p>Continuous research since the company was founded in 2004.</p></div>'
+        '<div class="fact-card"><span class="big">2025</span><h3>Biotech Breakthrough Award</h3><p>"Stem Cell Innovation of the Year" category.</p></div>'
+        '</div></div></section>',
+        unsafe_allow_html=True,
+    )
+    items_html = "".join(
+        f'<div class="study-item"><span class="org">{org}</span><h3>{title}</h3><p>{desc}</p></div>'
+        for (org, title, desc) in STUDIES_EN
+    )
+    st.markdown(
+        '<section class="sec sec-alt"><div class="study-list">'
+        '<h2 class="ttl ttl-center">INDEPENDENT RESEARCH</h2>'
+        '<p class="stxt ttl-center" style="text-align:center;max-width:750px;margin:0 auto 30px">'
+        'Different labs and research centers have evaluated the patch technology. Below is a selection.'
+        '</p>'
+        + items_html +
+        '</div></section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<section class="sec"><div style="max-width:950px;margin:0 auto">'
+        '<h2 class="ttl ttl-center">RECOGNITIONS</h2>'
+        '<ul class="check-list" style="max-width:750px;margin:0 auto">'
+        '<li><b>2025 Biotech Breakthrough Award</b> — "Stem Cell Innovation of the Year"</li>'
+        '<li>Multiple awards for innovation in wellness technology in previous editions</li>'
+        '<li>Presence in more than one hundred countries with a network of distributors and brand partners</li>'
+        '<li>David Schmidt, founder, is author and inventor of more than 200 patents worldwide</li>'
+        '</ul></div></section>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f'<section class="sec sec-alt"><div style="text-align:center;max-width:800px;margin:0 auto">'
+        f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">Want to understand how this applies to you?</h2>'
+        f'<p class="stxt" style="text-align:center">Message us and we\'ll walk you through it, calmly and with data.</p>'
+        f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
+        f'<a href="{WA}" class="btn btn-wa">💬 Chat on WhatsApp</a>'
+        f'<a href="{LINK_GHK}" class="btn btn-outline">More about GHK-Cu ›</a>'
         f'</div></div></section>',
         unsafe_allow_html=True,
     )
@@ -859,7 +1281,16 @@ def render_estudios_es():
 
 # ─── Router ──────────────────────────────────────────────────────────────────
 if lang == "en":
-    render_en_placeholder()
+    if page == "home":
+        render_home_en()
+    elif page == "ghk":
+        render_ghk_en()
+    elif page == "resultados":
+        render_resultados_en()
+    elif page == "estudios":
+        render_estudios_en()
+    else:
+        render_home_en()
 else:
     if page == "home":
         render_home_es()
