@@ -312,7 +312,7 @@ def active(p): return " active" if page == p else ""
 NAV = f"""
 <nav class="topnav">
   <div class="nav-inner">
-    <a href="{LINK_HOME}" target="_self" class="nav-logo">Pauli <span>Wellness</span></a>
+    <a href="{LINK_HOME}" target="_self" class="nav-logo">Luz en tu <span>cuerpo...</span></a>
     <div class="nav-links">
       <a href="{LINK_HOME}" target="_self" class="{active('home').strip()}">{t['nav_home']}</a>
       <a href="{LINK_GHK}" target="_self" class="{active('ghk').strip()}">{t['nav_ghk']}</a>
