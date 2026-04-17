@@ -230,7 +230,10 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .test-card iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
 .test-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:44px;height:44px;border-radius:50%;
   background:rgba(255,255,255,.92);color:#111;display:flex;align-items:center;justify-content:center;
-  font-size:26px;line-height:1;box-shadow:0 4px 16px rgba(0,0,0,.25);user-select:none;pointer-events:none;font-weight:300}
+  font-size:26px;line-height:1;box-shadow:0 4px 16px rgba(0,0,0,.25);user-select:none;cursor:pointer;font-weight:300;
+  transition:background .2s,transform .2s}
+.test-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.08)}
+.test-arrow:active{transform:translateY(-50%) scale(.94)}
 .test-arrow-left{left:8px}.test-arrow-right{right:8px}
 .scroll-hint{text-align:center;color:var(--muted);font-size:14px;font-style:italic;margin-top:8px}
 
@@ -1341,3 +1344,42 @@ else:
         render_home_es()
 
 st.markdown(footer(), unsafe_allow_html=True)
+
+# ─── Wire up carousel arrows (runs after DOM is populated) ────────────────────
+_arrows_js = """
+<script>
+(function(){
+  function hook(){
+    try{
+      var doc = window.parent.document;
+      var wraps = doc.querySelectorAll('.test-scroll-wrap');
+      if(!wraps.length) return false;
+      wraps.forEach(function(wrap){
+        if(wrap.dataset.wired) return;
+        var scroll = wrap.querySelector('.test-scroll');
+        var left = wrap.querySelector('.test-arrow-left');
+        var right = wrap.querySelector('.test-arrow-right');
+        if(!scroll || !left || !right) return;
+        var card = scroll.querySelector('.test-card');
+        var step = (card ? card.offsetWidth : 260) + 22;
+        [left, right].forEach(function(b){
+          b.style.cursor = 'pointer';
+          b.style.pointerEvents = 'auto';
+        });
+        left.addEventListener('click', function(e){ e.preventDefault(); scroll.scrollBy({left: -step, behavior: 'smooth'}); });
+        right.addEventListener('click', function(e){ e.preventDefault(); scroll.scrollBy({left: step, behavior: 'smooth'}); });
+        wrap.dataset.wired = '1';
+      });
+      return true;
+    }catch(e){ return false; }
+  }
+  if(!hook()){
+    var tries = 0;
+    var timer = setInterval(function(){
+      if(hook() || ++tries > 20) clearInterval(timer);
+    }, 250);
+  }
+})();
+</script>
+"""
+_components.html(_arrows_js, height=0)
