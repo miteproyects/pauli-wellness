@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ─── Routing & language from query params ────────────────────────────────────
+# ─── Routing, language & theme from query params ─────────────────────────────
 qp = st.query_params
 page = qp.get("page", "home")
 if page not in ("home", "ghk", "resultados", "estudios"):
@@ -19,6 +19,14 @@ if page not in ("home", "ghk", "resultados", "estudios"):
 lang = qp.get("lang", "es")
 if lang not in ("es", "en"):
     lang = "es"
+theme = qp.get("theme", "dark")
+if theme not in ("dark", "light"):
+    theme = "dark"
+theme_other = "light" if theme == "dark" else "dark"
+theme_icon = "🌙" if theme == "dark" else "☀️"
+theme_title_es = "Cambiar a modo claro" if theme == "dark" else "Cambiar a modo oscuro"
+theme_title_en = "Switch to light mode" if theme == "dark" else "Switch to dark mode"
+theme_title = theme_title_es if lang == "es" else theme_title_en
 
 # ─── Config ──────────────────────────────────────────────────────────────────
 WA_NUM = "593939890499"
@@ -26,10 +34,15 @@ WA_TXT = "Hola%20Pauli!%20Vi%20tu%20pagina%20y%20me%20gustaria%20saber%20mas%20s
 WA = f"https://wa.me/{WA_NUM}?text={WA_TXT}"
 
 # Internal page routes (replaces prior whythelight.com links)
-LINK_HOME = f"?page=home&lang={lang}"
-LINK_GHK = f"?page=ghk&lang={lang}"
-LINK_RESULTS = f"?page=resultados&lang={lang}"
-LINK_STUDIES = f"?page=estudios&lang={lang}"
+# All routes preserve current lang + theme so theme persists across navigation.
+_q = f"lang={lang}&theme={theme}"
+LINK_HOME = f"?page=home&{_q}"
+LINK_GHK = f"?page=ghk&{_q}"
+LINK_RESULTS = f"?page=resultados&{_q}"
+LINK_STUDIES = f"?page=estudios&{_q}"
+LINK_THEME_TOGGLE = f"?page={page}&lang={lang}&theme={theme_other}"
+LINK_LANG_ES = f"?page={page}&lang=es&theme={theme}"
+LINK_LANG_EN = f"?page={page}&lang=en&theme={theme}"
 
 # Image URLs (same asset hosts used by whythelight.com; no text mirroring)
 IMG_AGING = "https://whythelight.com/wp-content/uploads/2025/11/womanAging-battery-1-1024x981.png"
@@ -101,14 +114,6 @@ CSS = """<style>
   --footer-text:#8a8a8a;--footer-border:#1a1a1a;
   --tl-title:#1B2A4A;
 }
-html[data-light]{
-  --bg:#fafafa;--bg-2:#f0f0f0;--text:#1a1a1a;--muted:#555;
-  --accent:#b8923c;--accent-hover:#8f6e2b;
-  --card-bg:#ffffff;--card-text:#111;--card-sub:#555;
-  --nav-bg:rgba(255,255,255,.96);--nav-border:#e2e2e2;
-  --footer-text:#555;--footer-border:#e2e2e2;
-  --tl-title:#1B2A4A;
-}
 
 *{box-sizing:border-box;margin:0;padding:0}
 html,body,.stApp{background:var(--bg)!important;font-family:'Inter',sans-serif!important;color:var(--text)!important;transition:background .25s,color .25s}
@@ -137,14 +142,15 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .nav-links a.active{color:var(--accent);border-bottom:2px solid var(--accent);padding-bottom:2px}
 .nav-contact{background:#25D366;padding:8px 18px!important;border-radius:24px;color:#fff!important;font-weight:700!important;letter-spacing:.5px!important}
 .nav-contact:hover{background:#1da851;color:#fff!important}
-.nav-tools{display:flex;gap:14px;align-items:center}
-.theme-tgl{background:transparent;border:1px solid var(--nav-border);width:38px;height:38px;border-radius:50%;font-size:17px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0}
-.theme-tgl:hover{border-color:var(--accent);color:var(--accent)}
-.lang-switch{display:flex;gap:6px;font-size:13px;font-weight:700;align-items:center}
-.lang-switch a{color:var(--muted);padding:4px 6px;border-radius:4px;transition:all .2s}
-.lang-switch a.active{color:var(--accent)}
-.lang-switch a:hover{color:var(--accent)}
-.lang-switch .sep{color:var(--muted);opacity:.5}
+.nav-tools{display:flex;gap:12px;align-items:center}
+.theme-tgl{background:transparent;border:1px solid var(--nav-border);width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;color:var(--text);display:inline-flex;align-items:center;justify-content:center;transition:transform .35s cubic-bezier(.4,.14,.3,1),border-color .2s,background .2s,color .2s;padding:0;line-height:1;user-select:none}
+.theme-tgl:hover{border-color:var(--accent)!important;color:var(--accent)!important;transform:rotate(20deg) scale(1.06)}
+.theme-tgl:active{transform:scale(.92)}
+.lang-switch{display:inline-flex;background:var(--bg-2);border:1px solid var(--nav-border);border-radius:999px;padding:3px;font-size:12px;font-weight:700;align-items:center;gap:0;letter-spacing:.4px}
+.lang-switch a{color:var(--muted)!important;padding:5px 12px;border-radius:999px;transition:background .2s,color .2s;line-height:1}
+.lang-switch a.active{background:var(--accent);color:#111!important}
+.lang-switch a:hover:not(.active){color:var(--text)!important}
+.lang-switch .sep{display:none}
 
 @media(max-width:900px){
   .nav-links{display:none}
@@ -272,55 +278,45 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 }
 </style>"""
 
-# ─── Nav HTML + theme toggle JS ──────────────────────────────────────────────
+# ─── Conditional light-theme override (server-side, no JS) ───────────────────
+LIGHT_CSS = """<style>
+:root{
+  --bg:#fafafa;--bg-2:#f0f0f0;--text:#1a1a1a;--muted:#555;
+  --accent:#b8923c;--accent-hover:#8f6e2b;
+  --card-bg:#ffffff;--card-text:#111;--card-sub:#555;
+  --nav-bg:rgba(255,255,255,.96);--nav-border:#e2e2e2;
+  --footer-text:#555;--footer-border:#e2e2e2;
+  --tl-title:#1B2A4A;
+}
+.test-card,.test-label{background:#f5f5f5!important;color:var(--text)!important}
+.study-item,.fact-card{background:#f5f5f5!important}
+.theme-tgl{box-shadow:0 2px 10px rgba(0,0,0,.06)}
+</style>"""
+
+# ─── Nav HTML ────────────────────────────────────────────────────────────────
 def active(p): return " active" if page == p else ""
 
 NAV = f"""
 <nav class="topnav">
   <div class="nav-inner">
-    <a href="{LINK_HOME}" target="_top" class="nav-logo">Pauli <span>Wellness</span></a>
+    <a href="{LINK_HOME}" class="nav-logo">Pauli <span>Wellness</span></a>
     <div class="nav-links">
-      <a href="{LINK_HOME}" target="_top" class="{active('home').strip()}">{t['nav_home']}</a>
-      <a href="{LINK_GHK}" target="_top" class="{active('ghk').strip()}">{t['nav_ghk']}</a>
-      <a href="{LINK_RESULTS}" target="_top" class="{active('resultados').strip()}">{t['nav_results']}</a>
-      <a href="{LINK_STUDIES}" target="_top" class="{active('estudios').strip()}">{t['nav_studies']}</a>
-      <a href="{WA}" target="_blank" class="nav-contact">{t['nav_contact']}</a>
+      <a href="{LINK_HOME}" class="{active('home').strip()}">{t['nav_home']}</a>
+      <a href="{LINK_GHK}" class="{active('ghk').strip()}">{t['nav_ghk']}</a>
+      <a href="{LINK_RESULTS}" class="{active('resultados').strip()}">{t['nav_results']}</a>
+      <a href="{LINK_STUDIES}" class="{active('estudios').strip()}">{t['nav_studies']}</a>
+      <a href="{WA}" target="_blank" rel="noopener" class="nav-contact">{t['nav_contact']}</a>
     </div>
     <div class="nav-tools">
-      <button class="theme-tgl" onclick="__pauliTheme()" aria-label="Toggle theme" id="themeTgl">🌙</button>
+      <a href="{LINK_THEME_TOGGLE}" class="theme-tgl" aria-label="{theme_title}" title="{theme_title}">{theme_icon}</a>
       <div class="lang-switch">
-        <a href="?page={page}&lang=es" target="_top" class="{'active' if lang == 'es' else ''}">ES</a>
+        <a href="{LINK_LANG_ES}" class="{'active' if lang == 'es' else ''}">ES</a>
         <span class="sep">·</span>
-        <a href="?page={page}&lang=en" target="_top" class="{'active' if lang == 'en' else ''}">EN</a>
+        <a href="{LINK_LANG_EN}" class="{'active' if lang == 'en' else ''}">EN</a>
       </div>
     </div>
   </div>
 </nav>
-<script>
-(function(){{
-  try {{
-    const saved = localStorage.getItem('pauli-theme') || 'dark';
-    if (saved === 'light') document.documentElement.setAttribute('data-light', '');
-  }} catch(e) {{}}
-  function applyIcon() {{
-    const isLight = document.documentElement.hasAttribute('data-light');
-    document.querySelectorAll('.theme-tgl').forEach(b => {{ b.textContent = isLight ? '☀️' : '🌙'; }});
-  }}
-  window.__pauliTheme = function() {{
-    const isLight = document.documentElement.hasAttribute('data-light');
-    if (isLight) {{
-      document.documentElement.removeAttribute('data-light');
-      try {{ localStorage.setItem('pauli-theme', 'dark'); }} catch(e) {{}}
-    }} else {{
-      document.documentElement.setAttribute('data-light', '');
-      try {{ localStorage.setItem('pauli-theme', 'light'); }} catch(e) {{}}
-    }}
-    applyIcon();
-  }};
-  applyIcon();
-  document.addEventListener('DOMContentLoaded', applyIcon);
-}})();
-</script>
 """
 
 WA_BTN = f'''<a href="{WA}" target="_blank" class="wa-float" aria-label="WhatsApp Pauli">
@@ -341,8 +337,44 @@ def footer():
 
 # ─── Render shell ────────────────────────────────────────────────────────────
 st.markdown(CSS, unsafe_allow_html=True)
+if theme == "light":
+    st.markdown(LIGHT_CSS, unsafe_allow_html=True)
 st.markdown(NAV, unsafe_allow_html=True)
 st.markdown(WA_BTN, unsafe_allow_html=True)
+
+# Persist theme & language across visits via localStorage (runs in iframe
+# so <script> actually executes). Reads saved preference and redirects
+# parent URL if it's missing the theme param. Writes current URL prefs back
+# to localStorage on each load.
+import streamlit.components.v1 as _components
+_persist_js = """
+<script>
+(function(){
+  try {
+    var top = window.parent;
+    var url = new URL(top.location.href);
+    var qp = url.searchParams;
+    var savedTheme = localStorage.getItem('pauli-theme');
+    var savedLang = localStorage.getItem('pauli-lang');
+    var changed = false;
+    if (!qp.get('theme') && savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+      qp.set('theme', savedTheme); changed = true;
+    }
+    if (!qp.get('lang') && savedLang && (savedLang === 'es' || savedLang === 'en')) {
+      qp.set('lang', savedLang); changed = true;
+    }
+    if (changed) {
+      top.location.replace(url.toString());
+      return;
+    }
+    // Persist current selection
+    var t = qp.get('theme'); if (t) localStorage.setItem('pauli-theme', t);
+    var l = qp.get('lang'); if (l) localStorage.setItem('pauli-lang', l);
+  } catch(e) { /* privacy mode / cross-origin — fail silently */ }
+})();
+</script>
+"""
+_components.html(_persist_js, height=0)
 
 
 # ─── Page: EN placeholder ────────────────────────────────────────────────────
@@ -352,7 +384,7 @@ def render_en_placeholder():
   <h1>{t["en_soon_title"]}</h1>
   <p>{t["en_soon_body"]}</p>
   <a href="{WA}" target="_blank" class="btn btn-wa">💬 {t["en_soon_cta"]}</a>
-  <p style="margin-top:32px"><a href="?page={page}&lang=es" target="_top" style="color:var(--accent);font-weight:700">← Ver versión en español</a></p>
+  <p style="margin-top:32px"><a href="?page={page}&lang=es" style="color:var(--accent);font-weight:700">← Ver versión en español</a></p>
 </section>
 ''', unsafe_allow_html=True)
 
@@ -466,7 +498,7 @@ def render_home_es():
       <p class="stxt">Piénsalo como el interruptor maestro que reactiva la capacidad de tu cuerpo para repararse.</p>
       <p class="stxt">Con la edad, los niveles de <b>GHK-Cu</b> bajan — y con ellos, también baja nuestra capacidad natural de reparar, renovar y regenerar.</p>
       <p class="stxt">El parche está diseñado para ayudarte a elevar el GHK-Cu en tu cuerpo, acercándolo a los niveles que tenías en tu juventud.</p>
-      <a href="{LINK_GHK}" target="_top" class="btn" style="margin-top:22px">Más sobre el GHK ›</a>
+      <a href="{LINK_GHK}" class="btn" style="margin-top:22px">Más sobre el GHK ›</a>
     </div>
     <div><img src="{IMG_MOUNTAIN}" class="img-full" alt="Hombre frente a la montaña"></div>
   </div>
@@ -488,7 +520,7 @@ def render_home_es():
   {test_html}
   <p class="scroll-hint">(Deslizá para ver más experiencias)</p>
   <div style="margin-top:28px">
-    <a href="{LINK_RESULTS}" target="_top" class="btn btn-outline">Ver más experiencias reales ›</a>
+    <a href="{LINK_RESULTS}" class="btn btn-outline">Ver más experiencias reales ›</a>
   </div>
 </section>
 ''', unsafe_allow_html=True)
@@ -562,7 +594,7 @@ def render_home_es():
       <p class="about-txt">Desde 2004, LifeWave acompaña a personas en más de cien países a sentirse mejor, verse más jóvenes y vivir con más presencia — con tecnologías de bienestar que potencian la energía y la resiliencia que tu cuerpo ya tiene.</p>
       <p class="about-txt" style="margin-top:14px">A nivel global, David figura hoy como titular de más de <b>200 patentes otorgadas</b> — con varias más en trámite. De ese total, más de setenta corresponden al campo de la ciencia y la tecnología de la regeneración.</p>
       <p class="about-txt" style="margin-top:14px">LifeWave ha recibido varios reconocimientos a lo largo de los años; entre los más recientes, el <b>Premio Biotech Breakthrough 2025</b> en la categoría «Innovación en células madre del año».</p>
-      <div style="margin-top:22px"><a href="{LINK_STUDIES}" target="_top" class="btn btn-outline">Patentes y estudios ›</a></div>
+      <div style="margin-top:22px"><a href="{LINK_STUDIES}" class="btn btn-outline">Patentes y estudios ›</a></div>
     </div>
   </div>
 </section>
@@ -674,8 +706,8 @@ def render_ghk_es():
   <div style="text-align:center;max-width:800px;margin:0 auto">
     <h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">¿Querés ver cómo esto cambia la vida de personas reales?</h2>
     <div class="cta-btns" style="justify-content:center">
-      <a href="{LINK_RESULTS}" target="_top" class="btn">Ver resultados reales ›</a>
-      <a href="{LINK_STUDIES}" target="_top" class="btn btn-outline">Ver estudios y patentes ›</a>
+      <a href="{LINK_RESULTS}" class="btn">Ver resultados reales ›</a>
+      <a href="{LINK_STUDIES}" class="btn btn-outline">Ver estudios y patentes ›</a>
     </div>
   </div>
 </section>
@@ -728,7 +760,7 @@ def render_resultados_es():
     <p class="stxt" style="text-align:center">Lo más sencillo es escribirnos — te contamos qué parche corresponde a lo que buscás, cómo pedirlo, y cómo funciona la garantía.</p>
     <div class="cta-btns" style="justify-content:center;margin-top:20px">
       <a href="{WA}" target="_blank" class="btn btn-wa">💬 Hablar por WhatsApp</a>
-      <a href="{LINK_GHK}" target="_top" class="btn btn-outline">¿Qué es el GHK-Cu? ›</a>
+      <a href="{LINK_GHK}" class="btn btn-outline">¿Qué es el GHK-Cu? ›</a>
     </div>
   </div>
 </section>
@@ -833,7 +865,7 @@ def render_estudios_es():
     <p class="stxt" style="text-align:center">Escribinos y te contamos qué hay detrás, con calma y con datos.</p>
     <div class="cta-btns" style="justify-content:center;margin-top:20px">
       <a href="{WA}" target="_blank" class="btn btn-wa">💬 Hablar por WhatsApp</a>
-      <a href="{LINK_GHK}" target="_top" class="btn btn-outline">Más sobre el GHK-Cu ›</a>
+      <a href="{LINK_GHK}" class="btn btn-outline">Más sobre el GHK-Cu ›</a>
     </div>
   </div>
 </section>
