@@ -224,18 +224,10 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .test-scroll{display:flex;gap:22px;overflow-x:auto;padding:24px 4px 32px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .test-scroll::-webkit-scrollbar{display:none}
 .test-card{flex:0 0 260px;aspect-ratio:9/16;position:relative;scroll-snap-align:center;border-radius:18px;overflow:hidden;
-  box-shadow:0 14px 40px rgba(0,0,0,.45);background:#000;text-decoration:none;display:block;
+  box-shadow:0 14px 40px rgba(0,0,0,.45);background:#000;
   transition:transform .35s cubic-bezier(.4,.14,.3,1),box-shadow .35s}
 .test-card:hover{transform:translateY(-5px);box-shadow:0 20px 48px rgba(0,0,0,.55)}
-.test-card .test-poster{width:100%;height:100%;object-fit:cover;display:block;background:#111}
-.test-card .test-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:74px;height:74px;border-radius:50%;background:rgba(85,170,215,.88);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 24px rgba(0,0,0,.4);transition:transform .25s,background .25s}
-.test-card .test-play::after{content:"";display:block;width:0;height:0;
-  border-top:12px solid transparent;border-bottom:12px solid transparent;border-left:19px solid #fff;margin-left:6px}
-.test-card:hover .test-play{background:rgba(85,170,215,1);transform:translate(-50%,-50%) scale(1.1)}
-.test-card .test-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12) 0%,transparent 30%,transparent 70%,rgba(0,0,0,.18) 100%);pointer-events:none}
+.test-card iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
 .test-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:44px;height:44px;border-radius:50%;
   background:rgba(255,255,255,.92);color:#111;display:flex;align-items:center;justify-content:center;
   font-size:26px;line-height:1;box-shadow:0 4px 16px rgba(0,0,0,.25);user-select:none;pointer-events:none;font-weight:300}
@@ -521,9 +513,10 @@ def render_home_es():
     test_cards = ""
     for vid_id, label in TESTIMONIALS:
         test_cards += (
-            f'<a class="test-card" href="https://vimeo.com/{vid_id}" target="_self" aria-label="{label}">'
-            f'<img class="test-poster" src="https://vumbnail.com/{vid_id}.jpg" alt="{label}" loading="lazy">'
-            f'<span class="test-overlay"></span><span class="test-play" aria-hidden="true"></span></a>'
+            f'<div class="test-card" aria-label="{label}">'
+            f'<iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0&dnt=1" '
+            f'title="{label}" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen loading="lazy"></iframe>'
+            f'</div>'
         )
     test_html = (
         '<div class="test-scroll-wrap">'
@@ -739,9 +732,10 @@ def render_resultados_es():
     cards = ""
     for vid_id, label in TESTIMONIALS:
         cards += (
-            f'<a class="test-card" href="https://vimeo.com/{vid_id}" target="_self" aria-label="{label}">'
-            f'<img class="test-poster" src="https://vumbnail.com/{vid_id}.jpg" alt="{label}" loading="lazy">'
-            f'<span class="test-overlay"></span><span class="test-play" aria-hidden="true"></span></a>'
+            f'<div class="test-card" aria-label="{label}">'
+            f'<iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0&dnt=1" '
+            f'title="{label}" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen loading="lazy"></iframe>'
+            f'</div>'
         )
     grid_html = (
         '<div class="test-scroll-wrap">'
@@ -1013,9 +1007,10 @@ def render_home_en():
     test_cards = ""
     for vid_id, label in TESTIMONIALS_EN:
         test_cards += (
-            f'<a class="test-card" href="https://vimeo.com/{vid_id}" target="_self" aria-label="{label}">'
-            f'<img class="test-poster" src="https://vumbnail.com/{vid_id}.jpg" alt="{label}" loading="lazy">'
-            f'<span class="test-overlay"></span><span class="test-play" aria-hidden="true"></span></a>'
+            f'<div class="test-card" aria-label="{label}">'
+            f'<iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0&dnt=1" '
+            f'title="{label}" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen loading="lazy"></iframe>'
+            f'</div>'
         )
     test_html = (
         '<div class="test-scroll-wrap">'
@@ -1185,9 +1180,10 @@ def render_resultados_en():
     cards = ""
     for vid_id, label in TESTIMONIALS_EN:
         cards += (
-            f'<a class="test-card" href="https://vimeo.com/{vid_id}" target="_self" aria-label="{label}">'
-            f'<img class="test-poster" src="https://vumbnail.com/{vid_id}.jpg" alt="{label}" loading="lazy">'
-            f'<span class="test-overlay"></span><span class="test-play" aria-hidden="true"></span></a>'
+            f'<div class="test-card" aria-label="{label}">'
+            f'<iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0&dnt=1" '
+            f'title="{label}" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen loading="lazy"></iframe>'
+            f'</div>'
         )
     grid_html = (
         '<div class="test-scroll-wrap">'
