@@ -116,7 +116,15 @@ html,body,.stApp{background:var(--bg)!important;font-family:'Inter',sans-serif!i
 header[data-testid="stHeader"],#MainMenu,footer,.stDeployButton{display:none!important}
 div[data-testid="stSidebarCollapsedControl"],section[data-testid="stSidebar"]{display:none!important}
 .stApp > div:first-child > div:first-child > div:first-child > div:first-child{gap:0!important}
-a{color:inherit;text-decoration:none}
+a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none!important}
+.nav-logo,.nav-logo:link,.nav-logo:visited,.nav-logo:hover,.nav-logo:active{color:var(--text)!important;text-decoration:none!important}
+.nav-logo span{color:var(--accent)!important}
+.nav-links a,.nav-links a:link,.nav-links a:visited{color:var(--text)!important;text-decoration:none!important}
+.nav-links a:hover{color:var(--accent)!important}
+.nav-links a.active{color:var(--accent)!important}
+.nav-links a.nav-contact,.nav-links a.nav-contact:link,.nav-links a.nav-contact:visited{color:#fff!important}
+.lang-switch a,.lang-switch a:link,.lang-switch a:visited{color:var(--muted)!important;text-decoration:none!important}
+.lang-switch a.active,.lang-switch a:hover{color:var(--accent)!important}
 
 /* ─── Top Nav ─────────────────────────────────────────────────── */
 .topnav{position:sticky;top:0;z-index:1000;background:var(--nav-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--nav-border)}
