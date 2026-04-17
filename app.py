@@ -220,12 +220,26 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .tl-card h4{font-size:clamp(15px,1.35vw,19px);font-weight:700;margin-bottom:8px;color:var(--tl-title);line-height:1.3}
 .tl-card p{font-size:13px;color:var(--card-sub);line-height:1.5}
 
-.test-scroll{display:flex;gap:18px;overflow-x:auto;padding:20px 0 28px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-.test-scroll::-webkit-scrollbar{height:8px}
-.test-scroll::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
-.test-card{flex:0 0 300px;scroll-snap-align:start;background:var(--bg-2);border-radius:12px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.35)}
-.test-card .video-wrap{border-radius:0;box-shadow:none}
-.test-label{padding:12px;text-align:center;font-weight:600;font-size:14px;background:var(--bg-2);color:var(--text)}
+.test-scroll-wrap{position:relative;padding:0 56px}
+.test-scroll{display:flex;gap:22px;overflow-x:auto;padding:24px 4px 32px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.test-scroll::-webkit-scrollbar{display:none}
+.test-card{flex:0 0 260px;aspect-ratio:9/16;position:relative;scroll-snap-align:center;border-radius:18px;overflow:hidden;
+  box-shadow:0 14px 40px rgba(0,0,0,.45);background:#000;text-decoration:none;display:block;
+  transition:transform .35s cubic-bezier(.4,.14,.3,1),box-shadow .35s}
+.test-card:hover{transform:translateY(-5px);box-shadow:0 20px 48px rgba(0,0,0,.55)}
+.test-card .test-poster{width:100%;height:100%;object-fit:cover;display:block;background:#111}
+.test-card .test-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:74px;height:74px;border-radius:50%;background:rgba(85,170,215,.88);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);transition:transform .25s,background .25s}
+.test-card .test-play::after{content:"";display:block;width:0;height:0;
+  border-top:12px solid transparent;border-bottom:12px solid transparent;border-left:19px solid #fff;margin-left:6px}
+.test-card:hover .test-play{background:rgba(85,170,215,1);transform:translate(-50%,-50%) scale(1.1)}
+.test-card .test-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12) 0%,transparent 30%,transparent 70%,rgba(0,0,0,.18) 100%);pointer-events:none}
+.test-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.92);color:#111;display:flex;align-items:center;justify-content:center;
+  font-size:26px;line-height:1;box-shadow:0 4px 16px rgba(0,0,0,.25);user-select:none;pointer-events:none;font-weight:300}
+.test-arrow-left{left:8px}.test-arrow-right{right:8px}
 .scroll-hint{text-align:center;color:var(--muted);font-size:14px;font-style:italic;margin-top:8px}
 
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:45px;align-items:start}
@@ -256,9 +270,6 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .fact-card p{font-size:15px;line-height:1.65;color:var(--text);opacity:.85}
 .fact-card .big{font-size:clamp(28px,3vw,42px);font-weight:800;color:var(--text);display:block;margin-bottom:6px}
 
-.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;margin-top:10px}
-.test-grid .test-card{flex:none;background:var(--bg-2)}
-
 .study-list{max-width:950px;margin:0 auto}
 .study-item{background:var(--bg-2);border-radius:14px;padding:28px 28px;margin-bottom:18px;border-left:4px solid var(--accent)}
 .study-item h3{font-size:clamp(18px,2vw,24px);color:var(--text);margin-bottom:10px;font-weight:800}
@@ -275,7 +286,9 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
   .sec{padding:50px 6%}
   .hero-wrap,.page-hero{padding:70px 6% 55px}
   .tl-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
-  .test-card{flex-basis:260px}
+  .test-card{flex-basis:220px}
+  .test-scroll-wrap{padding:0 14px}
+  .test-arrow{display:none}
 }
 </style>"""
 
@@ -289,7 +302,7 @@ LIGHT_CSS = """<style>
   --footer-text:#555;--footer-border:#e2e2e2;
   --tl-title:#1B2A4A;
 }
-.test-card,.test-label{background:#f5f5f5!important;color:var(--text)!important}
+.test-arrow{background:rgba(255,255,255,.96)!important;color:#111!important;box-shadow:0 4px 14px rgba(0,0,0,.12)!important}
 .study-item,.fact-card{background:#f5f5f5!important}
 .theme-tgl{box-shadow:0 2px 10px rgba(0,0,0,.06)}
 </style>"""
@@ -505,12 +518,20 @@ def render_home_es():
 ''', unsafe_allow_html=True)
 
     # 8. SKEPTICAL + TESTIMONIALS
-    test_html = '<div class="test-scroll">'
+    test_cards = ""
     for vid_id, label in TESTIMONIALS:
-        test_html += f'''<div class="test-card">
-<div class="video-wrap"><iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>
-<div class="test-label">{label}</div></div>'''
-    test_html += '</div>'
+        test_cards += (
+            f'<a class="test-card" href="https://vimeo.com/{vid_id}" target="_self" aria-label="{label}">'
+            f'<img class="test-poster" src="https://vumbnail.com/{vid_id}.jpg" alt="{label}" loading="lazy">'
+            f'<span class="test-overlay"></span><span class="test-play" aria-hidden="true"></span></a>'
+        )
+    test_html = (
+        '<div class="test-scroll-wrap">'
+        '<span class="test-arrow test-arrow-left" aria-hidden="true">‹</span>'
+        f'<div class="test-scroll">{test_cards}</div>'
+        '<span class="test-arrow test-arrow-right" aria-hidden="true">›</span>'
+        '</div>'
+    )
 
     st.markdown(f'''
 <section class="sec" style="text-align:center">
@@ -715,12 +736,20 @@ def render_ghk_es():
 
 # ─── Page: Resultados (Spanish) ──────────────────────────────────────────────
 def render_resultados_es():
-    grid_html = '<div class="test-grid">'
+    cards = ""
     for vid_id, label in TESTIMONIALS:
-        grid_html += f'''<div class="test-card">
-<div class="video-wrap"><iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>
-<div class="test-label">{label}</div></div>'''
-    grid_html += '</div>'
+        cards += (
+            f'<a class="test-card" href="https://vimeo.com/{vid_id}" target="_self" aria-label="{label}">'
+            f'<img class="test-poster" src="https://vumbnail.com/{vid_id}.jpg" alt="{label}" loading="lazy">'
+            f'<span class="test-overlay"></span><span class="test-play" aria-hidden="true"></span></a>'
+        )
+    grid_html = (
+        '<div class="test-scroll-wrap">'
+        '<span class="test-arrow test-arrow-left" aria-hidden="true">‹</span>'
+        f'<div class="test-scroll">{cards}</div>'
+        '<span class="test-arrow test-arrow-right" aria-hidden="true">›</span>'
+        '</div>'
+    )
 
     st.markdown(f'''
 <section class="sec page-hero">
@@ -981,14 +1010,20 @@ def render_home_en():
     )
 
     # 8. SKEPTICAL + TESTIMONIALS
-    test_html = '<div class="test-scroll">'
+    test_cards = ""
     for vid_id, label in TESTIMONIALS_EN:
-        test_html += (
-            f'<div class="test-card">'
-            f'<div class="video-wrap"><iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>'
-            f'<div class="test-label">{label}</div></div>'
+        test_cards += (
+            f'<a class="test-card" href="https://vimeo.com/{vid_id}" target="_self" aria-label="{label}">'
+            f'<img class="test-poster" src="https://vumbnail.com/{vid_id}.jpg" alt="{label}" loading="lazy">'
+            f'<span class="test-overlay"></span><span class="test-play" aria-hidden="true"></span></a>'
         )
-    test_html += '</div>'
+    test_html = (
+        '<div class="test-scroll-wrap">'
+        '<span class="test-arrow test-arrow-left" aria-hidden="true">‹</span>'
+        f'<div class="test-scroll">{test_cards}</div>'
+        '<span class="test-arrow test-arrow-right" aria-hidden="true">›</span>'
+        '</div>'
+    )
     st.markdown(
         f'<section class="sec" style="text-align:center">'
         f'<h2 class="ttl ttl-center">SKEPTICAL? GOOD. SO WERE WE.</h2>'
@@ -1147,14 +1182,20 @@ def render_ghk_en():
 
 # ─── Page: Resultados (English) ──────────────────────────────────────────────
 def render_resultados_en():
-    grid_html = '<div class="test-grid">'
+    cards = ""
     for vid_id, label in TESTIMONIALS_EN:
-        grid_html += (
-            f'<div class="test-card">'
-            f'<div class="video-wrap"><iframe src="https://player.vimeo.com/video/{vid_id}?title=0&byline=0&portrait=0" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>'
-            f'<div class="test-label">{label}</div></div>'
+        cards += (
+            f'<a class="test-card" href="https://vimeo.com/{vid_id}" target="_self" aria-label="{label}">'
+            f'<img class="test-poster" src="https://vumbnail.com/{vid_id}.jpg" alt="{label}" loading="lazy">'
+            f'<span class="test-overlay"></span><span class="test-play" aria-hidden="true"></span></a>'
         )
-    grid_html += '</div>'
+    grid_html = (
+        '<div class="test-scroll-wrap">'
+        '<span class="test-arrow test-arrow-left" aria-hidden="true">‹</span>'
+        f'<div class="test-scroll">{cards}</div>'
+        '<span class="test-arrow test-arrow-right" aria-hidden="true">›</span>'
+        '</div>'
+    )
     st.markdown(
         '<section class="sec page-hero">'
         '<div class="kicker">Real experiences</div>'
