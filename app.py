@@ -300,27 +300,27 @@ def active(p): return " active" if page == p else ""
 NAV = f"""
 <nav class="topnav">
   <div class="nav-inner">
-    <a href="{LINK_HOME}" class="nav-logo">Pauli <span>Wellness</span></a>
+    <a href="{LINK_HOME}" target="_self" class="nav-logo">Pauli <span>Wellness</span></a>
     <div class="nav-links">
-      <a href="{LINK_HOME}" class="{active('home').strip()}">{t['nav_home']}</a>
-      <a href="{LINK_GHK}" class="{active('ghk').strip()}">{t['nav_ghk']}</a>
-      <a href="{LINK_RESULTS}" class="{active('resultados').strip()}">{t['nav_results']}</a>
-      <a href="{LINK_STUDIES}" class="{active('estudios').strip()}">{t['nav_studies']}</a>
-      <a href="{WA}" class="nav-contact">{t['nav_contact']}</a>
+      <a href="{LINK_HOME}" target="_self" class="{active('home').strip()}">{t['nav_home']}</a>
+      <a href="{LINK_GHK}" target="_self" class="{active('ghk').strip()}">{t['nav_ghk']}</a>
+      <a href="{LINK_RESULTS}" target="_self" class="{active('resultados').strip()}">{t['nav_results']}</a>
+      <a href="{LINK_STUDIES}" target="_self" class="{active('estudios').strip()}">{t['nav_studies']}</a>
+      <a href="{WA}" target="_self" class="nav-contact">{t['nav_contact']}</a>
     </div>
     <div class="nav-tools">
-      <a href="{LINK_THEME_TOGGLE}" class="theme-tgl" aria-label="{theme_title}" title="{theme_title}">{theme_icon}</a>
+      <a href="{LINK_THEME_TOGGLE}" target="_self" class="theme-tgl" aria-label="{theme_title}" title="{theme_title}">{theme_icon}</a>
       <div class="lang-switch">
-        <a href="{LINK_LANG_ES}" class="{'active' if lang == 'es' else ''}">ES</a>
+        <a href="{LINK_LANG_ES}" target="_self" class="{'active' if lang == 'es' else ''}">ES</a>
         <span class="sep">·</span>
-        <a href="{LINK_LANG_EN}" class="{'active' if lang == 'en' else ''}">EN</a>
+        <a href="{LINK_LANG_EN}" target="_self" class="{'active' if lang == 'en' else ''}">EN</a>
       </div>
     </div>
   </div>
 </nav>
 """
 
-WA_BTN = f'''<a href="{WA}" class="wa-float" aria-label="WhatsApp Pauli">
+WA_BTN = f'''<a href="{WA}" target="_self" class="wa-float" aria-label="WhatsApp Pauli">
 <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>'''
 
 
@@ -497,7 +497,7 @@ def render_home_es():
       <p class="stxt">Piénsalo como el interruptor maestro que reactiva la capacidad de tu cuerpo para repararse.</p>
       <p class="stxt">Con la edad, los niveles de <b>GHK-Cu</b> bajan — y con ellos, también baja nuestra capacidad natural de reparar, renovar y regenerar.</p>
       <p class="stxt">El parche está diseñado para ayudarte a elevar el GHK-Cu en tu cuerpo, acercándolo a los niveles que tenías en tu juventud.</p>
-      <a href="{LINK_GHK}" class="btn" style="margin-top:22px">Más sobre el GHK ›</a>
+      <a href="{LINK_GHK}" target="_self" class="btn" style="margin-top:22px">Más sobre el GHK ›</a>
     </div>
     <div><img src="{IMG_MOUNTAIN}" class="img-full" alt="Hombre frente a la montaña"></div>
   </div>
@@ -519,7 +519,7 @@ def render_home_es():
   {test_html}
   <p class="scroll-hint">(Deslizá para ver más experiencias)</p>
   <div style="margin-top:28px">
-    <a href="{LINK_RESULTS}" class="btn btn-outline">Ver más experiencias reales ›</a>
+    <a href="{LINK_RESULTS}" target="_self" class="btn btn-outline">Ver más experiencias reales ›</a>
   </div>
 </section>
 ''', unsafe_allow_html=True)
@@ -593,7 +593,7 @@ def render_home_es():
       <p class="about-txt">Desde 2004, LifeWave acompaña a personas en más de cien países a sentirse mejor, verse más jóvenes y vivir con más presencia — con tecnologías de bienestar que potencian la energía y la resiliencia que tu cuerpo ya tiene.</p>
       <p class="about-txt" style="margin-top:14px">A nivel global, David figura hoy como titular de más de <b>200 patentes otorgadas</b> — con varias más en trámite. De ese total, más de setenta corresponden al campo de la ciencia y la tecnología de la regeneración.</p>
       <p class="about-txt" style="margin-top:14px">LifeWave ha recibido varios reconocimientos a lo largo de los años; entre los más recientes, el <b>Premio Biotech Breakthrough 2025</b> en la categoría «Innovación en células madre del año».</p>
-      <div style="margin-top:22px"><a href="{LINK_STUDIES}" class="btn btn-outline">Patentes y estudios ›</a></div>
+      <div style="margin-top:22px"><a href="{LINK_STUDIES}" target="_self" class="btn btn-outline">Patentes y estudios ›</a></div>
     </div>
   </div>
 </section>
@@ -622,8 +622,8 @@ def render_home_es():
       <p class="stxt stxt-lg">No tienes que decidir solo/a.</p>
       <p class="stxt stxt-lg">Escríbele a quien te compartió esta página — estamos aquí para responderte.</p>
       <div class="cta-btns">
-        <a href="{WA}" class="btn btn-wa">💬 Hablar por WhatsApp</a>
-        <a href="{WA}" class="btn">Paquetes y precios ›</a>
+        <a href="{WA}" target="_self" class="btn btn-wa">💬 Hablar por WhatsApp</a>
+        <a href="{WA}" target="_self" class="btn">Paquetes y precios ›</a>
       </div>
     </div>
     <div><img src="{IMG_KITCHEN}" class="img-full" alt="Pareja feliz en la cocina"></div>
@@ -705,8 +705,8 @@ def render_ghk_es():
   <div style="text-align:center;max-width:800px;margin:0 auto">
     <h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">¿Querés ver cómo esto cambia la vida de personas reales?</h2>
     <div class="cta-btns" style="justify-content:center">
-      <a href="{LINK_RESULTS}" class="btn">Ver resultados reales ›</a>
-      <a href="{LINK_STUDIES}" class="btn btn-outline">Ver estudios y patentes ›</a>
+      <a href="{LINK_RESULTS}" target="_self" class="btn">Ver resultados reales ›</a>
+      <a href="{LINK_STUDIES}" target="_self" class="btn btn-outline">Ver estudios y patentes ›</a>
     </div>
   </div>
 </section>
@@ -758,8 +758,8 @@ def render_resultados_es():
     <h2 class="ttl ttl-center">¿Querés probarlo?</h2>
     <p class="stxt" style="text-align:center">Lo más sencillo es escribirnos — te contamos qué parche corresponde a lo que buscás, cómo pedirlo, y cómo funciona la garantía.</p>
     <div class="cta-btns" style="justify-content:center;margin-top:20px">
-      <a href="{WA}" class="btn btn-wa">💬 Hablar por WhatsApp</a>
-      <a href="{LINK_GHK}" class="btn btn-outline">¿Qué es el GHK-Cu? ›</a>
+      <a href="{WA}" target="_self" class="btn btn-wa">💬 Hablar por WhatsApp</a>
+      <a href="{LINK_GHK}" target="_self" class="btn btn-outline">¿Qué es el GHK-Cu? ›</a>
     </div>
   </div>
 </section>
@@ -849,8 +849,8 @@ def render_estudios_es():
         f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">¿Querés entender cómo esto te aplica a ti?</h2>'
         f'<p class="stxt" style="text-align:center">Escribinos y te contamos qué hay detrás, con calma y con datos.</p>'
         f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
-        f'<a href="{WA}" class="btn btn-wa">💬 Hablar por WhatsApp</a>'
-        f'<a href="{LINK_GHK}" class="btn btn-outline">Más sobre el GHK-Cu ›</a>'
+        f'<a href="{WA}" target="_self" class="btn btn-wa">💬 Hablar por WhatsApp</a>'
+        f'<a href="{LINK_GHK}" target="_self" class="btn btn-outline">Más sobre el GHK-Cu ›</a>'
         f'</div></div></section>',
         unsafe_allow_html=True,
     )
@@ -973,7 +973,7 @@ def render_home_en():
         f'<p class="stxt">Think of it as the master switch that reactivates your body\'s ability to repair itself.</p>'
         f'<p class="stxt">With age, <b>GHK-Cu</b> levels drop — and with them, our natural capacity to repair, renew and regenerate.</p>'
         f'<p class="stxt">The patch is designed to help you raise GHK-Cu in your body, closer to the levels you had in your youth.</p>'
-        f'<a href="{LINK_GHK}" class="btn" style="margin-top:22px">More about GHK ›</a>'
+        f'<a href="{LINK_GHK}" target="_self" class="btn" style="margin-top:22px">More about GHK ›</a>'
         f'</div>'
         f'<div><img src="{IMG_MOUNTAIN}" class="img-full" alt="Man in front of the mountain"></div>'
         f'</div></section>',
@@ -995,7 +995,7 @@ def render_home_en():
         f'<p class="stxt stxt-lg" style="text-align:center">Most of the people here today started the same way. These are their stories.</p>'
         f'{test_html}'
         f'<p class="scroll-hint">(Swipe to see more experiences)</p>'
-        f'<div style="margin-top:28px"><a href="{LINK_RESULTS}" class="btn btn-outline">See more real experiences ›</a></div>'
+        f'<div style="margin-top:28px"><a href="{LINK_RESULTS}" target="_self" class="btn btn-outline">See more real experiences ›</a></div>'
         f'</section>',
         unsafe_allow_html=True,
     )
@@ -1041,7 +1041,7 @@ def render_home_en():
         f'<p class="about-txt">Since 2004, LifeWave has supported people in over one hundred countries to feel better, look younger and live more present — with wellness technologies that amplify the energy and resilience your body already has.</p>'
         f'<p class="about-txt" style="margin-top:14px">Globally, David holds more than <b>200 granted patents</b> — with several more pending. Of those, over seventy are in the field of regeneration science and technology.</p>'
         f'<p class="about-txt" style="margin-top:14px">LifeWave has received multiple awards over the years; among the most recent, the <b>2025 Biotech Breakthrough Award</b> in the "Stem Cell Innovation of the Year" category.</p>'
-        f'<div style="margin-top:22px"><a href="{LINK_STUDIES}" class="btn btn-outline">Patents and studies ›</a></div>'
+        f'<div style="margin-top:22px"><a href="{LINK_STUDIES}" target="_self" class="btn btn-outline">Patents and studies ›</a></div>'
         f'</div></div></section>',
         unsafe_allow_html=True,
     )
@@ -1067,8 +1067,8 @@ def render_home_en():
         f'<p class="stxt stxt-lg">You don\'t have to decide alone.</p>'
         f'<p class="stxt stxt-lg">Write to whoever shared this page with you — we\'re here to answer.</p>'
         f'<div class="cta-btns">'
-        f'<a href="{WA}" class="btn btn-wa">💬 Chat on WhatsApp</a>'
-        f'<a href="{WA}" class="btn">Packages and pricing ›</a>'
+        f'<a href="{WA}" target="_self" class="btn btn-wa">💬 Chat on WhatsApp</a>'
+        f'<a href="{WA}" target="_self" class="btn">Packages and pricing ›</a>'
         f'</div>'
         f'</div>'
         f'<div><img src="{IMG_KITCHEN}" class="img-full" alt="Happy couple in the kitchen"></div>'
@@ -1138,8 +1138,8 @@ def render_ghk_en():
         f'<section class="sec"><div style="text-align:center;max-width:800px;margin:0 auto">'
         f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">Want to see how this changes real people\'s lives?</h2>'
         f'<div class="cta-btns" style="justify-content:center">'
-        f'<a href="{LINK_RESULTS}" class="btn">See real results ›</a>'
-        f'<a href="{LINK_STUDIES}" class="btn btn-outline">See studies and patents ›</a>'
+        f'<a href="{LINK_RESULTS}" target="_self" class="btn">See real results ›</a>'
+        f'<a href="{LINK_STUDIES}" target="_self" class="btn btn-outline">See studies and patents ›</a>'
         f'</div></div></section>',
         unsafe_allow_html=True,
     )
@@ -1192,8 +1192,8 @@ def render_resultados_en():
         f'<h2 class="ttl ttl-center">Want to try it?</h2>'
         f'<p class="stxt" style="text-align:center">The easiest thing is to message us — we\'ll tell you which patch fits what you\'re looking for, how to order it, and how the guarantee works.</p>'
         f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
-        f'<a href="{WA}" class="btn btn-wa">💬 Chat on WhatsApp</a>'
-        f'<a href="{LINK_GHK}" class="btn btn-outline">What is GHK-Cu? ›</a>'
+        f'<a href="{WA}" target="_self" class="btn btn-wa">💬 Chat on WhatsApp</a>'
+        f'<a href="{LINK_GHK}" target="_self" class="btn btn-outline">What is GHK-Cu? ›</a>'
         f'</div></div></section>',
         unsafe_allow_html=True,
     )
@@ -1272,8 +1272,8 @@ def render_estudios_en():
         f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">Want to understand how this applies to you?</h2>'
         f'<p class="stxt" style="text-align:center">Message us and we\'ll walk you through it, calmly and with data.</p>'
         f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
-        f'<a href="{WA}" class="btn btn-wa">💬 Chat on WhatsApp</a>'
-        f'<a href="{LINK_GHK}" class="btn btn-outline">More about GHK-Cu ›</a>'
+        f'<a href="{WA}" target="_self" class="btn btn-wa">💬 Chat on WhatsApp</a>'
+        f'<a href="{LINK_GHK}" target="_self" class="btn btn-outline">More about GHK-Cu ›</a>'
         f'</div></div></section>',
         unsafe_allow_html=True,
     )
