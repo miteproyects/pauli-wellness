@@ -181,7 +181,7 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .grid2-rev{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
 
 .hero-wrap{position:relative;padding:100px 8% 90px;text-align:center;overflow:hidden;isolation:isolate}
-.hero-wrap::before{content:"";position:absolute;inset:0;background-image:url("https://whythelight.com/wp-content/uploads/2025/09/SN-Patch-placement-scaled-1-690x1024.jpg");background-size:cover;background-position:center 30%;background-repeat:no-repeat;filter:contrast(1.25);z-index:-2}
+.hero-wrap::before{content:"";position:absolute;inset:0;background-image:url("https://whythelight.com/wp-content/uploads/2025/09/SN-Patch-placement-scaled-1-690x1024.jpg");background-size:cover;background-position:center 30%;background-repeat:no-repeat;filter:contrast(1.5);z-index:-2}
 .hero-wrap::after{content:"";position:absolute;inset:0;background:var(--hero-veil);z-index:-1}
 .hero-top{position:relative;font-size:clamp(26px,4vw,52px);font-weight:800;line-height:1.2;max-width:1100px;margin:0 auto 35px;letter-spacing:.5px;color:var(--text);z-index:1}
 .hero-highlight{color:var(--accent)}
