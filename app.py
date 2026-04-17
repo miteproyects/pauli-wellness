@@ -1035,8 +1035,6 @@ def render_home_en():
         f'<h2 class="ttl ttl-center">SKEPTICAL? GOOD. SO WERE WE.</h2>'
         f'<p class="stxt stxt-lg" style="text-align:center">Most of the people here today started the same way. These are their stories.</p>'
         f'{test_html}'
-        f'<p class="scroll-hint">(Swipe to see more experiences)</p>'
-        f'<div style="margin-top:28px"><a href="{LINK_RESULTS}" target="_self" class="btn btn-outline">See more real experiences ›</a></div>'
         f'</section>',
         unsafe_allow_html=True,
     )
