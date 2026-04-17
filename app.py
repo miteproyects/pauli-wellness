@@ -64,6 +64,7 @@ IMG_BADGE = "https://whythelight.com/wp-content/uploads/2025/09/90-dayGuarantee.
 VIMEO_MAIN = "1133694650"
 VIMEO_DAVID = "1131910398"
 TESTIMONIALS = [
+    ("1118429044", "Dedos doloridos"),
     ("1118429946", "Túnel carpiano, vista, piel"),
     ("1118430693", "Testimonio"),
     ("1118433583", "Escaneado claro"),
@@ -887,6 +888,7 @@ def render_estudios_es():
 
 # ─── English testimonial labels ──────────────────────────────────────────────
 TESTIMONIALS_EN = [
+    ("1118429044", "Sore fingers"),
     ("1118429946", "Carpal tunnel, sight, skin"),
     ("1118430693", "Testimonial"),
     ("1118433583", "Clear scan"),
