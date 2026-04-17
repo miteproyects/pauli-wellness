@@ -137,7 +137,9 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .lang-switch a.active,.lang-switch a:hover{color:var(--accent)!important}
 
 /* ─── Top Nav ─────────────────────────────────────────────────── */
-.topnav{position:sticky;top:0;z-index:1000;background:var(--nav-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--nav-border)}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--nav-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--nav-border)}
+.nav-spacer{height:64px}
+@media(max-width:780px){.nav-spacer{height:58px}}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1400px;margin:0 auto;padding:14px 5%;gap:24px}
 .nav-logo{font-weight:900;font-size:21px;color:var(--text);letter-spacing:.6px;white-space:nowrap}
 .nav-logo span{color:var(--accent);font-weight:700}
@@ -363,6 +365,7 @@ st.markdown(CSS, unsafe_allow_html=True)
 if theme == "light":
     st.markdown(LIGHT_CSS, unsafe_allow_html=True)
 st.markdown(NAV, unsafe_allow_html=True)
+st.markdown('<div class="nav-spacer"></div>', unsafe_allow_html=True)
 st.markdown(WA_BTN, unsafe_allow_html=True)
 
 # Persist theme & language across visits via localStorage (runs in iframe
