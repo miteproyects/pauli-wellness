@@ -65,10 +65,9 @@ div[data-testid="stSidebarCollapsedControl"],section[data-testid="stSidebar"]{di
 .stApp > div:first-child > div:first-child > div:first-child > div:first-child{gap:0!important}
 a{color:inherit;text-decoration:none}
 
-/* Fix Streamlit's inner scroll container so the parent iframe auto-sizes to full content
-   instead of clipping the 13 sections into a 678px scroll window. */
-section.stMain,section[data-testid="stMain"]{height:auto!important;min-height:100vh!important;overflow:visible!important}
-.stAppViewContainer,.stMainBlockContainer,div[data-testid="stMainBlockContainer"]{height:auto!important;overflow:visible!important;max-height:none!important}
+/* Keep Streamlit's default internal-scroll behavior (scrollbar inside section.stMain).
+   Overriding this breaks page access on Streamlit Cloud since the outer iframe
+   wrapper does not auto-resize when the content exceeds the viewport. */
 
 .wa-float{position:fixed;bottom:25px;right:25px;z-index:9999;width:60px;height:60px;border-radius:50%;
   background:#25D366;display:flex;align-items:center;justify-content:center;
