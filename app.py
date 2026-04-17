@@ -332,7 +332,7 @@ NAV = f"""
 </nav>
 """
 
-WA_BTN = f'''<a href="{WA}" target="_self" class="wa-float" aria-label="WhatsApp Pauli">
+WA_BTN = f'''<a href="{WA}" target="_blank" rel="noopener" class="wa-float" aria-label="WhatsApp Pauli">
 <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>'''
 
 
@@ -643,7 +643,7 @@ def render_home_es():
       <p class="stxt stxt-lg">No tienes que decidir solo/a.</p>
       <p class="stxt stxt-lg">Escríbele a quien te compartió esta página — estamos aquí para responderte.</p>
       <div class="cta-btns">
-        <a href="{WA}" target="_self" class="btn btn-wa">💬 Hablar por WhatsApp</a>
+        <a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Hablar por WhatsApp</a>
         <a href="https://raw.githubusercontent.com/miteproyects/pauli-wellness/main/Packages-and-Pricing.pdf" download="Packages-and-Pricing.pdf" target="_self" class="btn">Descargar paquetes y precios</a>
       </div>
     </div>
@@ -788,7 +788,7 @@ def render_resultados_es():
     <h2 class="ttl ttl-center">¿Querés probarlo?</h2>
     <p class="stxt" style="text-align:center">Lo más sencillo es escribirnos — te contamos qué parche corresponde a lo que buscás, cómo pedirlo, y cómo funciona la garantía.</p>
     <div class="cta-btns" style="justify-content:center;margin-top:20px">
-      <a href="{WA}" target="_self" class="btn btn-wa">💬 Hablar por WhatsApp</a>
+      <a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Hablar por WhatsApp</a>
       <a href="{LINK_GHK}" target="_self" class="btn btn-outline">¿Qué es el GHK-Cu? ›</a>
     </div>
   </div>
@@ -879,7 +879,7 @@ def render_estudios_es():
         f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">¿Querés entender cómo esto te aplica a ti?</h2>'
         f'<p class="stxt" style="text-align:center">Escribinos y te contamos qué hay detrás, con calma y con datos.</p>'
         f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
-        f'<a href="{WA}" target="_self" class="btn btn-wa">💬 Hablar por WhatsApp</a>'
+        f'<a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Hablar por WhatsApp</a>'
         f'<a href="{LINK_GHK}" target="_self" class="btn btn-outline">Más sobre el GHK-Cu ›</a>'
         f'</div></div></section>',
         unsafe_allow_html=True,
@@ -1106,7 +1106,7 @@ def render_home_en():
         f'<p class="stxt stxt-lg">You don\'t have to decide alone.</p>'
         f'<p class="stxt stxt-lg">Write to whoever shared this page with you — we\'re here to answer.</p>'
         f'<div class="cta-btns">'
-        f'<a href="{WA}" target="_self" class="btn btn-wa">💬 Chat on WhatsApp</a>'
+        f'<a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Chat on WhatsApp</a>'
         f'<a href="https://raw.githubusercontent.com/miteproyects/pauli-wellness/main/Packages-and-Pricing.pdf" download="Packages-and-Pricing.pdf" target="_self" class="btn">Download Packages and Pricing</a>'
         f'</div>'
         f'</div>'
@@ -1238,7 +1238,7 @@ def render_resultados_en():
         f'<h2 class="ttl ttl-center">Want to try it?</h2>'
         f'<p class="stxt" style="text-align:center">The easiest thing is to message us — we\'ll tell you which patch fits what you\'re looking for, how to order it, and how the guarantee works.</p>'
         f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
-        f'<a href="{WA}" target="_self" class="btn btn-wa">💬 Chat on WhatsApp</a>'
+        f'<a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Chat on WhatsApp</a>'
         f'<a href="{LINK_GHK}" target="_self" class="btn btn-outline">What is GHK-Cu? ›</a>'
         f'</div></div></section>',
         unsafe_allow_html=True,
@@ -1318,7 +1318,7 @@ def render_estudios_en():
         f'<h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">Want to understand how this applies to you?</h2>'
         f'<p class="stxt" style="text-align:center">Message us and we\'ll walk you through it, calmly and with data.</p>'
         f'<div class="cta-btns" style="justify-content:center;margin-top:20px">'
-        f'<a href="{WA}" target="_self" class="btn btn-wa">💬 Chat on WhatsApp</a>'
+        f'<a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Chat on WhatsApp</a>'
         f'<a href="{LINK_GHK}" target="_self" class="btn btn-outline">More about GHK-Cu ›</a>'
         f'</div></div></section>',
         unsafe_allow_html=True,
