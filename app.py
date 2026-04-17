@@ -1,6 +1,6 @@
 """Pauli Wellness - LifeWave Landing Page (ES)
-1:1 parallel of whythelight.com/es/ — same photos, videos, sections, link targets.
-Spanish copy is Pauli Wellness's own adaptation.
+Structure parallels whythelight.com/es/: same photos, same Vimeo videos, same link targets.
+All Spanish copy here is Pauli Wellness's own original wording.
 """
 import streamlit as st
 
@@ -16,13 +16,13 @@ WA_NUM = "593939890499"
 WA_TXT = "Hola%20Pauli!%20Vi%20tu%20pagina%20y%20me%20gustaria%20saber%20mas%20sobre%20los%20parches%20LifeWave"
 WA = f"https://wa.me/{WA_NUM}?text={WA_TXT}"
 
-# External pages on whythelight.com (Pauli doesn't yet host these locally)
+# External info pages (same asset targets used by whythelight.com)
 LINK_GHK = "https://whythelight.com/es/ghk-cu/"
 LINK_RESULTS = "https://whythelight.com/es/resultados-reales/"
 LINK_STUDIES = "https://whythelight.com/es/estudios/"
 LINK_PRICING = WA  # Pauli routes pricing inquiries to WhatsApp
 
-# Image URLs — same assets used by whythelight.com
+# Image URLs — same assets as whythelight.com
 IMG_AGING = "https://whythelight.com/wp-content/uploads/2025/11/womanAging-battery-1-1024x981.png"
 IMG_VIDEO_THUMB = "https://whythelight.com/wp-content/uploads/2025/11/3-MinuteVideo-thumbnail-2-1.png"
 IMG_PATCH_PLACEMENT = "https://whythelight.com/wp-content/uploads/2025/09/SN-Patch-placement-scaled-1-690x1024.jpg"
@@ -38,10 +38,9 @@ IMG_TL_12M = "https://whythelight.com/wp-content/uploads/2025/09/timeline-medita
 IMG_HOLDING = "https://whythelight.com/wp-content/uploads/2025/11/HoldingPatch-clean-cropped-1024x759.png"
 IMG_BADGE = "https://whythelight.com/wp-content/uploads/2025/09/90-dayGuarantee.png"
 
-# Vimeo IDs (from whythelight.com/es/)
+# Vimeo IDs
 VIMEO_MAIN = "1133694650"       # 3-minute "how it works"
 VIMEO_DAVID = "1131910398"      # David Schmidt / About the company
-# 8 testimonial videos, ordered as they appear in the reference carousel
 TESTIMONIALS = [
     ("1133177065", "Tendinitis en codo"),
     ("1118432346", "Ojos, digestión, piel"),
@@ -65,6 +64,12 @@ header[data-testid="stHeader"],#MainMenu,footer,.stDeployButton{display:none!imp
 div[data-testid="stSidebarCollapsedControl"],section[data-testid="stSidebar"]{display:none!important}
 .stApp > div:first-child > div:first-child > div:first-child > div:first-child{gap:0!important}
 a{color:inherit;text-decoration:none}
+
+/* Fix Streamlit's inner scroll container so the parent iframe auto-sizes to full content
+   instead of clipping the 13 sections into a 678px scroll window. */
+section.stMain,section[data-testid="stMain"]{height:auto!important;min-height:100vh!important;overflow:visible!important}
+.stAppViewContainer,.stMainBlockContainer,div[data-testid="stMainBlockContainer"]{height:auto!important;overflow:visible!important;max-height:none!important}
+
 .wa-float{position:fixed;bottom:25px;right:25px;z-index:9999;width:60px;height:60px;border-radius:50%;
   background:#25D366;display:flex;align-items:center;justify-content:center;
   box-shadow:0 4px 15px rgba(37,211,102,.4);transition:transform .3s}
@@ -173,8 +178,8 @@ st.markdown(WA_BTN, unsafe_allow_html=True)
 # 1. HERO
 st.markdown(f'''
 <section class="sec sec-black hero-wrap">
-  <h1 class="hero-top">Tras <span class="hero-highlight">10 años de investigación con células madre</span> y más de <span class="hero-highlight">200 patentes mundiales</span>… descubrimos una manera de usar la luz, no químicos, para activar la propia producción celular de tu cuerpo.</h1>
-  <p class="hero-sub">Es como encender el interruptor de reparación de tu propio cuerpo — <i>con seguridad, sin esfuerzo y desde dentro.</i></p>
+  <h1 class="hero-top">Dos décadas de ciencia. Más de <span class="hero-highlight">200 patentes en todo el mundo</span>. Y una idea simple: usar <span class="hero-highlight">la luz — no químicos</span> — para despertar la producción celular que tu cuerpo ya sabe hacer.</h1>
+  <p class="hero-sub">Como devolverle a tu organismo una señal que había olvidado — <i>segura, silenciosa y desde adentro.</i></p>
 </section>
 ''', unsafe_allow_html=True)
 
@@ -183,17 +188,17 @@ st.markdown(f'''
 <section class="sec sec-black">
   <div class="grid2">
     <div>
-      <h2 class="ttl">¿POR QUÉ TANTA INVESTIGACIÓN?</h2>
-      <p class="stxt">A medida que envejecemos, las células reparadoras naturales de nuestro organismo se ralentizan.</p>
-      <p class="stxt">Menos células activas significa que tu cuerpo se cura más lentamente y muestra signos de envejecimiento más rápido.</p>
-      <p class="stxt stxt-it">Y… empiezas a sentirlo —</p>
+      <h2 class="ttl">¿POR QUÉ TANTA CIENCIA DETRÁS?</h2>
+      <p class="stxt">Con los años, las células que se encargan de repararte pierden ritmo.</p>
+      <p class="stxt">Menos actividad celular = tu cuerpo sana más despacio y los signos del tiempo aparecen más pronto.</p>
+      <p class="stxt stxt-it">Y de a poco… empiezas a notarlo —</p>
       <ul class="check-list">
-        <li>Dolores y rigidez</li>
-        <li>Sueño insuficiente y recuperación lenta</li>
-        <li>Baja energía y concentración</li>
-        <li>Líneas de expresión, pérdida de cabello e inflamación</li>
+        <li>Rigidez, molestias y dolores que antes no estaban</li>
+        <li>Sueño ligero, recuperación más lenta</li>
+        <li>Energía que cae a media tarde</li>
+        <li>Piel apagada, cabello que se afina, inflamación que no se va</li>
       </ul>
-      <p class="stxt">Si pudieras reparar y regenerar de dentro hacia fuera, de forma segura y asequible… <b><i>¿no te gustaría?</i></b></p>
+      <p class="stxt">Y si existiera una forma segura y accesible de encender de nuevo tu propia maquinaria de reparación desde dentro… <b><i>¿no te gustaría probarla?</i></b></p>
     </div>
     <div><img src="{IMG_AGING}" class="img-full" alt="Envejecimiento celular"></div>
   </div>
@@ -205,11 +210,11 @@ st.markdown(f'''
 <section class="sec sec-black">
   <div class="grid2">
     <div>
-      <h2 class="ttl">ESTO NO ES UNA MEJOR PASTILLA, CREMA, INYECCIÓN O TENDENCIA.</h2>
-      <p class="stxt stxt-lg">Es una categoría completamente nueva.</p>
-      <p class="stxt">Un parche portátil, no transdérmico, con resultados reales respaldados por ciencia, estudios clínicos y patentes mundiales.</p>
-      <p class="stxt"><b>Sin medicamentos. Sin inyecciones. Sin conjeturas. Sin efectos secundarios.</b></p>
-      <p class="stxt stxt-it">Solo luz — enviando una señal que tu cuerpo olvidó… hasta ahora.</p>
+      <h2 class="ttl">NO ES OTRA PASTILLA, CREMA, INYECCIÓN NI MODA.</h2>
+      <p class="stxt stxt-lg">Es una categoría completamente distinta.</p>
+      <p class="stxt">Un parche del tamaño de una moneda, portable y no transdérmico, con resultados documentados en estudios clínicos y protegidos por patentes en todo el mundo.</p>
+      <p class="stxt"><b>Sin fármacos. Sin agujas. Sin suplementos. Sin efectos secundarios conocidos.</b></p>
+      <p class="stxt stxt-it">Solo luz — una señal que tu cuerpo ya sabe leer… solo había dejado de escucharla.</p>
     </div>
     <div class="video-wrap">
       <iframe src="https://player.vimeo.com/video/{VIMEO_MAIN}?title=0&byline=0&portrait=0" allow="autoplay;fullscreen" allowfullscreen></iframe>
@@ -223,8 +228,8 @@ st.markdown(f'''
 <section class="sec sec-black" style="padding-top:20px">
   <div style="max-width:850px;margin:0 auto;text-align:center">
     <img src="{IMG_VIDEO_THUMB}" alt="Video de 3 minutos" style="max-width:420px;width:100%;margin-bottom:10px">
-    <p style="font-size:clamp(20px,2.4vw,30px);font-weight:800;color:#fff;margin-top:15px">Mira cómo funciona el parche</p>
-    <p style="font-size:clamp(16px,1.6vw,20px);color:#d4a94a;font-weight:600;margin-top:6px">Video de 3 minutos</p>
+    <p style="font-size:clamp(20px,2.4vw,30px);font-weight:800;color:#fff;margin-top:15px">Entiende cómo funciona en 3 minutos</p>
+    <p style="font-size:clamp(16px,1.6vw,20px);color:#d4a94a;font-weight:600;margin-top:6px">Dale play al video</p>
   </div>
 </section>
 ''', unsafe_allow_html=True)
@@ -234,33 +239,33 @@ st.markdown(f'''
 <section class="sec sec-black">
   <div class="grid2">
     <div>
-      <h2 class="ttl">¿POR QUÉ LA LUZ?</h2>
-      <p class="stxt stxt-lg">La luz es información — y tu cuerpo siempre está escuchando.</p>
-      <p class="stxt">Es acupuntura unida a la biología cuántica — sin agujas ni complejidad.</p>
-      <p class="stxt">Nuestro parche patentado refleja longitudes de onda específicas de luz que estimulan tu piel para elevar el <b>GHK-Cu</b>, el péptido de cobre clínicamente comprobado para reparar y regenerar células dañadas.</p>
-      <p class="stxt">Nada entra en tu cuerpo. Solo una señal limpia que despierta lo que ya está dentro de ti.</p>
-      <p class="stxt stxt-it"><b>Tu cuerpo sabe qué hacer. El parche simplemente se lo recuerda.</b></p>
+      <h2 class="ttl">¿POR QUÉ LUZ?</h2>
+      <p class="stxt stxt-lg">La luz es información. Y tu cuerpo la está escuchando siempre.</p>
+      <p class="stxt">Pensalo como acupuntura moderna — pero sin agujas y sin sesiones.</p>
+      <p class="stxt">La superficie patentada del parche refleja longitudes de onda precisas hacia tu piel, ayudando a que tu cuerpo eleve naturalmente el <b>GHK-Cu</b>, el péptido de cobre que la literatura científica asocia con la reparación y la renovación celular.</p>
+      <p class="stxt">Nada atraviesa la piel. Solo un estímulo limpio que activa lo que ya estaba listo dentro de ti.</p>
+      <p class="stxt stxt-it"><b>Tu cuerpo sabe qué hacer. El parche solo le recuerda el camino.</b></p>
     </div>
     <div><img src="{IMG_PATCHES}" class="img-full" alt="Parches LifeWave"></div>
   </div>
 </section>
 ''', unsafe_allow_html=True)
 
-# 6. NOT ABOUT QUICK FIXES  (fixed — now uses couple photo from whythelight, not unsplash)
+# 6. NOT ABOUT QUICK FIXES  (image on the left, text on the right via grid2-rev)
 st.markdown(f'''
 <section class="sec sec-black">
   <div class="grid2-rev">
     <div><img src="{IMG_COUPLE}" class="img-full" alt="Pareja viviendo con vitalidad"></div>
     <div>
-      <h2 class="ttl">NO SE TRATA DE SOLUCIONES RÁPIDAS NI DE ENMASCARAR SÍNTOMAS</h2>
-      <p class="stxt">Imagina despertar con energía que no viene de la cafeína. Piel que refleja tu vitalidad. Un cuerpo que responde como si recordara para qué fue creado.</p>
+      <h2 class="ttl">NO HABLAMOS DE PARCHES SOBRE SÍNTOMAS NI DE ATAJOS RÁPIDOS</h2>
+      <p class="stxt">Hablamos de despertarte con energía de verdad — no la que sube y baja con cada café. Piel que acompaña a cómo te sientes por dentro. Un cuerpo que vuelve a responder como cuando todo fluía.</p>
       <ul class="benefit-list">
-        <li>Energía renovada que te acompaña todo el día</li>
-        <li>Sueño profundo y reparador con mayor claridad mental</li>
-        <li>Piel más tersa y joven con soporte natural de colágeno</li>
-        <li>Recuperación más rápida — del ejercicio o de la vida</li>
-        <li>Regeneración que comienza de adentro hacia afuera</li>
-        <li>y lo más importante… <b><i>¡sentirte tú mismo/a de nuevo!</i></b></li>
+        <li>Energía sostenida durante todo el día</li>
+        <li>Sueño más profundo y mañanas con la cabeza despejada</li>
+        <li>Piel con más luminosidad y apoyo natural al colágeno</li>
+        <li>Recuperación más ágil — del ejercicio o del día</li>
+        <li>Reparación que empieza por dentro y se nota por fuera</li>
+        <li>y lo mejor… <b><i>¡volver a reconocerte!</i></b></li>
       </ul>
     </div>
   </div>
@@ -272,13 +277,13 @@ st.markdown(f'''
 <section class="sec sec-black">
   <div class="grid2">
     <div>
-      <h2 class="ttl">GHK-Cu PÉPTIDO DE COBRE</h2>
-      <p class="stxt stxt-lg" style="color:#d4a94a;font-weight:700">¡El súper péptido de tu propio cuerpo!</p>
-      <p class="stxt">El interruptor maestro que reactiva la capacidad curativa de tu cuerpo.</p>
-      <p class="stxt">A medida que envejecemos, los niveles naturales de <b>GHK-Cu</b> disminuyen — y con ellos, nuestra capacidad de reparar, renovar y regenerar.</p>
-      <p class="stxt">Nuestro parche está clínicamente comprobado para elevar el GHK-Cu, restaurando este péptido vital a niveles juveniles.</p>
-      <p class="stxt">Aunque no sientas algo de inmediato, tus células ya están trabajando — reparando primero lo más importante, y luego avanzando hacia los cambios que puedes ver y sentir.</p>
-      <a href="{LINK_GHK}" target="_blank" rel="noopener" class="btn" style="margin-top:22px">Más información sobre GHK ›</a>
+      <h2 class="ttl">GHK-Cu · EL PÉPTIDO DE COBRE</h2>
+      <p class="stxt stxt-lg" style="color:#d4a94a;font-weight:700">Tu cuerpo ya lo produce. Solo necesita un pequeño empujón.</p>
+      <p class="stxt">Piénsalo como el interruptor maestro que reactiva la capacidad de tu cuerpo para repararse.</p>
+      <p class="stxt">Con la edad, los niveles de <b>GHK-Cu</b> bajan — y con ellos, también baja nuestra capacidad natural de reparar, renovar y regenerar.</p>
+      <p class="stxt">El parche está diseñado para ayudarte a elevar el GHK-Cu en tu cuerpo, acercándolo a los niveles que tenías en tu juventud.</p>
+      <p class="stxt">Aunque los primeros días no sientas nada, por dentro tus células ya están reorganizándose — atendiendo primero lo esencial y, luego, lo que empiezas a ver y a sentir.</p>
+      <a href="{LINK_GHK}" target="_blank" rel="noopener" class="btn" style="margin-top:22px">Más sobre el GHK ›</a>
     </div>
     <div><img src="{IMG_MOUNTAIN}" class="img-full" alt="Hombre frente a la montaña"></div>
   </div>
@@ -295,12 +300,12 @@ test_html += '</div>'
 
 st.markdown(f'''
 <section class="sec sec-black" style="text-align:center">
-  <h2 class="ttl ttl-center">SI ERES ESCÉPTICO/A, BIEN…</h2>
-  <p class="stxt stxt-lg" style="text-align:center">Muchos de nuestros clientes también lo fueron.</p>
+  <h2 class="ttl ttl-center">¿ESCÉPTICO/A? BIEN. NOSOTROS TAMBIÉN LO FUIMOS.</h2>
+  <p class="stxt stxt-lg" style="text-align:center">La mayoría de quienes hoy están aquí, empezaron igual. Estas son sus historias.</p>
   {test_html}
-  <p class="scroll-hint">(Desliza para ver más testimonios)</p>
+  <p class="scroll-hint">(Deslizá para ver más experiencias)</p>
   <div style="margin-top:28px">
-    <a href="{LINK_RESULTS}" target="_blank" rel="noopener" class="btn btn-outline">Ver más experiencias personales ›</a>
+    <a href="{LINK_RESULTS}" target="_blank" rel="noopener" class="btn btn-outline">Ver más experiencias reales ›</a>
   </div>
 </section>
 ''', unsafe_allow_html=True)
@@ -310,13 +315,13 @@ st.markdown(f'''
 <section class="sec sec-black">
   <div class="grid2">
     <div>
-      <h2 class="ttl">CÓMO USAR EL PARCHE</h2>
-      <p class="stxt stxt-lg" style="color:#d4a94a;font-weight:700;margin-bottom:18px">¡Simplemente despega y pega!</p>
-      <div class="step-row"><div class="step-num">1</div><div class="step-txt">Aplica sobre piel limpia y seca.</div></div>
-      <div class="step-row"><div class="step-num">2</div><div class="step-txt">Úsalo hasta 12 horas puesto, luego 12 horas sin él.</div></div>
-      <div class="step-row"><div class="step-num">3</div><div class="step-txt">Desecha el parche o colócalo en tu mascota.</div></div>
-      <div class="step-row"><div class="step-num">4</div><div class="step-txt">Coloca un parche nuevo y repite diariamente.</div></div>
-      <p class="stxt" style="margin-top:18px">Para mejores resultados, asegúrate de tomar <b>mucha agua</b>.</p>
+      <h2 class="ttl">CÓMO SE USA</h2>
+      <p class="stxt stxt-lg" style="color:#d4a94a;font-weight:700;margin-bottom:18px">Despega, pega, listo.</p>
+      <div class="step-row"><div class="step-num">1</div><div class="step-txt">Aplícalo sobre piel limpia y seca.</div></div>
+      <div class="step-row"><div class="step-num">2</div><div class="step-txt">Déjalo puesto hasta 12 horas; después descansa otras 12.</div></div>
+      <div class="step-row"><div class="step-num">3</div><div class="step-txt">Retíralo (si quieres, luego puedes ponerlo sobre tu mascota).</div></div>
+      <div class="step-row"><div class="step-num">4</div><div class="step-txt">Al día siguiente, un parche nuevo — y así cada día.</div></div>
+      <p class="stxt" style="margin-top:18px">Para mejores resultados, acompaña el parche con <b>buena hidratación</b> a lo largo del día.</p>
     </div>
     <div><img src="{IMG_PATCH_PLACEMENT}" class="img-full" alt="Colocación del parche"></div>
   </div>
@@ -326,36 +331,36 @@ st.markdown(f'''
 # 10. TIMELINE
 st.markdown(f'''
 <section class="sec sec-black" style="text-align:center">
-  <h2 class="ttl ttl-center">ESTO ES LO QUE PUEDES ESPERAR</h2>
+  <h2 class="ttl ttl-center">QUÉ PUEDES ESPERAR CON EL TIEMPO</h2>
   <div class="tl-grid">
     <div class="tl-card">
       <img src="{IMG_TL_DAYS}" alt="Primeros días">
       <h3>En los primeros días</h3>
-      <h4>4.000 genes comienzan a reiniciarse</h4>
+      <h4>Miles de genes empiezan a ajustar su expresión</h4>
     </div>
     <div class="tl-card">
       <img src="{IMG_TL_4W}" alt="4 semanas">
-      <h3>En 4 semanas</h3>
-      <h4>Se activa la reparación celular</h4>
-      <p>Trabajando silenciosamente en lo que tu cuerpo más necesita</p>
+      <h3>A las 4 semanas</h3>
+      <h4>Arranca la reparación celular</h4>
+      <p>Tu cuerpo dedica recursos a lo que más necesita, sin que tengas que pensarlo</p>
     </div>
     <div class="tl-card">
       <img src="{IMG_TL_6W}" alt="6 semanas">
-      <h3>En 6 semanas</h3>
-      <h4>Tu cerebro y energía entran en balance</h4>
-      <p>*Respaldado por estudios de PSY-TEK Labs y The Center for Biofield Sciences</p>
+      <h3>A las 6 semanas</h3>
+      <h4>Cerebro y energía encuentran su equilibrio</h4>
+      <p>*Observaciones respaldadas por PSY-TEK Labs y The Center for Biofield Sciences</p>
     </div>
     <div class="tl-card">
       <img src="{IMG_TL_3M}" alt="3-6 meses">
-      <h3>En 3-6 meses</h3>
-      <h4>El colágeno aumenta</h4>
-      <p>La piel se suaviza, la recuperación se acelera</p>
+      <h3>Entre 3 y 6 meses</h3>
+      <h4>Sube el colágeno</h4>
+      <p>La piel gana tersura y la recuperación se acorta</p>
     </div>
     <div class="tl-card">
       <img src="{IMG_TL_12M}" alt="12 meses">
-      <h3>En 12 meses</h3>
-      <h4>No solo te sientes mejor…</h4>
-      <p>te ves y vives como tal</p>
+      <h3>A los 12 meses</h3>
+      <h4>Ya no es solo cómo te sientes…</h4>
+      <p>también se ve y se refleja en cómo vives</p>
     </div>
   </div>
 </section>
@@ -369,11 +374,11 @@ st.markdown(f'''
       <iframe src="https://player.vimeo.com/video/{VIMEO_DAVID}?title=0&byline=0&portrait=0" allow="autoplay;fullscreen" allowfullscreen></iframe>
     </div>
     <div>
-      <h2 class="ttl">ACERCA DE LA EMPRESA</h2>
+      <h2 class="ttl">SOBRE LA EMPRESA</h2>
       <h3 style="font-size:clamp(18px,2vw,24px);margin-bottom:18px;color:#fff">David Schmidt<br>Fundador, inventor y CEO</h3>
-      <p class="about-txt">Desde 2004, hemos ayudado a personas en todo el mundo a sentirse mejor, verse más jóvenes y llevar vidas más plenas. Lo hacemos a través de productos de bienestar que aprovechan la energía natural y la resiliencia del cuerpo, y a través de oportunidades de negocio que inspiran realización personal y profesional.</p>
-      <p class="about-txt" style="margin-top:14px">A nivel global, David es titular de más de <b>200 patentes otorgadas</b> — con muchas más en proceso. Más de setenta de esas patentes están en el campo de la ciencia y tecnología regenerativa.</p>
-      <p class="about-txt" style="margin-top:14px">A lo largo de los años, LifeWave ha recibido múltiples premios, incluyendo el reciente <b>Premio Biotech Breakthrough 2025</b> a la «Innovación en células madre del año».</p>
+      <p class="about-txt">Desde 2004, LifeWave acompaña a personas en más de cien países a sentirse mejor, verse más jóvenes y vivir con más presencia — con tecnologías de bienestar que potencian la energía y la resiliencia que tu cuerpo ya tiene.</p>
+      <p class="about-txt" style="margin-top:14px">A nivel global, David figura hoy como titular de más de <b>200 patentes otorgadas</b> — con varias más en trámite. De ese total, más de setenta corresponden al campo de la ciencia y la tecnología de la regeneración.</p>
+      <p class="about-txt" style="margin-top:14px">LifeWave ha recibido varios reconocimientos a lo largo de los años; entre los más recientes, el <b>Premio Biotech Breakthrough 2025</b> en la categoría «Innovación en células madre del año».</p>
       <div style="margin-top:22px"><a href="{LINK_STUDIES}" target="_blank" rel="noopener" class="btn btn-outline">Patentes y estudios ›</a></div>
     </div>
   </div>
@@ -388,8 +393,8 @@ st.markdown(f'''
       <img src="{IMG_HOLDING}" alt="Sosteniendo el parche" style="border-radius:14px">
       <img src="{IMG_BADGE}" class="badge-img" alt="Garantía 30/90 días">
     </div>
-    <h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">¡Disfruta de los beneficios con confianza!</h2>
-    <p class="stxt stxt-lg" style="margin-top:8px">Prueba nuestro parche <b>sin riesgos durante 30/90 días*</b></p>
+    <h2 class="ttl ttl-center" style="font-size:clamp(24px,3vw,38px)">Pruébalo con tranquilidad total</h2>
+    <p class="stxt stxt-lg" style="margin-top:8px">Sin riesgo durante <b>30/90 días*</b></p>
   </div>
 </section>
 ''', unsafe_allow_html=True)
@@ -399,12 +404,12 @@ st.markdown(f'''
 <section class="sec sec-black">
   <div class="cta-grid">
     <div>
-      <h2 class="ttl">¿SIENTES CURIOSIDAD POR SABER CÓMO ENCAJA ESTO EN TU CAMINO DE SALUD?</h2>
-      <p class="stxt stxt-lg">No estás solo/a.</p>
-      <p class="stxt stxt-lg">Ponte en contacto con la persona que compartió este sitio contigo.</p>
+      <h2 class="ttl">¿TE INTRIGA CÓMO ESTO ENCAJA EN LO QUE YA HACES POR TI?</h2>
+      <p class="stxt stxt-lg">No tienes que decidir solo/a.</p>
+      <p class="stxt stxt-lg">Escríbele a quien te compartió esta página — estamos aquí para responderte.</p>
       <div class="cta-btns">
-        <a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Escríbeme por WhatsApp</a>
-        <a href="{LINK_PRICING}" target="_blank" rel="noopener" class="btn">Información sobre paquetes y precios ›</a>
+        <a href="{WA}" target="_blank" rel="noopener" class="btn btn-wa">💬 Hablar por WhatsApp</a>
+        <a href="{LINK_PRICING}" target="_blank" rel="noopener" class="btn">Paquetes y precios ›</a>
       </div>
     </div>
     <div><img src="{IMG_KITCHEN}" class="img-full" alt="Pareja feliz en la cocina"></div>
@@ -415,10 +420,10 @@ st.markdown(f'''
 # FOOTER
 st.markdown(f'''
 <div class="footer">
-  <p><b>Descargo de responsabilidad:</b> Nuestros parches se basan en la teoría de la fototerapia.<br>
-  Los parches no están comprobados según los estándares de la medicina convencional y no deben usarse en lugar de la atención médica.</p>
-  <p style="margin-top:12px">*Garantía de devolución de dinero de 90 días para Clientes Minoristas y Preferidos. Garantía de devolución de 30 días para Socios de Marca Mayoristas.</p>
-  <p style="margin-top:12px;font-size:11px;max-width:1000px;margin-left:auto;margin-right:auto">Nuestros productos no están destinados a diagnosticar, tratar, curar o prevenir ninguna enfermedad o condición médica. El contenido presentado es de naturaleza general y se proporciona solo con fines informativos. No asumimos responsabilidad por daños o lesiones a personas o propiedades que surjan del uso de cualquier producto, información, idea o instrucción contenida en los materiales proporcionados.</p>
+  <p><b>Aviso importante:</b> nuestros parches se basan en los principios de la fototerapia.<br>
+  Los parches no han sido validados bajo los estándares de la medicina convencional y no sustituyen la atención médica profesional.</p>
+  <p style="margin-top:12px">*Garantía de devolución de 90 días para Clientes Minoristas y Preferidos. Garantía de 30 días para Socios de Marca Mayoristas.</p>
+  <p style="margin-top:12px;font-size:11px;max-width:1000px;margin-left:auto;margin-right:auto">Nuestros productos no están destinados a diagnosticar, tratar, curar o prevenir enfermedad o condición médica alguna. La información de este sitio se comparte con fines generales e informativos. No asumimos responsabilidad por daños o lesiones personales o materiales derivados del uso de cualquier producto, contenido o indicación de este sitio.</p>
   <p style="margin-top:22px;font-size:14px;color:#6a6a6a">©2026 Pauli Wellness · Todos los derechos reservados.</p>
 </div>
 ''', unsafe_allow_html=True)
