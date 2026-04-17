@@ -267,6 +267,10 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .page-hero h1{font-size:clamp(32px,4vw,56px);font-weight:800;color:var(--text);letter-spacing:.5px;margin-bottom:18px}
 .page-hero .kicker{color:var(--accent);font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
 .page-hero .lede{font-size:clamp(18px,2vw,24px);color:var(--text);opacity:.8;max-width:800px;margin:0 auto;line-height:1.55}
+.page-hero-ghk{position:relative;overflow:hidden;isolation:isolate}
+.page-hero-ghk::before{content:"";position:absolute;inset:0;background-image:url("https://raw.githubusercontent.com/miteproyects/pauli-wellness/main/assets/ghk-hero.png");background-size:cover;background-position:center 35%;background-repeat:no-repeat;filter:contrast(1.1);z-index:-2}
+.page-hero-ghk::after{content:"";position:absolute;inset:0;background:var(--hero-veil);z-index:-1}
+.page-hero-ghk h1,.page-hero-ghk .kicker,.page-hero-ghk .lede{position:relative;z-index:1}
 
 .fact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;margin:30px 0}
 .fact-card{background:var(--bg-2);border-radius:14px;padding:26px 22px;border:1px solid var(--nav-border)}
@@ -663,7 +667,7 @@ def render_home_es():
 # ─── Page: GHK-Cu (Spanish) ──────────────────────────────────────────────────
 def render_ghk_es():
     st.markdown(f'''
-<section class="sec page-hero">
+<section class="sec page-hero page-hero-ghk">
   <div class="kicker">Péptido de cobre</div>
   <h1>GHK-Cu · el péptido que tu cuerpo ya conoce</h1>
   <p class="lede">Un tripéptido natural de tu organismo, enlazado a cobre, que la ciencia relaciona con la reparación de tejidos. Aquí te contamos qué es, por qué importa con la edad, y cómo el parche ayuda a elevarlo.</p>
@@ -1126,7 +1130,7 @@ def render_home_en():
 # ─── Page: GHK-Cu (English) ──────────────────────────────────────────────────
 def render_ghk_en():
     st.markdown(
-        '<section class="sec page-hero">'
+        '<section class="sec page-hero page-hero-ghk">'
         '<div class="kicker">Copper peptide</div>'
         '<h1>GHK-Cu · the peptide your body already knows</h1>'
         '<p class="lede">A natural tripeptide made by your body, bound to copper, which science links to tissue repair. Here\'s what it is, why it matters with age, and how the patch helps raise it.</p>'
