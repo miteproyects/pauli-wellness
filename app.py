@@ -19,9 +19,9 @@ if page not in ("home", "ghk", "resultados", "estudios"):
 lang = qp.get("lang", "es")
 if lang not in ("es", "en"):
     lang = "es"
-theme = qp.get("theme", "dark")
+theme = qp.get("theme", "light")
 if theme not in ("dark", "light"):
-    theme = "dark"
+    theme = "light"
 theme_other = "light" if theme == "dark" else "dark"
 theme_icon = "🌙" if theme == "dark" else "☀️"
 theme_title_es = "Cambiar a modo claro" if theme == "dark" else "Cambiar a modo oscuro"
