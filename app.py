@@ -64,16 +64,19 @@ IMG_BADGE = "https://whythelight.com/wp-content/uploads/2025/09/90-dayGuarantee.
 VIMEO_MAIN = "1133694650"
 VIMEO_DAVID = "1131910398"
 TESTIMONIALS = [
-    ("1133177065", "Tendinitis en codo"),
-    ("1118432346", "Ojos, digestión, piel"),
-    ("1118418371", "Energía y cabello"),
-    ("1118429044", "Dedos doloridos"),
     ("1118429946", "Túnel carpiano, vista, piel"),
+    ("1118430693", "Testimonio"),
     ("1118433583", "Escaneado claro"),
+    ("1118434636", "Testimonio"),
     ("1118418475", "Tratamientos con células madre"),
     ("1118426413", "Bienestar general"),
     ("1153060029", "Experiencia cliente"),
+    ("1118418454", "Testimonio"),
     ("1118427670", "Testimonio"),
+    ("1118418407", "Testimonio"),
+    ("1118432346", "Ojos, digestión, piel"),
+    ("1118418371", "Energía y cabello"),
+    ("1118418429", "Testimonio"),
 ]
 
 # ─── I18N (nav + common labels) ──────────────────────────────────────────────
@@ -640,7 +643,7 @@ def render_home_es():
       <p class="stxt stxt-lg">Escríbele a quien te compartió esta página — estamos aquí para responderte.</p>
       <div class="cta-btns">
         <a href="{WA}" target="_self" class="btn btn-wa">💬 Hablar por WhatsApp</a>
-        <a href="{WA}" target="_self" class="btn">Paquetes y precios ›</a>
+        <a href="https://raw.githubusercontent.com/miteproyects/pauli-wellness/main/Packages-and-Pricing.pdf" download="Packages-and-Pricing.pdf" target="_self" class="btn">Descargar paquetes y precios</a>
       </div>
     </div>
     <div><img src="{IMG_KITCHEN}" class="img-full" alt="Pareja feliz en la cocina"></div>
@@ -884,16 +887,19 @@ def render_estudios_es():
 
 # ─── English testimonial labels ──────────────────────────────────────────────
 TESTIMONIALS_EN = [
-    ("1133177065", "Elbow tendinitis"),
-    ("1118432346", "Eyes, digestion, skin"),
-    ("1118418371", "Energy and hair"),
-    ("1118429044", "Sore fingers"),
     ("1118429946", "Carpal tunnel, sight, skin"),
+    ("1118430693", "Testimonial"),
     ("1118433583", "Clear scan"),
+    ("1118434636", "Testimonial"),
     ("1118418475", "Stem-cell treatments"),
     ("1118426413", "Overall wellbeing"),
     ("1153060029", "Customer experience"),
+    ("1118418454", "Testimonial"),
     ("1118427670", "Testimonial"),
+    ("1118418407", "Testimonial"),
+    ("1118432346", "Eyes, digestion, skin"),
+    ("1118418371", "Energy and hair"),
+    ("1118418429", "Testimonial"),
 ]
 
 
@@ -1101,7 +1107,7 @@ def render_home_en():
         f'<p class="stxt stxt-lg">Write to whoever shared this page with you — we\'re here to answer.</p>'
         f'<div class="cta-btns">'
         f'<a href="{WA}" target="_self" class="btn btn-wa">💬 Chat on WhatsApp</a>'
-        f'<a href="{WA}" target="_self" class="btn">Packages and pricing ›</a>'
+        f'<a href="https://raw.githubusercontent.com/miteproyects/pauli-wellness/main/Packages-and-Pricing.pdf" download="Packages-and-Pricing.pdf" target="_self" class="btn">Download Packages and Pricing</a>'
         f'</div>'
         f'</div>'
         f'<div><img src="{IMG_KITCHEN}" class="img-full" alt="Happy couple in the kitchen"></div>'
