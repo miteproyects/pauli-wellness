@@ -29,7 +29,7 @@ theme_title_en = "Switch to light mode" if theme == "dark" else "Switch to dark 
 theme_title = theme_title_es if lang == "es" else theme_title_en
 
 # ─── Config ──────────────────────────────────────────────────────────────────
-WA_NUM = "593984949487"
+WA_NUM = "593939890499"
 WA_TXT_ES = "Hola%20Pauli!%20Vi%20tu%20pagina%20y%20me%20gustaria%20saber%20mas%20sobre%20los%20parches%20LifeWave"
 WA_TXT_EN = "Hi%20Pauli!%20I%20saw%20your%20site%20and%20I%27d%20love%20to%20learn%20more%20about%20the%20LifeWave%20patches"
 WA = f"https://wa.me/{WA_NUM}?text=" + (WA_TXT_ES if lang == "es" else WA_TXT_EN)
