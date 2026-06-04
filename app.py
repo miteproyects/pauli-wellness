@@ -63,6 +63,7 @@ IMG_BADGE = "https://whythelight.com/wp-content/uploads/2025/09/90-dayGuarantee.
 
 VIMEO_MAIN = "1133694650"
 VIMEO_DAVID = "1131910398"
+YT_EXPLAINER = "oxdeXAW08us"  # ¿Cómo funcionan los parches? — Claudia Reinoso, ES
 TESTIMONIALS = [
     ("1118429044", "Dedos doloridos"),
     ("1118429946", "Túnel carpiano, vista, piel"),
@@ -468,6 +469,19 @@ def render_home_es():
     <img src="{IMG_VIDEO_THUMB}" alt="Video de 3 minutos" style="max-width:420px;width:100%;margin-bottom:10px">
     <p style="font-size:clamp(20px,2.4vw,30px);font-weight:800;color:var(--text);margin-top:15px">Entiende cómo funciona en 3 minutos</p>
     <p style="font-size:clamp(16px,1.6vw,20px);color:var(--accent);font-weight:600;margin-top:6px">Dale play al video</p>
+  </div>
+</section>
+''', unsafe_allow_html=True)
+
+    # 4b. SPANISH EXPLAINER (YouTube) — ¿Cómo funcionan los parches?
+    st.markdown(f'''
+<section class="sec">
+  <div style="max-width:900px;margin:0 auto;text-align:center">
+    <h2 class="ttl ttl-center">¿CÓMO FUNCIONAN LOS PARCHES?</h2>
+    <p class="stxt stxt-lg" style="margin-bottom:30px">Una explicación clara, en español, de cómo la fototerapia LifeWave estimula al cuerpo desde afuera con luz.</p>
+    <div class="video-wrap">
+      <iframe src="https://www.youtube.com/embed/{YT_EXPLAINER}?rel=0&modestbranding=1" title="¿Cómo funcionan los parches de fototerapia de Lifewave?" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    </div>
   </div>
 </section>
 ''', unsafe_allow_html=True)
@@ -971,6 +985,18 @@ def render_home_en():
         f'<p style="font-size:clamp(20px,2.4vw,30px);font-weight:800;color:var(--text);margin-top:15px">Understand how it works in 3 minutes</p>'
         f'<p style="font-size:clamp(16px,1.6vw,20px);color:var(--accent);font-weight:600;margin-top:6px">Press play on the video</p>'
         f'</div></section>',
+        unsafe_allow_html=True,
+    )
+
+    # 4b. SPANISH EXPLAINER (YouTube) — video is in Spanish, note that for EN visitors
+    st.markdown(
+        f'<section class="sec">'
+        f'<div style="max-width:900px;margin:0 auto;text-align:center">'
+        f'<h2 class="ttl ttl-center">HOW DO THE PATCHES WORK?</h2>'
+        f'<p class="stxt stxt-lg" style="margin-bottom:30px">A clear walkthrough (<i>in Spanish</i>) of how LifeWave phototherapy uses light to stimulate your body from the outside.</p>'
+        f'<div class="video-wrap">'
+        f'<iframe src="https://www.youtube.com/embed/{YT_EXPLAINER}?rel=0&modestbranding=1" title="How LifeWave phototherapy patches work" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen loading="lazy"></iframe>'
+        f'</div></div></section>',
         unsafe_allow_html=True,
     )
 
