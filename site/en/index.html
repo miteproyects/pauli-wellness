@@ -22,6 +22,19 @@
 <link rel="alternate" hreflang="es" href="https://luzentucuerpo.com/">
 <link rel="alternate" hreflang="en" href="https://luzentucuerpo.com/en/">
 <link rel="alternate" hreflang="x-default" href="https://luzentucuerpo.com/">
+
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  var p = q.get('page'), l = q.get('lang') || 'es';
+  if (!p) return;
+  var map = {home:'', ghk:'ghk', resultados:'resultados', estudios:'estudios'};
+  if (!(p in map)) return;
+  var en = {ghk:'en/ghk', resultados:'en/results', estudios:'en/studies', home:'en'};
+  var path = l === 'en' ? (en[p] || 'en') : map[p];
+  location.replace('/' + (path ? path + '/' : ''));
+})();
+</script>
 <link rel="preload" as="image" href="/img/patch-placement-690.webp" imagesrcset="/img/patch-placement-400.webp 400w, /img/patch-placement-690.webp 690w" imagesizes="100vw" fetchpriority="high">
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-400-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-800-normal.woff2" crossorigin>

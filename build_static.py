@@ -271,6 +271,22 @@ CONTENT_BLOCKS = {
 WA_BLOCKS = {key: parts[key]["wa"] for key in parts}
 FOOTER_BLOCKS = {key: parts[key]["footer"] for key in parts}
 
+# ───── legacy ?page=X&lang=Y redirect (homepage only, sync, pre-paint) ────────
+LEGACY_PARAM_JS = """
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  var p = q.get('page'), l = q.get('lang') || 'es';
+  if (!p) return;
+  var map = {home:'', ghk:'ghk', resultados:'resultados', estudios:'estudios'};
+  if (!(p in map)) return;
+  var en = {ghk:'en/ghk', resultados:'en/results', estudios:'en/studies', home:'en'};
+  var path = l === 'en' ? (en[p] || 'en') : map[p];
+  location.replace('/' + (path ? path + '/' : ''));
+})();
+</script>
+"""
+
 # ───── theme + carousel + nav-active JS (per-page, no router needed) ──────────
 PAGE_JS = """
 <script>
@@ -465,10 +481,13 @@ def render_page(key: str) -> str:
         f'{hreflang_links(key)}\n'
     )
 
+    # Legacy ?page= redirect script only on the two homepages (where old links land)
+    legacy_js = LEGACY_PARAM_JS if key in ("home-es", "home-en") else ""
+
     return f"""<!doctype html>
 <html lang="{lang}">
 <head>
-{head_meta}{harden.head_extras()}{BASE_CSS}
+{head_meta}{legacy_js}{harden.head_extras()}{BASE_CSS}
 {LIGHT_CSS_SCOPED}
 <style>
 html.theme-dark{{color-scheme:dark}}
@@ -634,29 +653,16 @@ a:hover{{color:#b8923c;border-color:#b8923c}}
 """
 (OUT_DIR / "404.html").write_text(not_found, encoding="utf-8")
 
-# ───── _redirects — legacy ?page=X&lang=Y URLs → new clean paths ──────────────
-# Cloudflare Pages reads /_redirects (Netlify format).
-# Match patterns that include any combination of query params.
-redirects_lines = [
-    "# Legacy SPA URLs (the old ?page=X&lang=Y format) → clean paths",
-    "# These send a 301 so search engines update their indexes.",
-    "",
-]
-for page in ("home", "ghk", "resultados", "estudios"):
-    for lang in ("es", "en"):
-        old = f"/?page={page}&lang={lang}"
-        new_path = page_relurl(f"{page}-{lang}")
-        # Splat-style redirect needs query-string handling that Pages limits;
-        # we register exact common variants the JS router previously emitted.
-        redirects_lines.append(f"{old}&theme=light  {new_path}  301")
-        redirects_lines.append(f"{old}&theme=dark   {new_path}  301")
-        redirects_lines.append(f"{old}             {new_path}  301")
-# Bare ?page=X (no lang) defaults to ES
-for page in ("home", "ghk", "resultados", "estudios"):
-    new_path = page_relurl(f"{page}-es")
-    redirects_lines.append(f"/?page={page}  {new_path}  301")
-redirects = "\n".join(redirects_lines) + "\n"
-(OUT_DIR / "_redirects").write_text(redirects, encoding="utf-8")
+# ───── _redirects ─────────────────────────────────────────────────────────────
+# IMPORTANT: Cloudflare Pages `_redirects` does NOT support query strings in
+# the source path — a line like `/?page=home  /  301` is parsed as `/ → /`,
+# which 301-loops the homepage (learned the hard way). Legacy ?page=X&lang=Y
+# URLs are instead handled by a tiny client-side script injected into the two
+# homepage files (see LEGACY_PARAM_JS) — humans get redirected, crawlers just
+# see the homepage, and the clean paths are what's in the sitemap.
+(OUT_DIR / "_redirects").write_text(
+    "# (intentionally empty — see build_static.py for why)\n", encoding="utf-8"
+)
 
 # ───── _headers — security + cache ────────────────────────────────────────────
 headers = """# Global security headers
