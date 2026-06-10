@@ -581,6 +581,12 @@ Sitemap: {SITE_ORIGIN}/sitemap.xml
 """
 (OUT_DIR / "robots.txt").write_text(robots, encoding="utf-8")
 
+# ───── IndexNow key file — instant push to Bing/Yandex/Seznam/Naver ────────────
+# Must be served at https://luzentucuerpo.com/<KEY>.txt containing exactly the key.
+# Pair with indexnow_ping.py after each deploy to notify search engines of changes.
+INDEXNOW_KEY = "b95ba6055d330203b26848096f2d15c0"
+(OUT_DIR / f"{INDEXNOW_KEY}.txt").write_text(INDEXNOW_KEY, encoding="utf-8")
+
 # ───── llms.txt — concise summary for LLMs ────────────────────────────────────
 llms = f"""# Pauli Wellness — Luz en tu cuerpo
 
