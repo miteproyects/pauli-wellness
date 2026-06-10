@@ -32,11 +32,12 @@ IMG_META = {
 FACADE_CSS = """
 <style>
 .video-facade{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;margin:0;cursor:pointer;
-  background-size:cover;background-position:center;background-repeat:no-repeat;background-color:#000;
+  background-color:#000;overflow:hidden;
   display:flex;align-items:center;justify-content:center;transition:opacity .2s}
-.video-facade::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.35) 100%);transition:background .2s}
+.video-facade>img{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover;z-index:0}
+.video-facade::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.35) 100%);transition:background .2s}
 .video-facade:hover::before{background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.5) 100%)}
-.video-facade .play-icon{position:relative;width:68px;height:48px;background:rgba(0,0,0,.7);border-radius:14px;
+.video-facade .play-icon{position:relative;z-index:2;width:68px;height:48px;background:rgba(0,0,0,.7);border-radius:14px;
   display:flex;align-items:center;justify-content:center;transition:background .2s}
 .video-facade:hover .play-icon{background:rgba(220,40,40,.92)}
 .video-facade .play-icon svg{width:22px;height:22px;fill:#fff;margin-left:3px}
@@ -54,6 +55,55 @@ FACADE_CSS = """
 button:focus-visible,a:focus-visible,iframe:focus-visible,.video-facade:focus-visible,.theme-tgl:focus-visible{
   outline:3px solid var(--accent,#d4a94a);outline-offset:3px}
 .video-facade:focus-visible{outline-offset:-3px}
+/* Media correctness: width/height attrs reserve space; CSS keeps ratio */
+main img:not(.hero-bg){height:auto}
+/* Hero as a real <img> (LCP paints earlier than a ::before background).
+   The ::before that used to carry the photo is disabled; the veil ::after
+   stays on top of the img (z-index -2 < veil -1). */
+.hero-wrap::before{content:none!important}
+/* contrast(1.75) is PRE-BAKED into the WebP — no CSS filter, cheaper paint */
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:center 30%;z-index:-2}
+/* ghk hero: contrast(1.1) likewise baked into ghk-hero-*.webp */
+.page-hero-ghk::before{filter:none!important}
+/* Zero-CLS font swap: Arial with Inter-matched metrics as the fallback,
+   so the swap to Inter doesn't reflow text (the H1 was shifting 0.156). */
+@font-face{font-family:'Inter-fallback';size-adjust:107%;ascent-override:90.44%;
+  descent-override:22.52%;line-gap-override:0%;src:local('Arial')}
+html,body{font-family:'Inter','Inter-fallback',sans-serif!important}
+/* ── WCAG AA color contrast ──────────────────────────────────────────
+   Light theme: #b8923c gold on near-white = 2.9:1 (fails 4.5:1).
+   Use a darker bronze for light mode; switch solid-accent components
+   to white text (7.3:1 on the bronze). Dark mode keeps #d4a94a on
+   black (≈9:1) untouched. */
+html:not(.theme-dark){--accent:#6e511a;--accent-hover:#543d13}
+/* Buttons are <a> tags and the base CSS forces a{color:inherit!important},
+   so these need anchor selectors + !important to actually win. */
+html:not(.theme-dark) a.btn{color:#fff!important}
+html:not(.theme-dark) a.btn-outline{color:var(--accent)!important;background:transparent}
+html:not(.theme-dark) a.btn-outline:hover{background:var(--accent);color:#fff!important}
+html:not(.theme-dark) .step-num{color:#fff}
+html:not(.theme-dark) .lang-switch a.active{color:#fff!important}
+/* Dark theme: gold solid buttons need DARK text (white on #d4a94a = 2.2:1) */
+html.theme-dark a.btn{color:#111!important}
+html.theme-dark a.btn-outline{color:var(--accent)!important;background:transparent}
+html.theme-dark a.btn-outline:hover{background:var(--accent);color:#111!important}
+/* WhatsApp-green buttons: dark green text in BOTH themes (white fails AA) */
+a.btn-wa{color:#0b3d2e!important}
+a.btn-wa:hover{color:#06281e!important}
+html.theme-dark a.btn-wa{color:#0b3d2e!important}
+/* Cards keep a fixed WHITE background in BOTH themes → always dark gold */
+.tl-card h3{color:#6e511a}
+/* WhatsApp-green CTAs: white on #25D366 is 2:1 — use dark green text */
+.nav-contact,.nav-links a.nav-contact,.nav-links a.nav-contact:link,.nav-links a.nav-contact:visited{color:#0b3d2e!important}
+.nav-contact:hover{color:#06281e!important}
+.btn-wa{color:#0b3d2e}.btn-wa:hover{color:#06281e}
+/* Hero bg: serve the 400w variant on small screens (matches the
+   media-scoped preload; avoids double-download + oversized LCP). */
+@media(max-width:600px){
+  .hero-wrap::before{background-image:url('/img/patch-placement-400.webp')}
+  .page-hero-ghk::before{background-image:url('/img/ghk-hero-400.webp')}
+}
 </style>
 """
 
@@ -118,7 +168,7 @@ HERO_CSS_REPLACEMENTS = [
     ("https://whythelight.com/wp-content/uploads/2025/09/SN-Patch-placement-scaled-1-690x1024.jpg",
      "/img/patch-placement-690.webp"),
     ("https://raw.githubusercontent.com/miteproyects/pauli-wellness/main/assets/ghk-hero.png",
-     "/img/ghk-hero.webp"),  # may not exist as webp; falls through to original or 404
+     "/img/ghk-hero-800.webp"),
 ]
 
 
@@ -161,13 +211,19 @@ _TITLE_ATTR_RE = re.compile(r'\btitle="([^"]*)"', re.IGNORECASE)
 
 
 def _facade_button(provider: str, vid: str, title: str, thumb_path: str, extra_attrs: str = "") -> str:
+    """Poster is a lazy <img>, NOT a CSS background — browsers eager-load
+    background-image regardless of viewport; with 62 facades that was
+    ~180 KB of thumbnails competing with the LCP image on first load."""
     play_svg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'
     aria = f'Play video: {title}' if title else f'Play {provider} video'
+    # Thumb intrinsic sizes: vimeo posters 400×~225 (16:9-ish), youtube 800×450
+    w, h = (800, 450) if provider == "youtube" else (400, 225)
     return (
         f'<button class="video-facade" type="button" '
         f'data-provider="{provider}" data-id="{vid}" data-title="{title}" '
-        f'style="background-image:url(\'{thumb_path}\')" '
         f'aria-label="{aria}"{extra_attrs}>'
+        f'<img src="{thumb_path}" alt="" width="{w}" height="{h}" '
+        f'loading="lazy" decoding="async">'
         f'<span class="play-icon">{play_svg}</span>'
         f'</button>'
     )
@@ -210,8 +266,20 @@ def _replace_youtube(match: re.Match) -> str:
     return _facade_button("youtube", vid, title, thumb)
 
 
+_HERO_OPEN_RE = re.compile(r'(<section class="sec hero-wrap"[^>]*>)')
+_HERO_IMG = (
+    '<img class="hero-bg" src="/img/patch-placement-690.webp" '
+    'srcset="/img/patch-placement-400.webp 400w, /img/patch-placement-690.webp 690w" '
+    'sizes="100vw" width="690" height="1024" alt="" '
+    'fetchpriority="high" decoding="async">'
+)
+
+
 def harden_html(html: str) -> str:
     """Apply all production transformations to a chunk of HTML."""
+    # 0. Hero photo becomes a real <img> right inside the hero section
+    #    (only the home pages contain .hero-wrap)
+    html = _HERO_OPEN_RE.sub(lambda m: m.group(1) + _HERO_IMG, html)
     # 1. Replace whythelight image hotlinks → self-hosted WebP with srcset/dims
     html = _IMG_RE.sub(_replace_img, html)
     # 2. Replace Vimeo iframes with click-to-load facades
@@ -240,21 +308,33 @@ def harden_css(css: str) -> str:
     return css
 
 
-def head_extras() -> str:
-    """Extra <head> tags: preload LCP image + preload critical fonts.
+def head_extras(page: str = "home") -> str:
+    """Extra <head> tags: media-scoped LCP-image preloads + critical fonts.
 
-    The two latin-400 + latin-800 font subsets cover ~95% of above-the-fold
-    text on the home page; preloading them eliminates the FOIT flash.
+    Per-page hero preloads (preloading another page's hero wastes bytes and
+    competes with the real LCP):
+      home → patch-placement (400w mobile / 690w desktop, matching the CSS
+              media query in FACADE_CSS)
+      ghk  → ghk-hero (400w mobile / 800w desktop)
+      other pages → no image preload (text-only heroes)
+
+    Fonts: latin-400 + latin-800 cover ~95% of above-the-fold text;
+    latin-ext subsets load on demand via unicode-range.
     """
+    hero = ""
+    # home: NO preload — the hero is a real early-<body> <img fetchpriority=high>
+    # with its own srcset; a media-scoped preload would pick a different
+    # variant than the img's DPR-aware srcset and double-download.
+    if page == "ghk":
+        hero = (
+            '<link rel="preload" as="image" href="/img/ghk-hero-400.webp" '
+            'media="(max-width:600px)" fetchpriority="high">\n'
+            '<link rel="preload" as="image" href="/img/ghk-hero-800.webp" '
+            'media="(min-width:601px)" fetchpriority="high">\n'
+        )
     return (
-        # LCP hero photo (visible in the first viewport on / )
-        '<link rel="preload" as="image" '
-        'href="/img/patch-placement-690.webp" '
-        'imagesrcset="/img/patch-placement-400.webp 400w, /img/patch-placement-690.webp 690w" '
-        'imagesizes="100vw" fetchpriority="high">\n'
-        # Critical fonts — body text (400) + hero/headings (800), latin subset only
-        # (latin-ext loads lazily when a non-ASCII char is encountered)
-        '<link rel="preload" as="font" type="font/woff2" '
+        hero
+        + '<link rel="preload" as="font" type="font/woff2" '
         'href="/fonts/inter-latin-400-normal.woff2" crossorigin>\n'
         '<link rel="preload" as="font" type="font/woff2" '
         'href="/fonts/inter-latin-800-normal.woff2" crossorigin>\n'

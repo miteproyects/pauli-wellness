@@ -483,11 +483,12 @@ def render_page(key: str) -> str:
 
     # Legacy ?page= redirect script only on the two homepages (where old links land)
     legacy_js = LEGACY_PARAM_JS if key in ("home-es", "home-en") else ""
+    page_kind = key.rsplit("-", 1)[0]
 
     return f"""<!doctype html>
 <html lang="{lang}">
 <head>
-{head_meta}{legacy_js}{harden.head_extras()}{BASE_CSS}
+{head_meta}{legacy_js}{harden.head_extras(page=page_kind)}{BASE_CSS}
 {LIGHT_CSS_SCOPED}
 <style>
 html.theme-dark{{color-scheme:dark}}

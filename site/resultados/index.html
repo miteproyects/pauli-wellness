@@ -22,7 +22,6 @@
 <link rel="alternate" hreflang="es" href="https://luzentucuerpo.com/resultados/">
 <link rel="alternate" hreflang="en" href="https://luzentucuerpo.com/en/results/">
 <link rel="alternate" hreflang="x-default" href="https://luzentucuerpo.com/resultados/">
-<link rel="preload" as="image" href="/img/patch-placement-690.webp" imagesrcset="/img/patch-placement-400.webp 400w, /img/patch-placement-690.webp 690w" imagesizes="100vw" fetchpriority="high">
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-400-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-800-normal.woff2" crossorigin>
 <style>
@@ -204,7 +203,7 @@ a,a:link,a:visited,a:hover,a:active{color:inherit!important;text-decoration:none
 .page-hero .kicker{color:var(--accent);font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
 .page-hero .lede{font-size:clamp(18px,2vw,24px);color:var(--text);opacity:.8;max-width:800px;margin:0 auto;line-height:1.55}
 .page-hero-ghk{position:relative;overflow:hidden;isolation:isolate}
-.page-hero-ghk::before{content:"";position:absolute;inset:0;background-image:url("/img/ghk-hero.webp");background-size:cover;background-position:center 35%;background-repeat:no-repeat;filter:contrast(1.1);z-index:-2}
+.page-hero-ghk::before{content:"";position:absolute;inset:0;background-image:url("/img/ghk-hero-800.webp");background-size:cover;background-position:center 35%;background-repeat:no-repeat;filter:contrast(1.1);z-index:-2}
 .page-hero-ghk::after{content:"";position:absolute;inset:0;background:var(--hero-veil);z-index:-1}
 .page-hero-ghk h1,.page-hero-ghk .kicker,.page-hero-ghk .lede{position:relative;z-index:1}
 
@@ -256,11 +255,12 @@ html:not(.theme-dark){color-scheme:light}
 
 <style>
 .video-facade{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;margin:0;cursor:pointer;
-  background-size:cover;background-position:center;background-repeat:no-repeat;background-color:#000;
+  background-color:#000;overflow:hidden;
   display:flex;align-items:center;justify-content:center;transition:opacity .2s}
-.video-facade::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.35) 100%);transition:background .2s}
+.video-facade>img{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover;z-index:0}
+.video-facade::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.35) 100%);transition:background .2s}
 .video-facade:hover::before{background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.5) 100%)}
-.video-facade .play-icon{position:relative;width:68px;height:48px;background:rgba(0,0,0,.7);border-radius:14px;
+.video-facade .play-icon{position:relative;z-index:2;width:68px;height:48px;background:rgba(0,0,0,.7);border-radius:14px;
   display:flex;align-items:center;justify-content:center;transition:background .2s}
 .video-facade:hover .play-icon{background:rgba(220,40,40,.92)}
 .video-facade .play-icon svg{width:22px;height:22px;fill:#fff;margin-left:3px}
@@ -278,6 +278,55 @@ html:not(.theme-dark){color-scheme:light}
 button:focus-visible,a:focus-visible,iframe:focus-visible,.video-facade:focus-visible,.theme-tgl:focus-visible{
   outline:3px solid var(--accent,#d4a94a);outline-offset:3px}
 .video-facade:focus-visible{outline-offset:-3px}
+/* Media correctness: width/height attrs reserve space; CSS keeps ratio */
+main img:not(.hero-bg){height:auto}
+/* Hero as a real <img> (LCP paints earlier than a ::before background).
+   The ::before that used to carry the photo is disabled; the veil ::after
+   stays on top of the img (z-index -2 < veil -1). */
+.hero-wrap::before{content:none!important}
+/* contrast(1.75) is PRE-BAKED into the WebP — no CSS filter, cheaper paint */
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:center 30%;z-index:-2}
+/* ghk hero: contrast(1.1) likewise baked into ghk-hero-*.webp */
+.page-hero-ghk::before{filter:none!important}
+/* Zero-CLS font swap: Arial with Inter-matched metrics as the fallback,
+   so the swap to Inter doesn't reflow text (the H1 was shifting 0.156). */
+@font-face{font-family:'Inter-fallback';size-adjust:107%;ascent-override:90.44%;
+  descent-override:22.52%;line-gap-override:0%;src:local('Arial')}
+html,body{font-family:'Inter','Inter-fallback',sans-serif!important}
+/* ── WCAG AA color contrast ──────────────────────────────────────────
+   Light theme: #b8923c gold on near-white = 2.9:1 (fails 4.5:1).
+   Use a darker bronze for light mode; switch solid-accent components
+   to white text (7.3:1 on the bronze). Dark mode keeps #d4a94a on
+   black (≈9:1) untouched. */
+html:not(.theme-dark){--accent:#6e511a;--accent-hover:#543d13}
+/* Buttons are <a> tags and the base CSS forces a{color:inherit!important},
+   so these need anchor selectors + !important to actually win. */
+html:not(.theme-dark) a.btn{color:#fff!important}
+html:not(.theme-dark) a.btn-outline{color:var(--accent)!important;background:transparent}
+html:not(.theme-dark) a.btn-outline:hover{background:var(--accent);color:#fff!important}
+html:not(.theme-dark) .step-num{color:#fff}
+html:not(.theme-dark) .lang-switch a.active{color:#fff!important}
+/* Dark theme: gold solid buttons need DARK text (white on #d4a94a = 2.2:1) */
+html.theme-dark a.btn{color:#111!important}
+html.theme-dark a.btn-outline{color:var(--accent)!important;background:transparent}
+html.theme-dark a.btn-outline:hover{background:var(--accent);color:#111!important}
+/* WhatsApp-green buttons: dark green text in BOTH themes (white fails AA) */
+a.btn-wa{color:#0b3d2e!important}
+a.btn-wa:hover{color:#06281e!important}
+html.theme-dark a.btn-wa{color:#0b3d2e!important}
+/* Cards keep a fixed WHITE background in BOTH themes → always dark gold */
+.tl-card h3{color:#6e511a}
+/* WhatsApp-green CTAs: white on #25D366 is 2:1 — use dark green text */
+.nav-contact,.nav-links a.nav-contact,.nav-links a.nav-contact:link,.nav-links a.nav-contact:visited{color:#0b3d2e!important}
+.nav-contact:hover{color:#06281e!important}
+.btn-wa{color:#0b3d2e}.btn-wa:hover{color:#06281e}
+/* Hero bg: serve the 400w variant on small screens (matches the
+   media-scoped preload; avoids double-download + oversized LCP). */
+@media(max-width:600px){
+  .hero-wrap::before{background-image:url('/img/patch-placement-400.webp')}
+  .page-hero-ghk::before{background-image:url('/img/ghk-hero-400.webp')}
+}
 </style>
 
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Pauli Wellness", "url": "https://luzentucuerpo.com", "logo": "https://luzentucuerpo.com/img/og.png", "sameAs": [], "contactPoint": [{"@type": "ContactPoint", "contactType": "customer support", "telephone": "+593-93-989-0499", "availableLanguage": ["Spanish", "English"]}]}</script>
@@ -315,7 +364,7 @@ button:focus-visible,a:focus-visible,iframe:focus-visible,.video-facade:focus-vi
   <div style="max-width:1200px;margin:0 auto">
     <h2 class="ttl ttl-center">Testimonios en video</h2>
     <p class="stxt ttl-center" style="text-align:center;max-width:750px;margin:0 auto 30px">Distintas personas, distintos motivos para empezar. Lo que comparten es que cada una notó algo que vale la pena contar.</p>
-    <div class="test-scroll-wrap"><span class="test-arrow test-arrow-left" aria-hidden="true">‹</span><div class="test-scroll"><div class="test-card" aria-label="Dedos doloridos"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118429044" data-title="Dedos doloridos" style="background-image:url('/thumbs/vimeo-1118429044.webp')" aria-label="Play video: Dedos doloridos"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Túnel carpiano, vista, piel"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118429946" data-title="Túnel carpiano, vista, piel" style="background-image:url('/thumbs/vimeo-1118429946.webp')" aria-label="Play video: Túnel carpiano, vista, piel"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118430693" data-title="Testimonio" style="background-image:url('/thumbs/vimeo-1118430693.webp')" aria-label="Play video: Testimonio"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Escaneado claro"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118433583" data-title="Escaneado claro" style="background-image:url('/thumbs/vimeo-1118433583.webp')" aria-label="Play video: Escaneado claro"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118434636" data-title="Testimonio" style="background-image:url('/thumbs/vimeo-1118434636.webp')" aria-label="Play video: Testimonio"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Tratamientos con células madre"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418475" data-title="Tratamientos con células madre" style="background-image:url('/thumbs/vimeo-1118418475.webp')" aria-label="Play video: Tratamientos con células madre"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Bienestar general"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118426413" data-title="Bienestar general" style="background-image:url('/thumbs/vimeo-1118426413.webp')" aria-label="Play video: Bienestar general"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Experiencia cliente"><button class="video-facade" type="button" data-provider="vimeo" data-id="1153060029" data-title="Experiencia cliente" style="background-image:url('/thumbs/vimeo-1153060029.webp')" aria-label="Play video: Experiencia cliente"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418454" data-title="Testimonio" style="background-image:url('/thumbs/vimeo-1118418454.webp')" aria-label="Play video: Testimonio"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118427670" data-title="Testimonio" style="background-image:url('/thumbs/vimeo-1118427670.webp')" aria-label="Play video: Testimonio"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418407" data-title="Testimonio" style="background-image:url('/thumbs/vimeo-1118418407.webp')" aria-label="Play video: Testimonio"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Ojos, digestión, piel"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118432346" data-title="Ojos, digestión, piel" style="background-image:url('/thumbs/vimeo-1118432346.webp')" aria-label="Play video: Ojos, digestión, piel"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Energía y cabello"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418371" data-title="Energía y cabello" style="background-image:url('/thumbs/vimeo-1118418371.webp')" aria-label="Play video: Energía y cabello"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418429" data-title="Testimonio" style="background-image:url('/thumbs/vimeo-1118418429.webp')" aria-label="Play video: Testimonio"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div></div><span class="test-arrow test-arrow-right" aria-hidden="true">›</span></div>
+    <div class="test-scroll-wrap"><span class="test-arrow test-arrow-left" aria-hidden="true">‹</span><div class="test-scroll"><div class="test-card" aria-label="Dedos doloridos"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118429044" data-title="Dedos doloridos" aria-label="Play video: Dedos doloridos"><img src="/thumbs/vimeo-1118429044.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Túnel carpiano, vista, piel"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118429946" data-title="Túnel carpiano, vista, piel" aria-label="Play video: Túnel carpiano, vista, piel"><img src="/thumbs/vimeo-1118429946.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118430693" data-title="Testimonio" aria-label="Play video: Testimonio"><img src="/thumbs/vimeo-1118430693.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Escaneado claro"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118433583" data-title="Escaneado claro" aria-label="Play video: Escaneado claro"><img src="/thumbs/vimeo-1118433583.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118434636" data-title="Testimonio" aria-label="Play video: Testimonio"><img src="/thumbs/vimeo-1118434636.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Tratamientos con células madre"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418475" data-title="Tratamientos con células madre" aria-label="Play video: Tratamientos con células madre"><img src="/thumbs/vimeo-1118418475.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Bienestar general"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118426413" data-title="Bienestar general" aria-label="Play video: Bienestar general"><img src="/thumbs/vimeo-1118426413.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Experiencia cliente"><button class="video-facade" type="button" data-provider="vimeo" data-id="1153060029" data-title="Experiencia cliente" aria-label="Play video: Experiencia cliente"><img src="/thumbs/vimeo-1153060029.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418454" data-title="Testimonio" aria-label="Play video: Testimonio"><img src="/thumbs/vimeo-1118418454.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118427670" data-title="Testimonio" aria-label="Play video: Testimonio"><img src="/thumbs/vimeo-1118427670.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418407" data-title="Testimonio" aria-label="Play video: Testimonio"><img src="/thumbs/vimeo-1118418407.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Ojos, digestión, piel"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118432346" data-title="Ojos, digestión, piel" aria-label="Play video: Ojos, digestión, piel"><img src="/thumbs/vimeo-1118432346.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Energía y cabello"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418371" data-title="Energía y cabello" aria-label="Play video: Energía y cabello"><img src="/thumbs/vimeo-1118418371.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div><div class="test-card" aria-label="Testimonio"><button class="video-facade" type="button" data-provider="vimeo" data-id="1118418429" data-title="Testimonio" aria-label="Play video: Testimonio"><img src="/thumbs/vimeo-1118418429.webp" alt="" width="400" height="225" loading="lazy" decoding="async"><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></button></div></div><span class="test-arrow test-arrow-right" aria-hidden="true">›</span></div>
   </div>
 </section>
 
