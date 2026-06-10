@@ -1,14 +1,20 @@
-"""Build a self-contained static index.html from app.py.
+"""Build the production static site for luzentucuerpo.com.
 
-Stubs `streamlit` and re-imports app.py 8 times (one per page×lang),
-captures the rendered HTML strings, then emits site/index.html with
-a tiny JS router that picks the right block based on URL params.
+Strategy
+--------
+1. Stub Streamlit and re-import app.py 8 times (one per page×lang) to capture
+   the rendered HTML each combo would produce.
+2. Apply production hardening (harden.py): self-host all images with srcset,
+   replace iframes with click-to-load video facades, preload LCP + critical fonts.
+3. Emit ONE self-contained HTML file per (page, lang) at clean URL paths:
+       /            /ghk/        /resultados/      /estudios/         (ES)
+       /en/         /en/ghk/     /en/results/      /en/studies/       (EN)
+   Each file has its own <title>, <meta description>, single <h1>, canonical,
+   hreflang pairs, JSON-LD structured data.
+4. Emit sitemap.xml, robots.txt, llms.txt, 404.html, _redirects, _headers.
 
-URL pattern is preserved verbatim:
-    ?page={home|ghk|resultados|estudios}&lang={es|en}&theme={light|dark}
-
-Run from the Pauli repo root:
-    python3 build_static.py
+The theme (light/dark) is JS-only (localStorage), not in URLs — keeps URLs SEO-
+clean (no duplicate-content issues from ?theme=).
 """
 from __future__ import annotations
 import importlib.util
@@ -17,11 +23,13 @@ import sys
 import types
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent.resolve()))
+import harden  # noqa: E402
+
 ROOT = Path(__file__).parent.resolve()
 APP_PY = ROOT / "app.py"
 OUT_DIR = ROOT / "site"
 OUT_DIR.mkdir(exist_ok=True)
-OUT_HTML = OUT_DIR / "index.html"
 
 # ───── streamlit stub ─────────────────────────────────────────────────────────
 _qp_storage: dict[str, str] = {}
@@ -31,10 +39,8 @@ _buffer: list[str] = []
 class _QP:
     def get(self, k, default=None):
         return _qp_storage.get(k, default)
-
     def __contains__(self, k):
         return k in _qp_storage
-
     def __getitem__(self, k):
         return _qp_storage[k]
 
@@ -47,13 +53,10 @@ def _comp_html(html, height=0):
     _buffer.append(str(html))
 
 
-# Build streamlit + streamlit.components + streamlit.components.v1 as real
-# ModuleType objects so `import streamlit.components.v1 as X` works.
 fake_st = types.ModuleType("streamlit")
 fake_st.query_params = _QP()
 fake_st.set_page_config = lambda **kw: None
 fake_st.markdown = _markdown
-
 fake_components = types.ModuleType("streamlit.components")
 fake_v1 = types.ModuleType("streamlit.components.v1")
 fake_v1.html = _comp_html
@@ -64,7 +67,6 @@ sys.modules["streamlit"] = fake_st
 sys.modules["streamlit.components"] = fake_components
 sys.modules["streamlit.components.v1"] = fake_v1
 
-# ───── render each combo ──────────────────────────────────────────────────────
 spec = importlib.util.spec_from_file_location("pauli_app", APP_PY)
 
 
@@ -85,18 +87,7 @@ COMBOS = [
 print(f"[build] rendering {len(COMBOS)} (page, lang) combos…")
 renders = {f"{p}-{l}": render(p, l, "light") for (p, l) in COMBOS}
 
-# ───── slice out the per-block fragments ──────────────────────────────────────
-# Each render is:
-#   <style>BASE_CSS</style>      ← shared
-#   <style>LIGHT_CSS</style>     ← we toggle via .theme-dark class on <html>
-#   <nav class="topnav">…</nav>  ← per page+lang
-#   <div class="nav-spacer">…</div>
-#   <a … class="wa-float">…</a>  ← per lang (WA text differs)
-#   <script>persist…</script>    ← shared (height=0 component)
-#   <section …>…content…</section>×N
-#   <div class="footer">…</div>
-#   <script>arrows…</script>     ← shared
-
+# ───── slice fragments out of each render ─────────────────────────────────────
 _anchor_re = re.compile(r"(?s)(<style>.*?</style>)")
 _nav_re = re.compile(r'(?s)<nav class="topnav">.*?</nav>\s*<div class="nav-spacer"></div>')
 _wa_re = re.compile(r'(?s)<a href="https://wa\.me/[^"]+" target="_blank" rel="noopener" class="wa-float"[\s\S]*?</a>')
@@ -105,7 +96,7 @@ _footer_re = re.compile(r'(?s)<div class="footer">.*?</div>\s*$', re.MULTILINE)
 
 
 def split_render(html: str) -> dict[str, str]:
-    styles = _anchor_re.findall(html)  # first = BASE, second = LIGHT
+    styles = _anchor_re.findall(html)
     base_css = styles[0] if styles else ""
     light_css = styles[1] if len(styles) > 1 else ""
 
@@ -122,8 +113,6 @@ def split_render(html: str) -> dict[str, str]:
     footer_match = _footer_re.search(html)
     footer = footer_match.group(0) if footer_match else ""
 
-    # Content = everything after the WA FAB and persist JS, up to (but not
-    # including) the footer.
     content = html
     if wa:
         content = content.split(wa, 1)[-1]
@@ -134,182 +123,186 @@ def split_render(html: str) -> dict[str, str]:
     if arrows_js:
         content = content.rsplit(arrows_js, 1)[0]
 
-    return {
-        "base_css": base_css,
-        "light_css": light_css,
-        "nav": nav,
-        "wa": wa,
-        "persist_js": persist_js,
-        "content": content.strip(),
-        "footer": footer,
-        "arrows_js": arrows_js,
-    }
+    return dict(
+        base_css=base_css, light_css=light_css, nav=nav, wa=wa,
+        persist_js=persist_js, content=content.strip(),
+        footer=footer, arrows_js=arrows_js,
+    )
 
 
 parts = {k: split_render(v) for k, v in renders.items()}
-
-# Shared blocks — pull from the first render
 first = parts["home-es"]
-BASE_CSS = first["base_css"]
-LIGHT_CSS = first["light_css"]
-PERSIST_JS = first["persist_js"]
+BASE_CSS = harden.harden_css(first["base_css"])
+LIGHT_CSS = harden.harden_css(first["light_css"])
 ARROWS_JS = first["arrows_js"]
 
-# Per-lang WA buttons
-WA_ES = parts["home-es"]["wa"]
-WA_EN = parts["home-en"]["wa"]
-
-# Per-lang footer
-FOOTER_ES = parts["home-es"]["footer"]
-FOOTER_EN = parts["home-en"]["footer"]
-
-# Per page+lang content + nav
-CONTENT_BLOCKS = {key: parts[key]["content"] for key in parts}
-NAV_BLOCKS = {key: parts[key]["nav"] for key in parts}
-
-# ───── adapt LIGHT_CSS so it activates only when <html> lacks .theme-dark ────
-# Original LIGHT_CSS just redefines :root vars. We re-scope it to
-# html:not(.theme-dark) :root → wait, that doesn't work. We scope it to
-# html:not(.theme-dark) and override the selectors that use :root vars by
-# putting LIGHT_CSS inside html:not(.theme-dark) selector wrapper, like:
-#   html:not(.theme-dark){--bg:…} (no :root needed)
-# So we replace `:root{` with `html:not(.theme-dark){` and prepend a
-# `html.theme-dark` block with the dark defaults (which BASE_CSS already
-# provides via :root). The simplest fix: keep BASE_CSS as the dark default
-# via :root, and make LIGHT_CSS apply when html does NOT have .theme-dark.
-
-LIGHT_CSS_SCOPED = LIGHT_CSS.replace(":root{", "html:not(.theme-dark){")
-# Also re-scope the specific selectors that don't use :root
-LIGHT_CSS_SCOPED = LIGHT_CSS_SCOPED.replace(
-    ".test-arrow{",
-    "html:not(.theme-dark) .test-arrow{",
-).replace(
-    ".study-item,.fact-card{",
-    "html:not(.theme-dark) .study-item,html:not(.theme-dark) .fact-card{",
-).replace(
-    ".theme-tgl{",
-    "html:not(.theme-dark) .theme-tgl{",
+# Re-scope LIGHT_CSS to apply when html lacks .theme-dark
+LIGHT_CSS_SCOPED = (
+    LIGHT_CSS
+    .replace(":root{", "html:not(.theme-dark){")
+    .replace(".test-arrow{", "html:not(.theme-dark) .test-arrow{")
+    .replace(".study-item,.fact-card{", "html:not(.theme-dark) .study-item,html:not(.theme-dark) .fact-card{")
+    .replace(".theme-tgl{", "html:not(.theme-dark) .theme-tgl{")
 )
 
-# ───── emit the final index.html ──────────────────────────────────────────────
-META = (
-    '<meta charset="UTF-8">\n'
-    '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-    '<meta name="theme-color" content="#000000">\n'
-    '<meta name="description" content="Pauli Wellness — fototerapia LifeWave X39, GHK-Cu y bienestar natural. Sin químicos, sin agujas, sin efectos secundarios conocidos.">\n'
-    '<meta property="og:title" content="Luz en tu cuerpo · Pauli Wellness">\n'
-    '<meta property="og:description" content="Dos décadas de ciencia. +200 patentes. Una idea simple: usar la luz para despertar la reparación celular que tu cuerpo ya sabe hacer.">\n'
-    '<meta property="og:type" content="website">\n'
-    '<title>Luz en tu cuerpo · Pauli Wellness</title>\n'
-    '<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'%3E%3Ctext y=\'26\' font-size=\'26\'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">\n'
+# ───── URL mapping: clean paths + per-page metadata ───────────────────────────
+# Path: served at /<path>/index.html, browser sees /<path>/
+URL_PATHS = {
+    "home-es":       "",
+    "ghk-es":        "ghk",
+    "resultados-es": "resultados",
+    "estudios-es":   "estudios",
+    "home-en":       "en",
+    "ghk-en":        "en/ghk",
+    "resultados-en": "en/results",
+    "estudios-en":   "en/studies",
+}
+
+# Per-page <title>, meta description, single <h1> hint
+PAGE_META = {
+    "home-es": {
+        "title": "Luz en tu cuerpo · Pauli Wellness",
+        "desc":  "Fototerapia LifeWave X39 + GHK-Cu. Dos décadas de ciencia, +200 patentes. Sin químicos, sin agujas. Despierta tu reparación celular con luz.",
+        "h1":    "Dos décadas de ciencia. Más de 200 patentes en todo el mundo.",
+    },
+    "ghk-es": {
+        "title": "GHK-Cu · El péptido de cobre · Pauli Wellness",
+        "desc":  "GHK-Cu, el tripéptido de cobre que tu cuerpo ya produce. Qué es, por qué baja con la edad, y cómo el parche LifeWave X39 ayuda a elevarlo.",
+        "h1":    "GHK-Cu · el péptido que tu cuerpo ya conoce",
+    },
+    "resultados-es": {
+        "title": "Resultados reales · Pauli Wellness",
+        "desc":  "Testimonios en video de personas que probaron los parches LifeWave X39 y comparten sus resultados — dolor, sueño, energía, piel, recuperación.",
+        "h1":    "Resultados que cuentan las personas",
+    },
+    "estudios-es": {
+        "title": "Estudios y patentes · LifeWave · Pauli Wellness",
+        "desc":  "+200 patentes globales, +70 en regeneración. Estudios independientes de PSY-TEK, Center for Biofield Sciences y más. Premio Biotech Breakthrough 2025.",
+        "h1":    "Estudios y patentes",
+    },
+    "home-en": {
+        "title": "Light in your body · Pauli Wellness",
+        "desc":  "LifeWave X39 phototherapy + GHK-Cu. Two decades of science, 200+ patents. No drugs, no needles. Wake up your cellular repair with light.",
+        "h1":    "Two decades of science. More than 200 patents worldwide.",
+    },
+    "ghk-en": {
+        "title": "GHK-Cu · The copper peptide · Pauli Wellness",
+        "desc":  "GHK-Cu, the copper tripeptide your body already makes. What it is, why levels drop with age, how the LifeWave X39 patch helps raise it.",
+        "h1":    "GHK-Cu · the peptide your body already knows",
+    },
+    "resultados-en": {
+        "title": "Real results · Pauli Wellness",
+        "desc":  "Video testimonials from people who tried the LifeWave X39 patches and shared their results — pain, sleep, energy, skin, recovery.",
+        "h1":    "Results people share",
+    },
+    "estudios-en": {
+        "title": "Studies and patents · LifeWave · Pauli Wellness",
+        "desc":  "200+ global patents, 70+ in regeneration. Independent studies from PSY-TEK, Center for Biofield Sciences and more. 2025 Biotech Breakthrough Award.",
+        "h1":    "Studies and patents",
+    },
+}
+
+PAGE_LANG = {k: k.rsplit("-", 1)[1] for k in URL_PATHS}
+SITE_ORIGIN = "https://luzentucuerpo.com"
+
+
+def page_url(key: str) -> str:
+    p = URL_PATHS[key]
+    return SITE_ORIGIN + ("/" if not p else f"/{p}/")
+
+
+def page_relurl(key: str) -> str:
+    p = URL_PATHS[key]
+    return "/" if not p else f"/{p}/"
+
+
+# ───── nav URL rewriter — replace ?page=X&lang=Y → clean path ─────────────────
+def _query_to_path(href: str) -> str:
+    """Given an internal href like '?page=ghk&lang=en&theme=light', return the
+    clean path equivalent like '/en/ghk/'."""
+    if not href.startswith("?"):
+        return href
+    from urllib.parse import parse_qs
+    params = parse_qs(href[1:])
+    page = (params.get("page") or ["home"])[0]
+    lang = (params.get("lang") or ["es"])[0]
+    if page not in ("home", "ghk", "resultados", "estudios"):
+        page = "home"
+    if lang not in ("es", "en"):
+        lang = "es"
+    return page_relurl(f"{page}-{lang}")
+
+
+_HREF_QUERY_RE = re.compile(r'href="(\?[^"]+)"')
+_THEME_TGL_RE = re.compile(
+    r'<a\s+href="\?[^"]*theme=[^"]*"[^>]*class="theme-tgl"[^>]*>([^<]*)</a>',
+    re.IGNORECASE,
 )
 
-# Render content blocks as <template> tags so they are NOT shown by default;
-# JS clones the right one into <main> based on URL params.
-template_blocks = "\n".join(
-    f'<template id="page-{key}">{html}</template>'
-    for key, html in CONTENT_BLOCKS.items()
-)
-nav_blocks = "\n".join(
-    f'<template id="nav-{key}">{html}</template>'
-    for key, html in NAV_BLOCKS.items()
-)
 
-# WA + footer templates (lang-scoped)
-wa_templates = (
-    f'<template id="wa-es">{WA_ES}</template>\n'
-    f'<template id="wa-en">{WA_EN}</template>\n'
-)
-footer_templates = (
-    f'<template id="footer-es">{FOOTER_ES}</template>\n'
-    f'<template id="footer-en">{FOOTER_EN}</template>\n'
-)
+def rewrite_nav(nav_html: str, lang: str) -> str:
+    """Convert all query-param hrefs to clean paths; convert theme toggle to
+    a button (theme is JS-only now)."""
+    # Rewrite the theme-toggle anchor to a real <button>
+    title_es = "Cambiar de tema"
+    title_en = "Toggle theme"
+    title = title_es if lang == "es" else title_en
+    btn = (
+        f'<button type="button" class="theme-tgl" data-toggle-theme '
+        f'aria-label="{title}" title="{title}">'
+        f'<span class="theme-icon" aria-hidden="true">☀️</span>'
+        f'</button>'
+    )
+    nav_html = _THEME_TGL_RE.sub(btn, nav_html)
+    # Rewrite all remaining ?page=...&lang=... links to clean paths
+    nav_html = _HREF_QUERY_RE.sub(lambda m: f'href="{_query_to_path(m.group(1))}"', nav_html)
+    return nav_html
 
-# Router JS — picks block by URL params, applies theme class, persists prefs
-ROUTER_JS = """
+
+# Apply nav rewriter to every nav template
+NAV_BLOCKS = {key: rewrite_nav(parts[key]["nav"], lang=PAGE_LANG[key]) for key in parts}
+# Same for content (content blocks contain internal <a href="?page=...&lang=..."> too)
+CONTENT_BLOCKS = {
+    key: harden.harden_html(
+        _HREF_QUERY_RE.sub(lambda m: f'href="{_query_to_path(m.group(1))}"', parts[key]["content"])
+    )
+    for key in parts
+}
+WA_BLOCKS = {key: parts[key]["wa"] for key in parts}
+FOOTER_BLOCKS = {key: parts[key]["footer"] for key in parts}
+
+# ───── theme + carousel + nav-active JS (per-page, no router needed) ──────────
+PAGE_JS = """
 <script>
 (function(){
-  var qp = new URLSearchParams(window.location.search);
-  // page is NEVER persisted to localStorage — always default to home if absent.
-  var page  = qp.get('page')  || 'home';
-  // lang + theme persist across visits so user prefs stick (matches Streamlit).
-  var lang  = qp.get('lang')  || localStorage.getItem('pauli-lang')  || 'es';
-  var theme = qp.get('theme') || localStorage.getItem('pauli-theme') || 'light';
-
-  if (!['home','ghk','resultados','estudios'].includes(page)) page = 'home';
-  if (!['es','en'].includes(lang)) lang = 'es';
-  if (!['dark','light'].includes(theme)) theme = 'light';
-
-  // Apply theme + lang ASAP to <html> to avoid FOUC
-  document.documentElement.classList.toggle('theme-dark', theme === 'dark');
-  document.documentElement.lang = lang;
-
-  // Persist lang + theme only
+  // Theme: read localStorage → apply class → wire toggle button
   try {
-    localStorage.setItem('pauli-lang', lang);
-    localStorage.setItem('pauli-theme', theme);
+    var t = localStorage.getItem('pauli-theme') || 'light';
+    if (t === 'dark') document.documentElement.classList.add('theme-dark');
   } catch(e) {}
-
-  // Helper: clone a <template> into a host
-  function mount(templateId, hostId) {
-    var tpl = document.getElementById(templateId);
-    var host = document.getElementById(hostId);
-    if (!tpl || !host) return;
-    host.innerHTML = '';
-    host.appendChild(tpl.content.cloneNode(true));
+  function applyTheme(t){
+    document.documentElement.classList.toggle('theme-dark', t === 'dark');
+    var icon = document.querySelector('.theme-icon');
+    if (icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+    try { localStorage.setItem('pauli-theme', t); } catch(e) {}
   }
+  // Set the icon to match the initial theme
+  document.addEventListener('DOMContentLoaded', function(){
+    var t = document.documentElement.classList.contains('theme-dark') ? 'dark' : 'light';
+    var icon = document.querySelector('.theme-icon');
+    if (icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+  });
+  // Theme toggle click
+  document.addEventListener('click', function(ev){
+    var btn = ev.target.closest('[data-toggle-theme]');
+    if (!btn) return;
+    var current = document.documentElement.classList.contains('theme-dark') ? 'dark' : 'light';
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
 
-  var key = page + '-' + lang;
-  mount('nav-' + key, 'nav-mount');
-  mount('page-' + key, 'main');
-  mount('footer-' + lang, 'footer-mount');
-  mount('wa-' + lang, 'wa-mount');
-
-  // Nav templates were baked with theme=light. Post-mount, rewrite every
-  // internal nav href so it preserves the CURRENT theme, and update the
-  // theme-toggle icon + href so it points to the OPPOSITE of current theme.
-  function fixNavLinks(){
-    var otherTheme = theme === 'dark' ? 'light' : 'dark';
-    var nav = document.getElementById('nav-mount');
-    if (!nav) return;
-    nav.querySelectorAll('a[href^="?"]').forEach(function(a){
-      var u = new URL(a.getAttribute('href'), window.location.href);
-      // Theme toggle: explicitly flip to other theme
-      if (a.classList.contains('theme-tgl')) {
-        u.searchParams.set('theme', otherTheme);
-        a.setAttribute('href', '?' + u.searchParams.toString());
-        a.textContent = theme === 'dark' ? '🌙' : '☀️';
-        var title = theme === 'dark'
-          ? (lang === 'es' ? 'Cambiar a modo claro' : 'Switch to light mode')
-          : (lang === 'es' ? 'Cambiar a modo oscuro' : 'Switch to dark mode');
-        a.setAttribute('title', title);
-        a.setAttribute('aria-label', title);
-      } else {
-        // Every other nav link: preserve current theme on navigation
-        u.searchParams.set('theme', theme);
-        a.setAttribute('href', '?' + u.searchParams.toString());
-      }
-    });
-  }
-  fixNavLinks();
-
-  // Update <title> for the active page+lang
-  var titles = {
-    'home-es':'Luz en tu cuerpo · Pauli Wellness',
-    'ghk-es':'GHK-Cu · Pauli Wellness',
-    'resultados-es':'Resultados · Pauli Wellness',
-    'estudios-es':'Estudios y patentes · Pauli Wellness',
-    'home-en':'Light in your body · Pauli Wellness',
-    'ghk-en':'GHK-Cu · Pauli Wellness',
-    'resultados-en':'Results · Pauli Wellness',
-    'estudios-en':'Studies and patents · Pauli Wellness',
-  };
-  if (titles[key]) document.title = titles[key];
-
-  // Wire carousel arrows after content is mounted
+  // Testimonial-carousel arrows
   function wireArrows(){
-    var wraps = document.querySelectorAll('.test-scroll-wrap');
-    wraps.forEach(function(wrap){
+    document.querySelectorAll('.test-scroll-wrap').forEach(function(wrap){
       if (wrap.dataset.wired) return;
       var scroll = wrap.querySelector('.test-scroll');
       var left = wrap.querySelector('.test-arrow-left');
@@ -317,55 +310,394 @@ ROUTER_JS = """
       if (!scroll || !left || !right) return;
       var card = scroll.querySelector('.test-card');
       var step = (card ? card.offsetWidth : 260) + 22;
-      [left, right].forEach(function(b){
-        b.style.cursor = 'pointer';
-        b.style.pointerEvents = 'auto';
-      });
+      [left, right].forEach(function(b){ b.style.cursor = 'pointer'; b.style.pointerEvents = 'auto'; });
       left.addEventListener('click', function(e){ e.preventDefault(); scroll.scrollBy({left:-step, behavior:'smooth'}); });
       right.addEventListener('click', function(e){ e.preventDefault(); scroll.scrollBy({left:step, behavior:'smooth'}); });
       wrap.dataset.wired = '1';
     });
   }
-  wireArrows();
-
-  // Internal anchors (href="?page=…") work via normal browser navigation —
-  // no interception needed; the new URL triggers a reload which re-runs
-  // this router with the new params.
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', wireArrows);
+  else wireArrows();
 })();
 </script>
 """
 
-html_out = f"""<!doctype html>
-<html lang="es">
+
+# ───── per-page HTML emitter ──────────────────────────────────────────────────
+def hreflang_links(key: str) -> str:
+    """Return <link rel="alternate" hreflang="…"> tags for both langs +
+    x-default (Spanish home as default since site is Latin-Am focused)."""
+    page = key.rsplit("-", 1)[0]
+    out = []
+    for lang in ("es", "en"):
+        k = f"{page}-{lang}"
+        out.append(
+            f'<link rel="alternate" hreflang="{lang}" href="{page_url(k)}">'
+        )
+    # x-default → Spanish version
+    out.append(f'<link rel="alternate" hreflang="x-default" href="{page_url(f"{page}-es")}">')
+    return "\n".join(out)
+
+
+def canonical_link(key: str) -> str:
+    return f'<link rel="canonical" href="{page_url(key)}">'
+
+
+def jsonld_blocks(key: str, meta: dict) -> str:
+    """Return one or more JSON-LD <script> blocks for the page."""
+    import json
+    page = key.rsplit("-", 1)[0]
+    lang = PAGE_LANG[key]
+
+    org = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Pauli Wellness",
+        "url": SITE_ORIGIN,
+        "logo": f"{SITE_ORIGIN}/img/og.png",
+        "sameAs": [],
+        "contactPoint": [{
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "telephone": "+593-93-989-0499",
+            "availableLanguage": ["Spanish", "English"],
+        }],
+    }
+    product = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "LifeWave X39 Phototherapy Patch",
+        "image": f"{SITE_ORIGIN}/img/patches.webp",
+        "description": ("Coin-sized non-transdermic phototherapy patch that reflects "
+                        "specific wavelengths to the skin, supporting natural GHK-Cu "
+                        "elevation — no drugs, no needles, no known side effects."),
+        "brand": {"@type": "Brand", "name": "LifeWave"},
+        "category": "Wellness / Phototherapy",
+    }
+    blocks = [org, product]
+
+    # Add FAQPage on the GHK page (rich, factoid-style content)
+    if page == "ghk":
+        faq = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "¿Qué es el GHK-Cu?" if lang == "es" else "What is GHK-Cu?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": ("Es un pequeño péptido formado por tres aminoácidos — glicina, "
+                                 "histidina y lisina — unidos a un átomo de cobre. Circula de "
+                                 "forma natural en tu organismo y la investigación lo asocia con "
+                                 "regeneración, cicatrización y renovación celular.") if lang == "es" else
+                                ("It's a small peptide of three amino acids — glycine, histidine "
+                                 "and lysine — bound to a copper atom. It circulates naturally in "
+                                 "the body and research links it to regeneration, wound healing "
+                                 "and cellular renewal."),
+                    },
+                },
+                {
+                    "@type": "Question",
+                    "name": ("¿Por qué importa a partir de los 30?" if lang == "es"
+                             else "Why does it matter after 30?"),
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": ("Los niveles de GHK-Cu bajan ~60% entre los 20 y los 60 años, "
+                                 "y con ellos la capacidad natural del cuerpo para regenerarse.") if lang == "es"
+                                else ("GHK-Cu levels drop ~60% between ages 20 and 60, and with "
+                                      "them the body's natural capacity to regenerate."),
+                    },
+                },
+                {
+                    "@type": "Question",
+                    "name": ("¿El parche contiene GHK-Cu?" if lang == "es"
+                             else "Does the patch contain GHK-Cu?"),
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": ("No. El parche no contiene GHK-Cu ni lo libera en el cuerpo. "
+                                 "Su superficie patentada refleja longitudes de onda específicas "
+                                 "que estimulan al organismo a elevar el GHK-Cu que produce "
+                                 "naturalmente.") if lang == "es" else
+                                ("No. The patch contains no GHK-Cu and releases none into the body. "
+                                 "Its patented surface reflects specific wavelengths that stimulate "
+                                 "the body to raise the GHK-Cu it naturally produces."),
+                    },
+                },
+            ],
+        }
+        blocks.append(faq)
+
+    return "\n".join(
+        f'<script type="application/ld+json">{json.dumps(b, ensure_ascii=False)}</script>'
+        for b in blocks
+    )
+
+
+def render_page(key: str) -> str:
+    meta = PAGE_META[key]
+    lang = PAGE_LANG[key]
+    nav_html = NAV_BLOCKS[key]
+    content_html = CONTENT_BLOCKS[key]
+    wa_html = WA_BLOCKS[key]
+    footer_html = FOOTER_BLOCKS[key]
+
+    head_meta = (
+        '<meta charset="UTF-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+        '<meta name="theme-color" content="#000000">\n'
+        f'<meta name="description" content="{meta["desc"]}">\n'
+        f'<meta property="og:title" content="{meta["title"]}">\n'
+        f'<meta property="og:description" content="{meta["desc"]}">\n'
+        '<meta property="og:type" content="website">\n'
+        f'<meta property="og:url" content="{page_url(key)}">\n'
+        f'<meta property="og:image" content="{SITE_ORIGIN}/img/og.png">\n'
+        '<meta property="og:image:width" content="1200">\n'
+        '<meta property="og:image:height" content="630">\n'
+        '<meta name="twitter:card" content="summary_large_image">\n'
+        f'<meta name="twitter:title" content="{meta["title"]}">\n'
+        f'<meta name="twitter:description" content="{meta["desc"]}">\n'
+        f'<meta name="twitter:image" content="{SITE_ORIGIN}/img/og.png">\n'
+        f'<title>{meta["title"]}</title>\n'
+        '<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'%3E%3Ctext y=\'26\' font-size=\'26\'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">\n'
+        f'{canonical_link(key)}\n'
+        f'{hreflang_links(key)}\n'
+    )
+
+    return f"""<!doctype html>
+<html lang="{lang}">
 <head>
-{META}{BASE_CSS}
+{head_meta}{harden.head_extras()}{BASE_CSS}
 {LIGHT_CSS_SCOPED}
 <style>
-/* keep dark vars active when html.theme-dark explicitly set */
 html.theme-dark{{color-scheme:dark}}
 html:not(.theme-dark){{color-scheme:light}}
-/* hide template placeholders */
-template{{display:none!important}}
 </style>
+{harden.FACADE_CSS}
+{jsonld_blocks(key, meta)}
 </head>
 <body>
-<div id="nav-mount"></div>
-<main id="main"></main>
-<div id="footer-mount"></div>
-<div id="wa-mount"></div>
-
-{nav_blocks}
-{template_blocks}
-{wa_templates}
-{footer_templates}
-
-{PERSIST_JS}
+{nav_html}
+<main>{content_html}</main>
+{footer_html}
+{wa_html}
 {ARROWS_JS}
-{ROUTER_JS}
+{harden.FACADE_JS}
+{PAGE_JS}
 </body>
 </html>
 """
 
-OUT_HTML.write_text(html_out, encoding="utf-8")
-print(f"[build] wrote {OUT_HTML}  ({len(html_out):,} bytes)")
-print(f"[build] pages: {list(parts.keys())}")
+
+# ───── emit per-page HTML files ───────────────────────────────────────────────
+total_bytes = 0
+for key in URL_PATHS:
+    path = URL_PATHS[key]
+    out_file = OUT_DIR / path / "index.html" if path else OUT_DIR / "index.html"
+    out_file.parent.mkdir(parents=True, exist_ok=True)
+    html = render_page(key)
+    out_file.write_text(html, encoding="utf-8")
+    total_bytes += len(html)
+    print(f"[build] {out_file.relative_to(OUT_DIR)}  {len(html):>6,} bytes")
+
+print(f"[build] total HTML: {total_bytes:,} bytes across {len(URL_PATHS)} pages")
+
+# ───── sitemap.xml ────────────────────────────────────────────────────────────
+sitemap_urls = []
+for key in URL_PATHS:
+    page = key.rsplit("-", 1)[0]
+    url = page_url(key)
+    alternates = "\n".join(
+        f'    <xhtml:link rel="alternate" hreflang="{l}" href="{page_url(f"{page}-{l}")}"/>'
+        for l in ("es", "en")
+    )
+    alternates += f'\n    <xhtml:link rel="alternate" hreflang="x-default" href="{page_url(f"{page}-es")}"/>'
+    sitemap_urls.append(f"""  <url>
+    <loc>{url}</loc>
+{alternates}
+    <changefreq>monthly</changefreq>
+    <priority>{'1.0' if page == 'home' else '0.8'}</priority>
+  </url>""")
+
+sitemap = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+{chr(10).join(sitemap_urls)}
+</urlset>
+"""
+(OUT_DIR / "sitemap.xml").write_text(sitemap, encoding="utf-8")
+
+# ───── robots.txt — allow AI crawlers explicitly ──────────────────────────────
+robots = f"""# robots.txt for luzentucuerpo.com
+
+User-agent: *
+Allow: /
+Disallow: /img/.tmp-orig/
+
+# AI / LLM crawlers — explicitly allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: {SITE_ORIGIN}/sitemap.xml
+"""
+(OUT_DIR / "robots.txt").write_text(robots, encoding="utf-8")
+
+# ───── llms.txt — concise summary for LLMs ────────────────────────────────────
+llms = f"""# Pauli Wellness — Luz en tu cuerpo
+
+> Pauli Wellness es una pequeña distribuidora ecuatoriana de los parches de
+> fototerapia LifeWave X39 (basados en GHK-Cu), una tecnología con más de 200
+> patentes globales y dos décadas de desarrollo. El sitio explica qué hace la
+> tecnología, muestra testimonios reales en video y conecta a los visitantes
+> con Pauli vía WhatsApp para preguntas y pedidos.
+>
+> Pauli Wellness is a small Ecuadorian distributor of LifeWave X39 phototherapy
+> patches (GHK-Cu based), a 200+ patent technology developed over two decades.
+> The site explains the science, shows real video testimonials, and connects
+> visitors to Pauli via WhatsApp for questions and orders.
+
+## Pages
+
+- [Inicio (ES)]({page_url("home-es")}) — La página principal con el resumen, video explicativo y testimonios.
+- [GHK-Cu (ES)]({page_url("ghk-es")}) — Qué es el péptido de cobre GHK-Cu y por qué importa con la edad.
+- [Resultados (ES)]({page_url("resultados-es")}) — Testimonios en video y patrones de cambios reportados.
+- [Estudios (ES)]({page_url("estudios-es")}) — Patentes, investigación independiente y reconocimientos.
+- [Home (EN)]({page_url("home-en")}) — English overview.
+- [GHK-Cu (EN)]({page_url("ghk-en")}) — English copper-peptide explainer.
+- [Results (EN)]({page_url("resultados-en")}) — English testimonials page.
+- [Studies (EN)]({page_url("estudios-en")}) — English studies + patents page.
+
+## Contacto / Contact
+
+- WhatsApp: +593 93 989 0499 (Pauli, Ecuador)
+
+## Key claims (from manufacturer LifeWave, not medical advice)
+
+- The X39 patch uses light reflection (no drugs, no needles, nothing crosses the skin) to support the body's natural GHK-Cu production.
+- GHK-Cu is a copper-bound tripeptide (Gly-His-Lys-Cu) the body produces naturally; levels drop ~60% from age 20 → 60.
+- LifeWave holds 200+ global patents; David Schmidt (founder) is named on 70+ regeneration-specific patents.
+- LifeWave received the 2025 Biotech Breakthrough Award in "Stem Cell Innovation of the Year".
+- 30/90-day money-back guarantee on patches.
+
+The site contains testimonial videos hosted on Vimeo and one Spanish explainer hosted on YouTube; the videos are presented as click-to-load thumbnails to keep first-paint fast.
+"""
+(OUT_DIR / "llms.txt").write_text(llms, encoding="utf-8")
+
+# ───── 404.html ──────────────────────────────────────────────────────────────
+# Cloudflare Pages auto-serves /404.html for unknown paths with status 404.
+not_found = f"""<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Página no encontrada · Pauli Wellness</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'%3E%3Ctext y=\'26\' font-size=\'26\'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">
+<style>
+body{{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:#0a0a0a;color:#fff;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem}}
+.wrap{{max-width:560px}}
+h1{{font-size:clamp(28px,4vw,48px);margin:0 0 1rem;color:#d4a94a}}
+p{{font-size:clamp(16px,1.6vw,20px);line-height:1.6;opacity:.9;margin:0 0 2rem}}
+a{{color:#d4a94a;text-decoration:none;font-weight:700;border-bottom:2px solid #d4a94a;padding-bottom:2px}}
+a:hover{{color:#b8923c;border-color:#b8923c}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1>404 — Página no encontrada</h1>
+<p>La página que buscas no existe o fue movida.<br>Volvamos al inicio.</p>
+<p><a href="/">← Volver a la página principal</a></p>
+<p style="font-size:14px;opacity:.6;margin-top:2rem">English: <a href="/en/">Back to homepage</a></p>
+</main>
+</body>
+</html>
+"""
+(OUT_DIR / "404.html").write_text(not_found, encoding="utf-8")
+
+# ───── _redirects — legacy ?page=X&lang=Y URLs → new clean paths ──────────────
+# Cloudflare Pages reads /_redirects (Netlify format).
+# Match patterns that include any combination of query params.
+redirects_lines = [
+    "# Legacy SPA URLs (the old ?page=X&lang=Y format) → clean paths",
+    "# These send a 301 so search engines update their indexes.",
+    "",
+]
+for page in ("home", "ghk", "resultados", "estudios"):
+    for lang in ("es", "en"):
+        old = f"/?page={page}&lang={lang}"
+        new_path = page_relurl(f"{page}-{lang}")
+        # Splat-style redirect needs query-string handling that Pages limits;
+        # we register exact common variants the JS router previously emitted.
+        redirects_lines.append(f"{old}&theme=light  {new_path}  301")
+        redirects_lines.append(f"{old}&theme=dark   {new_path}  301")
+        redirects_lines.append(f"{old}             {new_path}  301")
+# Bare ?page=X (no lang) defaults to ES
+for page in ("home", "ghk", "resultados", "estudios"):
+    new_path = page_relurl(f"{page}-es")
+    redirects_lines.append(f"/?page={page}  {new_path}  301")
+redirects = "\n".join(redirects_lines) + "\n"
+(OUT_DIR / "_redirects").write_text(redirects, encoding="utf-8")
+
+# ───── _headers — security + cache ────────────────────────────────────────────
+headers = """# Global security headers
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+  X-Frame-Options: SAMEORIGIN
+
+# Long cache for fingerprint-able static assets (versioned by filename)
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/thumbs/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# HTML: must-revalidate (so updates ship fast)
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# robots/sitemap/llms — short TTL
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600
+"""
+(OUT_DIR / "_headers").write_text(headers, encoding="utf-8")
+
+print(f"[build] emitted sitemap.xml, robots.txt, llms.txt, 404.html, _redirects, _headers")
+print(f"[build] DONE")

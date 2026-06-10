@@ -1,0 +1,288 @@
+{
+  "aging-battery": {
+    "widths": [
+      {
+        "w": 400,
+        "file": "/img/aging-battery-400.webp",
+        "bytes": 6496
+      },
+      {
+        "w": 800,
+        "file": "/img/aging-battery-800.webp",
+        "bytes": 18350
+      },
+      {
+        "w": 1024,
+        "file": "/img/aging-battery-1024.webp",
+        "bytes": 36542
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/11/womanAging-battery-1-1024x981.png",
+    "natural": {
+      "file": "/img/aging-battery.webp",
+      "bytes": 36542
+    }
+  },
+  "video-thumb": {
+    "widths": [
+      {
+        "w": 400,
+        "file": "/img/video-thumb-400.webp",
+        "bytes": 9488
+      },
+      {
+        "w": 800,
+        "file": "/img/video-thumb-800.webp",
+        "bytes": 23002
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/11/3-MinuteVideo-thumbnail-2-1.png",
+    "natural": {
+      "file": "/img/video-thumb.webp",
+      "bytes": 68216
+    }
+  },
+  "patch-placement": {
+    "widths": [
+      {
+        "w": 400,
+        "file": "/img/patch-placement-400.webp",
+        "bytes": 8640
+      },
+      {
+        "w": 690,
+        "file": "/img/patch-placement-690.webp",
+        "bytes": 21788
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/SN-Patch-placement-scaled-1-690x1024.jpg",
+    "natural": {
+      "file": "/img/patch-placement.webp",
+      "bytes": 21788
+    }
+  },
+  "couple": {
+    "widths": [
+      {
+        "w": 400,
+        "file": "/img/couple-400.webp",
+        "bytes": 13498
+      },
+      {
+        "w": 800,
+        "file": "/img/couple-800.webp",
+        "bytes": 33146
+      },
+      {
+        "w": 1024,
+        "file": "/img/couple-1024.webp",
+        "bytes": 49582
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/490141872_10162757194347458_245241563246855534_n-1024x1024.jpg",
+    "natural": {
+      "file": "/img/couple.webp",
+      "bytes": 49582
+    }
+  },
+  "kitchen": {
+    "widths": [
+      {
+        "w": 400,
+        "file": "/img/kitchen-400.webp",
+        "bytes": 13510
+      },
+      {
+        "w": 800,
+        "file": "/img/kitchen-800.webp",
+        "bytes": 35382
+      },
+      {
+        "w": 1024,
+        "file": "/img/kitchen-1024.webp",
+        "bytes": 52842
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/ManWoman-Kitchen-swirl-1024x645.png",
+    "natural": {
+      "file": "/img/kitchen.webp",
+      "bytes": 52842
+    }
+  },
+  "mountain": {
+    "widths": [
+      {
+        "w": 400,
+        "file": "/img/mountain-400.webp",
+        "bytes": 8820
+      },
+      {
+        "w": 819,
+        "file": "/img/mountain-819.webp",
+        "bytes": 21792
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/11/Man-frontOfMtn-819x1024.png",
+    "natural": {
+      "file": "/img/mountain.webp",
+      "bytes": 21792
+    }
+  },
+  "patches": {
+    "widths": [
+      {
+        "w": 400,
+        "file": "/img/patches-400.webp",
+        "bytes": 15252
+      },
+      {
+        "w": 800,
+        "file": "/img/patches-800.webp",
+        "bytes": 41464
+      },
+      {
+        "w": 1024,
+        "file": "/img/patches-1024.webp",
+        "bytes": 74524
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/Phototherapy-LifeWave-patches-clean-1024x1024.jpg",
+    "natural": {
+      "file": "/img/patches.webp",
+      "bytes": 74524
+    }
+  },
+  "tl-days": {
+    "widths": [
+      {
+        "w": 240,
+        "file": "/img/tl-days-240.webp",
+        "bytes": 4396
+      },
+      {
+        "w": 480,
+        "file": "/img/tl-days-480.webp",
+        "bytes": 10018
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/timeline-firstFewDays-2.png",
+    "natural": {
+      "file": "/img/tl-days.webp",
+      "bytes": 15002
+    }
+  },
+  "tl-4w": {
+    "widths": [
+      {
+        "w": 240,
+        "file": "/img/tl-4w-240.webp",
+        "bytes": 3640
+      },
+      {
+        "w": 480,
+        "file": "/img/tl-4w-480.webp",
+        "bytes": 8600
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/timeline-6weeks-2.png",
+    "natural": {
+      "file": "/img/tl-4w.webp",
+      "bytes": 12714
+    }
+  },
+  "tl-6w": {
+    "widths": [
+      {
+        "w": 240,
+        "file": "/img/tl-6w-240.webp",
+        "bytes": 4596
+      },
+      {
+        "w": 480,
+        "file": "/img/tl-6w-480.webp",
+        "bytes": 10816
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/timeline-3women.png",
+    "natural": {
+      "file": "/img/tl-6w.webp",
+      "bytes": 16380
+    }
+  },
+  "tl-3m": {
+    "widths": [
+      {
+        "w": 240,
+        "file": "/img/tl-3m-240.webp",
+        "bytes": 2822
+      },
+      {
+        "w": 480,
+        "file": "/img/tl-3m-480.webp",
+        "bytes": 6668
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/timeline-3months-2.png",
+    "natural": {
+      "file": "/img/tl-3m.webp",
+      "bytes": 10254
+    }
+  },
+  "tl-12m": {
+    "widths": [
+      {
+        "w": 240,
+        "file": "/img/tl-12m-240.webp",
+        "bytes": 6092
+      },
+      {
+        "w": 480,
+        "file": "/img/tl-12m-480.webp",
+        "bytes": 14626
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/timeline-meditation.png",
+    "natural": {
+      "file": "/img/tl-12m.webp",
+      "bytes": 22044
+    }
+  },
+  "holding": {
+    "widths": [
+      {
+        "w": 340,
+        "file": "/img/holding-340.webp",
+        "bytes": 4162
+      },
+      {
+        "w": 680,
+        "file": "/img/holding-680.webp",
+        "bytes": 10010
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/11/HoldingPatch-clean-cropped-1024x759.png",
+    "natural": {
+      "file": "/img/holding.webp",
+      "bytes": 17662
+    }
+  },
+  "badge": {
+    "widths": [
+      {
+        "w": 160,
+        "file": "/img/badge-160.webp",
+        "bytes": 10128
+      },
+      {
+        "w": 320,
+        "file": "/img/badge-320.webp",
+        "bytes": 22666
+      }
+    ],
+    "src": "https://whythelight.com/wp-content/uploads/2025/09/90-dayGuarantee.png",
+    "natural": {
+      "file": "/img/badge.webp",
+      "bytes": 24128
+    }
+  }
+}

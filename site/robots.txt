@@ -1,0 +1,29 @@
+# robots.txt for luzentucuerpo.com
+
+User-agent: *
+Allow: /
+Disallow: /img/.tmp-orig/
+
+# AI / LLM crawlers — explicitly allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://luzentucuerpo.com/sitemap.xml

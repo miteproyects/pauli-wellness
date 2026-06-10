@@ -1,0 +1,37 @@
+# Pauli Wellness — Luz en tu cuerpo
+
+> Pauli Wellness es una pequeña distribuidora ecuatoriana de los parches de
+> fototerapia LifeWave X39 (basados en GHK-Cu), una tecnología con más de 200
+> patentes globales y dos décadas de desarrollo. El sitio explica qué hace la
+> tecnología, muestra testimonios reales en video y conecta a los visitantes
+> con Pauli vía WhatsApp para preguntas y pedidos.
+>
+> Pauli Wellness is a small Ecuadorian distributor of LifeWave X39 phototherapy
+> patches (GHK-Cu based), a 200+ patent technology developed over two decades.
+> The site explains the science, shows real video testimonials, and connects
+> visitors to Pauli via WhatsApp for questions and orders.
+
+## Pages
+
+- [Inicio (ES)](https://luzentucuerpo.com/) — La página principal con el resumen, video explicativo y testimonios.
+- [GHK-Cu (ES)](https://luzentucuerpo.com/ghk/) — Qué es el péptido de cobre GHK-Cu y por qué importa con la edad.
+- [Resultados (ES)](https://luzentucuerpo.com/resultados/) — Testimonios en video y patrones de cambios reportados.
+- [Estudios (ES)](https://luzentucuerpo.com/estudios/) — Patentes, investigación independiente y reconocimientos.
+- [Home (EN)](https://luzentucuerpo.com/en/) — English overview.
+- [GHK-Cu (EN)](https://luzentucuerpo.com/en/ghk/) — English copper-peptide explainer.
+- [Results (EN)](https://luzentucuerpo.com/en/results/) — English testimonials page.
+- [Studies (EN)](https://luzentucuerpo.com/en/studies/) — English studies + patents page.
+
+## Contacto / Contact
+
+- WhatsApp: +593 93 989 0499 (Pauli, Ecuador)
+
+## Key claims (from manufacturer LifeWave, not medical advice)
+
+- The X39 patch uses light reflection (no drugs, no needles, nothing crosses the skin) to support the body's natural GHK-Cu production.
+- GHK-Cu is a copper-bound tripeptide (Gly-His-Lys-Cu) the body produces naturally; levels drop ~60% from age 20 → 60.
+- LifeWave holds 200+ global patents; David Schmidt (founder) is named on 70+ regeneration-specific patents.
+- LifeWave received the 2025 Biotech Breakthrough Award in "Stem Cell Innovation of the Year".
+- 30/90-day money-back guarantee on patches.
+
+The site contains testimonial videos hosted on Vimeo and one Spanish explainer hosted on YouTube; the videos are presented as click-to-load thumbnails to keep first-paint fast.
